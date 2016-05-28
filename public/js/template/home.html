@@ -1,0 +1,56 @@
+<div data-role="header">
+    <h1>DDO-IT</h1>
+    <a href="#nav-panel" data-icon="bars" data-iconpos="notext">Menu-left</a>
+    <a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a>
+</div>
+<div id="nav-panel" data-role="panel" data-position="left" data-theme="b">
+    <div class="ui-panel-inner">
+    <h3>Que voulez vous faire ?</h3>
+    <ul data-role="listview" data-inset="true">
+        <li data-icon="refresh">
+            <a href="#sync/pull">
+            <span class="ui-btn-inner">Download</span>
+            </a>
+        </li>
+        <li data-icon="check">
+            <a href="#sync/push">
+            <span class="ui-btn-inner">Upload</span>
+            </a>
+        </li>
+        <li data-icon="delete">
+            <a href="#delete">
+            <span class="ui-btn-inner">Supprimer</span>
+            </a>
+        </li>
+    </ul>
+    </div>
+</div>
+
+<div id="nav-panel-user" data-role="panel" data-position="right" data-theme="b">
+    <div class="ui-panel-inner">
+        <h3><%= user.firstname %> <%= user.lastname %></h3>
+        <a href="#logout" data-rel="close" data-role="button" data-theme="c" data-icon="delete" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-left">
+        <span class="ui-btn-inner">Se deconnecter</span>
+        </a>
+    </div>
+</div>
+<div data-role="content">
+    <% if (audits.length > 0){ %>
+    <h3>Choisir un audit</h3>
+    <ul data-role="listview"  data-inset="true">
+        <% _.each(audits, function(audit){ %>
+            <li><a href="#audit/<%= audit.id %>"><%= audit.id %> - <%= audit.establishment.name %></a></li>
+        <% }) %>
+    </ul>
+     <% } else { %>
+     <div data-role="collapsible"  data-collapsed="false">
+      <h1>Il semble que vous n'avez pas encore téléchargé d'audit sur votre tablette.</h1>
+      <p>Pour acceder à l'onglet de synchronisation vous devez cliquer sur : 
+            <a  data-role="button" data-icon="bars" data-iconpos="notext" data-theme="a" data-inline="true" role="button"></a> 
+            et ensuite cliquer sur le bouton 
+            <a data-role="button" data-theme="c" class="ui-btn ui-btn-up-c ui-shadow ui-btn-inline ui-btn-icon-left">
+            <span class="ui-btn-inner">Synchroniser</span></a></p>
+
+    </div>
+     <% } %>
+</div>

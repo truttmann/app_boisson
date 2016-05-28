@@ -1,0 +1,90 @@
+    <div data-role="header">
+        <a href="#" data-icon="back" data-direction="reverse" class="back ui-btn-left">Home</a>
+        <h1>DDO-IT</h1>
+    </div>
+   
+    <div id="checklist" data-role="panel" data-position="right" data-theme="b">
+	    <div class="ui-panel-inner">
+	    <% if (!_.isEmpty(question.checklists)){ %>
+	     <ul data-role="listview" data-theme="a" data-divider-theme="b">   
+	        <% _.each(question.checklists, function(checklist){ %>
+	          <li><a href="#checklists/<%= checklist.id %>?audit=<%= audit.id  %>&question=<%= question.id %>&theme=<%= theme.id %>"><%= checklist.name %> <span class="ui-li-count"><%= checklist.number %></span></a></li>
+	        <% });%>
+	    </ul>
+	    <% } else{ %>
+	    <h3>Il n'y a pas de check list pour cette question</h3>
+	        <a data-rel="close" data-role="button" data-theme="c" data-icon="delete" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-left">
+	            <span class="ui-btn-inner"><span class="ui-btn-text">Revenir</span>
+	        </a>
+	    <% } %>
+	    </div>
+    </div>
+    <div data-role="content" id="listAudits">
+	
+        <div class="ui-grid-a">
+            <div class="ui-block-a"> <a href="#audit/<%= audit.id %>/theme/<%= question.theme_id %>" data-direction="reverse" data-role="button" data-inline="true">Retour au theme</a></div>
+            <% if (!_.isEmpty(question.checklists)){ %>
+                <div class="ui-block-c"><a href="#checklist"  data-role="button" data-inline="true">Check list</a></div>
+            <% } %>
+        </div>
+        <h3 id="#title" class="ui-bar ui-bar-a ui-corner-all"><%= question.id %></h3>
+	<form>
+	<div class="ui-body ui-body-a ui-corner-all">
+		<p><%= question.name %></p>
+	</div>
+
+	<h3>Sources explicatives:</h3>
+	
+		<ul data-role="listview" data-inset="true" >
+		<%_.each(question.sources, function(source){  %>
+			<li><%= source.name %></li>
+		<% }); %>
+		</ul>
+	
+
+	<h3>Elements de preuve</h3>
+	<div class="ui-body ui-body-a ui-corner-all">
+		<p><%= question.clues %></p>
+	</div>
+
+	<h3>Profil des interlocuteurs</h3>
+		<ul data-role="listview" data-inset="true" >
+			<%_.each(question.agents, function(agent){  %>
+			<li><%= agent.name %></li>
+			<% }); %>
+		</ul>
+	<h3 for="comment">Commentaires</h3>
+	<textarea cols="40" rows="8" name="comment" id="comment"><%= question.comment %></textarea>
+	<% if (!_.isEmpty(question.default_comment)) { %>
+	<button id="defaultCommentBtn">Ajouter le commentaire par default</button>
+	<% } %>
+		<fieldset id="auditResponse" class="radio-btn" data-role="controlgroup" data-type="horizontal">		
+            <legend><h3>Cotation</h3></legend>
+			<input type="radio" name="response" id="radio-choice-c"
+				value="yes"> <label for="radio-choice-c">Oui</label>
+			<input type="radio" name="response" id="radio-choice-d"
+				value="no"> <label for="radio-choice-d">Non</label> <input
+				type="radio" name="response" id="radio-choice-e"
+				value="unknown"> <label for="radio-choice-e">N.C</label>
+		</fieldset>	
+	</form>
+
+</div>	
+
+<div data-role="footer" data-theme="b" data-position="fixed">
+	
+	<div data-role="navbar">
+		<ul>
+			<% if (!_.isUndefined(prev)) { %>
+			<li><a id="prev" data-direction="reverse" href="#audit/<%= audit.id %>/theme/<%= theme.id %>/question/<%= prev.audit_question %>">Précédente</a></li> <% } %> <%
+			if (!_.isUndefined(next)) { %>
+			<li><a id="next" href="#audit/<%= audit.id %>/theme/<%= theme.id %>/question/<%= next.audit_question %>">Suivante</a></li> 
+			<% } else { %>
+			<li><a id="next" data-direction="reverse" href="#audit/<%= audit.id %>/theme/<%= theme.id %>">Retour au theme</a></li> 
+			<% } %>
+		</ul>
+	</div>
+	
+</div>
+
+    

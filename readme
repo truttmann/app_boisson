@@ -1,0 +1,15 @@
+Si vous n'avez pas installé require.js :
+
+npm install -g requirejs
+
+Après chaque modification, faire :
+r.js.cmd -o build.js     (dans le dossier du build.js)
+
+Afin de la voir sur le front.
+
+--------------------
+| Pour avoir un apk |
+--------------------
+- https://build.phonegap.com/
+-> deposer le code au format zip (avec l'url de l'api de production)
+-> builder au format android

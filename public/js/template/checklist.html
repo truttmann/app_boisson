@@ -1,0 +1,47 @@
+<div data-role="header">
+    <a href="#audit/<%= audit_number %>/theme/<%= theme %>/question/<%= audit_question_id %>" data-icon="back" data-direction="reverse" class="back ui-btn-left">Retour à la question</a>
+    <% if(nums >= 3) { %>
+    <a href="#checklist/<%= checklists.id %>?num=<%= nums - 2 %>&question=<%= question %>&audit=<%= audit_number %>" data-icon="back" data-direction="reverse" class="back ui-btn-left" style="left: 14.8em !important; width: 150px !important;">Checklist précédante</a>
+    <% } %>
+    <% if(checklistsTotalNumber > num && nums >= 3) { %>
+    <a href="#checklist/<%= checklists.id %>?num=<%= nums %>&question=<%= question %>&audit=<%= audit_number %>" data-icon="back" data-direction="reverse" class="back ui-btn-left" style="left: 31.5em !important; width: 150px !important;">Checklist suivante</a>
+    <% } else if(checklistsTotalNumber > num) { %>
+    <a href="#checklist/<%= checklists.id %>?num=<%= nums %>&question=<%= question %>&audit=<%= audit_number %>" data-icon="back" data-direction="reverse" class="back ui-btn-left" style="left: 14.8em !important; width: 150px !important;">Checklist suivante</a>
+    <% } %>
+    <h1>DDO-IT</h1>
+</div>
+<div data-role="content">
+
+    <ul data-role="listview" data-inset="true">
+        <form>
+            <h1><%=(checklists.name) %> - numéro <%= num %></h1>
+           <!-- <h3 for="comment">Commentaires</h3>
+            <textarea cols="40" rows="8" maxlength="500" name="comment" id="comment"><%= comment %></textarea> -->
+            <% _.each(checklists.listssmenu, function(content){ %>
+            <fieldset>
+                <div style="margin: 20px">
+                    <fieldset id="checklistResponse" data-type="horizontal">
+                        <div style="padding-left: 30px"><h3><%= content.name %></h3></div>
+                        <ul data-role="listview" data-inset="true">
+                            <% _.each(content.item, function(children){ %>
+                            <li>
+                                <div  class="radio-btn" data-role="controlgroup">
+                                    <legend><h3><%= children.name %></h3></legend>
+                                    <input type="radio" name="response-<%= content.id %>-<%= children.id %>" <% if(children.response == "yes"){ %> checked="checked" <% } %> data-parent-id="<%= content.id %>" data-id="<%= children.id %>" id="radio-choice-c-<%= content.id %>-<%= children.id %>" value="yes">
+                                    <label for="radio-choice-c-<%= content.id %>-<%= children.id %>">Oui</label>
+                                    <input type="radio" name="response-<%= content.id %>-<%= children.id %>"  <% if(children.response == "no"){ %> checked="checked" <% } %> data-parent-id="<%= content.id %>" data-id="<%= children.id %>" id="radio-choice-d-<%= content.id %>-<%= children.id %>" value="no">
+                                    <label for="radio-choice-d-<%= content.id %>-<%= children.id %>">Non</label>
+                                    <input type="radio" name="response-<%= content.id %>-<%= children.id %>"  <% if(children.response == "unknown"){ %> checked="checked" <% } %> data-parent-id="<%= content.id %>" data-id="<%= children.id %>" id="radio-choice-e-<%= content.id %>-<%= children.id %>" value="unknown">
+                                    <label for="radio-choice-e-<%= content.id %>-<%= children.id %>">N.C</label>
+                                </div>
+                            </li>
+                            <% }) %>
+                        </ul>
+                    </fieldset>
+                </div>
+            </fieldset>
+            <% }) %>
+        </form>
+    </ul>
+</div>
+

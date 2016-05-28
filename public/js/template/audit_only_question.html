@@ -1,0 +1,46 @@
+<div data-role="header">
+    <a href="#" data-icon="back" data-direction="reverse" class="back ui-btn-left">Home</a>
+    <h1>DDO-IT</h1>
+</div>
+<div data-role="content">
+    <h3><%= audit.name %></h3>
+        <fieldset data-role="controlgroup" data-type="horizontal" id="filters">
+            <legend>Filtres rapides</legend>
+            
+            <input type="checkbox" name="yes"  id="checkbox-yes">
+            <label for="checkbox-yes">Oui</label>
+
+            <input type="checkbox" name="no" id="checkbox-no">
+            <label for="checkbox-no">Non</label>
+
+            <input type="checkbox" name="unknown" id="checkbox-nc">
+            <label for="checkbox-nc">NC</label>
+
+            <input type="checkbox" name="empty"  id="checkbox-empty">
+            <label for="checkbox-empty">Vide</label>
+
+            <select name="profil" id="profile-filters">
+                <option value="all">Choisir un profil</option>
+                <% _.each(agents, function(agent){ %>
+                     <option value="<%= agent.id %>"><%= agent.name %></option>
+                <% }); %>
+            </select>
+            
+        </fieldset>
+        
+        <fieldset>
+        	<input type="checkbox" name="view"  id="checkbox-view">
+        	<label for="checkbox-view">Voir que les questions</label>
+   		</fieldset>
+
+        <p>Choisir une question:</p>
+        <div id="audit-area">
+	        <ul data-role="listview" data-inset="true">
+	        <% _.each(audit.questions, function(question){ %>
+	                <li>
+	                    <a href='#audit/<%= audit.id %>/theme/<%= question.theme_id %>/question/<%= question.audit_question %>'><%= question.name %></a>
+	                </li>
+	        <% }); %>
+	        </ul>
+    	</div>
+</div>

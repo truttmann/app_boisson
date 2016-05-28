@@ -1,0 +1,17 @@
+<div data-role="header">
+            <a href="#" data-icon="back" data-direction="reverse" class="back ui-btn-left">Home</a>
+            <h1>DDO-IT</h1>
+    </div>
+    <div data-role="content">
+			<h3>Vous allez supprimer un de vos audits</h3>
+			<ul id="delete" data-role="listview" data-inset="true" >
+				<% _.each(audits, function(audit) {  %>
+				<li data-icon="refresh" data-id=<%= audit.id %>><a>
+					<h2 class="ui-li-heading"><%= audit.id %> - <%= audit.establishment.name %></h2>
+					<p  class="ui-li-desc">
+						Date de début : <%= audit.date_start %>
+					</p>
+				</a></li>
+				<% }); %>
+			</ul>
+    </div>

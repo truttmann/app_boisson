@@ -46,6 +46,9 @@ define(["jquery", "underscore", "backbone", "backbone.syphon", "text!template/lo
         
         render: function(eventName) {
             $(this.el).html(this.template({}));
+            $('body').removeClass("ui-panel-page-container-themed");
+            $('body').removeClass("ui-panel-page-container-b");
+            $('body').removeClass("ui-panel-page-container");
             return this;
         }
     });

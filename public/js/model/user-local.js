@@ -21,6 +21,7 @@ define(["jquery", "underscore", "backbone", "backbone.localStorage"], function (
             this.trigger('user:logged', this);
         },
         onLoginFailure: function (data) {
+            console.log(data);
             this.trigger('login:failure');
         },
         login: function (options) {

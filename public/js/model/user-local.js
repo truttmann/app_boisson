@@ -14,7 +14,7 @@ define(["jquery", "underscore", "backbone", "backbone.localStorage"], function (
             is_logged: false
         },
         onLoginSuccess: function (data) {
-            if(data.substr(0,2) == 'ko'){
+            if(typeof data != "object" && data.substr(0,2) == 'ko'){
                 this.onLoginFailure(data);
             } else {
                 this.set(_.pick(data.data, 'id', 'firstname', 'name', 'login', 'token'));

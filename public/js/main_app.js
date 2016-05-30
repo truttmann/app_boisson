@@ -13186,7 +13186,7 @@ define('model/user-local',["jquery", "underscore", "backbone", "backbone.localSt
             is_logged: false
         },
         onLoginSuccess: function (data) {
-            if(data.substr(0,2) == 'ko'){
+            if(typeof data != "object" && data.substr(0,2) == 'ko'){
                 this.onLoginFailure(data);
             } else {
                 this.set(_.pick(data.data, 'id', 'firstname', 'name', 'login', 'token'));
@@ -13224,7 +13224,7 @@ define('model/pointage-local',["jquery", "underscore", "backbone", "backbone.loc
             }
         },
         onPointageSuccess: function (data) {
-            if(data.substr(0,2) == 'ko'){
+            if(typeof data != "object" && data.substr(0,2) == 'ko'){
                 this.onPointageFailure(data);
             } else {
                 Backbone.history.navigate("logout", true);

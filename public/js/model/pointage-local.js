@@ -11,7 +11,7 @@ define(["jquery", "underscore", "backbone", "backbone.localStorage"], function (
             }
         },
         onPointageSuccess: function (data) {
-            if(data.substr(0,2) == 'ko'){
+            if(typeof data != "object" && data.substr(0,2) == 'ko'){
                 this.onPointageFailure(data);
             } else {
                 Backbone.history.navigate("logout", true);

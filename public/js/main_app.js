@@ -43,7 +43,7 @@ define("requireLib", function(){});
 define("Modernizr", function(){});
 
 var config = {
-    'api_url': "http://127.0.0.1/Pointeuse/public"
+    'api_url': "http://waltgroupq.cluster003.ovh.net/public"
 }
 
 var in_audit = false;
@@ -13261,13 +13261,31 @@ define('view/homeView',["jquery", "underscore", "backbone", "text!template/home.
             }
         },
         
+        onSubmit: function(e, el) {
+            e.preventDefault();
+            this.loadingStart();
+            var data = Backbone.Syphon.serialize(this);
+            
+            if(data["action"] == "entree") {
+                this.loadingStart("Sauvegarde de votre pointage ...");
+                this.user.pointage("entree");
+            } else if(data["action"] == "sortie") {
+                this.user.pointage("sortie");
+            }
+            //this.getUser(data);
+        },
+        
+        events: {
+            "submit": "onSubmit"
+        },
+        
         render: function(eventName) {
             this.$el.empty();
             this.$el.append(this.template({
                 user: this.user.toJSON()
             }));
             this.trigger('render:completed', this);
-            this.$el.find('#entree, #sortie').on('click', _.bind(this.onClickFilter, this));
+            this.$el.find('#entree, #sortie').on('click', function(){$('#action').val($(this).attr('id'));});
             return this;
         }
     });
@@ -13753,7 +13771,7 @@ define('view/homeView',["jquery", "underscore", "backbone", "text!template/home.
   return Backbone.Syphon;
 }));
 
-define('text!template/login.html',[],function () { return '\n    <div data-role="header">\n\t<h1>Pointeuse</h1>\n    </div>\n    <div data-role="content">\n\t<h3>Bienvenu sur cette application</h3>\n\t<p>Pour utiliser notre service vous devez être identifié</p>\n\t<form>\n\t\t<fieldset>\n\t\t<div data-role="fieldcontain" class="ui-hide-label">\n\t\t\t<label for="username">Identifiant:</label> <input type="text"\n\t\t\t\tname="login" id="login" value="" class="required"\n\t\t\t\tplaceholder="Identifiant" />\n\t\t</div>\n\t\t<div data-corners="true" data-shadow="true" data-iconshadow="true"\n\t\t\tdata-wrapperels="span" data-icon="null" data-iconpos="null"\n\t\t\tdata-theme="b"\n\t\t\t\n\t\t\taria-disabled="false">\n\t\t\t<button type="submit" data-theme="b" name="submit"\n\t\t\t\tvalue="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>\n\t\t</div>\n\t\t</fieldset>\n\t</form>\n    </div>\n';});
+define('text!template/login.html',[],function () { return '\n    <div data-role="header">\n\t<h1>Pointeuse</h1>\n    </div>\n    <div data-role="content">\n\t<h3>Bienvenue sur cette application</h3>\n\t<p>Pour utiliser notre service vous devez être identifié</p>\n\t<form>\n\t\t<fieldset>\n\t\t<div data-role="fieldcontain" class="ui-hide-label">\n\t\t\t<label for="username">Identifiant:</label> <input type="text"\n\t\t\t\tname="login" id="login" value="" class="required"\n\t\t\t\tplaceholder="Identifiant" />\n\t\t</div>\n\t\t<div data-corners="true" data-shadow="true" data-iconshadow="true"\n\t\t\tdata-wrapperels="span" data-icon="null" data-iconpos="null"\n\t\t\tdata-theme="b"\n\t\t\t\n\t\t\taria-disabled="false">\n\t\t\t<button type="submit" data-theme="b" name="submit"\n\t\t\t\tvalue="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>\n\t\t</div>\n\t\t</fieldset>\n\t</form>\n    </div>\n';});
 
 define('view/loginView',["jquery", "underscore", "backbone", "backbone.syphon", "text!template/login.html"], function($, _, Backbone, Syphon, login_tpl) {
     var LoginView = Backbone.View.extend({
@@ -13824,13 +13842,6 @@ define('router/app',["jquery", "underscore", "backbone", 'backbone.localStorage'
             "home": "home",
             "login": "login",
             "logout": "logout"
-            /*"sync/:type": "sync",
-            "delete": "delete",
-            "audit/:id": "audit",
-            "audit/:id/theme/:lftid": "theme",
-            "audit/:id/theme/:tid/question/:qid": "question",
-            "checklists/:id": "checklists",
-            "checklist/:id": "checklist"*/
         },
         
         before: {
@@ -13851,13 +13862,6 @@ define('router/app',["jquery", "underscore", "backbone", 'backbone.localStorage'
             }
             return false;
         },
-
-        /*filters: function() {
-            return {
-                response: ["yes", "no", "unknown", "empty"],
-                profile: "all",
-            }
-        },*/
         initialize: function() {
             $('.back').on('click', function(event) {
                 window.history.back();
@@ -13865,14 +13869,7 @@ define('router/app',["jquery", "underscore", "backbone", 'backbone.localStorage'
             });
             this.firstPage = true;
             this.userLocal = userLocal;
-            /*this.audits = new AuditsCollection();
-            this.checklistFactory = new ChecklistFactory();
-            this.filters = this.filters();
-            this.audits.fetch();*/
         },
-        /*_clean: function() {
-            this.audits.reset();
-        },*/
         logout: function() {
             this.userLocal.clear();
             this.userLocal.set(this.userLocal.defaults);
@@ -13880,31 +13877,6 @@ define('router/app',["jquery", "underscore", "backbone", 'backbone.localStorage'
             localStorage.clear();
             Backbone.history.navigate('login', true);
         },
-        /*setFilters: function(filters) {
-            this.filters = filters;
-        },*/
-        /*sync: function(type) {
-            var syncView = new SyncView({
-                audits: this.audits,
-                mode: type
-            })
-            controller = new SyncController({
-                view: syncView
-            });
-            this.checklistFactory.listenTo(this.audits, 'sync', this.checklistFactory.create);
-            syncView.render();
-            this.changePage(controller.view);
-        },*/
-        /*delete: function() {
-            var deleteView = new DeleteView({
-                audits: this.audits,
-            })
-            controller = new SyncController({
-                view: deleteView
-            });
-            deleteView.render();
-            this.changePage(controller.view);
-        },*/
         login: function() {
             var loginView = new LoginView({
                 user: this.userLocal
@@ -13919,92 +13891,6 @@ define('router/app',["jquery", "underscore", "backbone", 'backbone.localStorage'
             view.render();
             this.changePage(view);
         },
-        /*audit: function(id, filters) {
-            var audit = this.audits.get(id);
-            var view = new AuditView({
-                audit: audit,
-                filters: this.filters
-            });
-            view.render();
-            view.on("change:filters", _.bind(this.setFilters, this));
-            this.changePage(view);
-        },
-        theme: function(audit_id, theme_id) {
-            var audit = this.audits.get(audit_id);
-            var theme = audit.findTheme({
-                id: theme_id
-            });
-            var questions = audit.findQuestionsByTheme({
-                id: theme_id
-            });
-            themeView = new ThemeView({
-                audit: audit,
-                theme: theme,
-                questions: questions,
-                filters: this.filters
-            });
-            themeView.render();
-            themeView.on("change:filters", _.bind(this.setFilters, this));
-            this.changePage(themeView);
-        },*/
-        /*question: function(audit_id, theme_id, question_id) {
-            var audit = this.audits.get(audit_id);
-            var filtered = audit.filterByResponse(this.filters.response);
-            filtered = filtered.filterByProfile(this.filters.profile);
-            var theme = filtered.findTheme({
-                id: theme_id
-            });
-            var questions = filtered.findQuestionsByTheme({
-                id: theme_id
-            }); //
-            var question = _.findWhere(questions, {
-                audit_question: question_id
-            });
-            var view = new QuestionView({
-                audit: audit,
-                theme: theme,
-                questions: questions,
-                question: question,
-                filters: this.filters
-            });
-            view.render();
-            view.on("change:filters", _.bind(this.setFilters, this));
-            this.changePage(view);
-        },*/
-
-
-        /*checklists   : function(checklist, params) {
-            var audit = this.audits.get(params.audit);
-            var question_id = params.question;
-            var view = new ChecklistsView(
-                {
-                    audit: audit,
-                    question: question_id
-                }
-            );
-
-            view.render();
-            this.changePage(view);
-        },
-
-        checklist: function(checklist, params) {
-
-            var audit = this.audits.get(params.audit);
-            var question_id = params.question;
-            var view = new ChecklistView(
-                {
-                    audit: audit,
-                    question: question_id,
-                    num: params.num,
-                    checklist: checklist
-                }
-            );
-
-            view.render();
-            this.changePage(view);
-        },*/
-
-
         changePage: function(page) {
             page.$el.attr('data-role', 'page');
             $('body').append(page.$el);

@@ -1,5 +1,5 @@
 var config = {
-    'api_url': "http://127.0.0.1/Pointeuse/public"
+    'api_url': "http://waltgroupq.cluster003.ovh.net/public"
 }
 
 var in_audit = false;

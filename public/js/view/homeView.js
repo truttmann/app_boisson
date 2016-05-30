@@ -37,13 +37,31 @@ define(["jquery", "underscore", "backbone", "text!template/home.html"], function
             }
         },
         
+        onSubmit: function(e, el) {
+            e.preventDefault();
+            this.loadingStart();
+            var data = Backbone.Syphon.serialize(this);
+            
+            if(data["action"] == "entree") {
+                this.loadingStart("Sauvegarde de votre pointage ...");
+                this.user.pointage("entree");
+            } else if(data["action"] == "sortie") {
+                this.user.pointage("sortie");
+            }
+            //this.getUser(data);
+        },
+        
+        events: {
+            "submit": "onSubmit"
+        },
+        
         render: function(eventName) {
             this.$el.empty();
             this.$el.append(this.template({
                 user: this.user.toJSON()
             }));
             this.trigger('render:completed', this);
-            this.$el.find('#entree, #sortie').on('click', _.bind(this.onClickFilter, this));
+            this.$el.find('#entree, #sortie').on('click', function(){$('#action').val($(this).attr('id'));});
             return this;
         }
     });

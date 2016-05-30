@@ -20,7 +20,8 @@ define(["jquery", "underscore", "backbone", "backbone.localStorage"], function (
                     this.save();
             this.trigger('user:logged', this);
         },
-        onLoginFailure: function () {
+        onLoginFailure: function (data) {
+            alert("login échoué..."+data);
             this.trigger('login:failure');
         },
         onPointageSuccess: function (data) {

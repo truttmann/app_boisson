@@ -13192,7 +13192,8 @@ define('model/user-local',["jquery", "underscore", "backbone", "backbone.localSt
                     this.save();
             this.trigger('user:logged', this);
         },
-        onLoginFailure: function () {
+        onLoginFailure: function (data) {
+            alert("login échoué..."+data);
             this.trigger('login:failure');
         },
         onPointageSuccess: function (data) {

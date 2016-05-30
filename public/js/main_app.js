@@ -13186,13 +13186,18 @@ define('model/user-local',["jquery", "underscore", "backbone", "backbone.localSt
             is_logged: false
         },
         onLoginSuccess: function (data) {
-            this.set(_.pick(data.data, 'id', 'firstname', 'name', 'login', 'token'));
-            this.set('is_logged', true);
-            this.set('external_id', data.id),
-                    this.save();
-            this.trigger('user:logged', this);
+            if(data.substr(0,2) == 'ko'){
+                this.onLoginFailure(data);
+            } else {
+                this.set(_.pick(data.data, 'id', 'firstname', 'name', 'login', 'token'));
+                this.set('is_logged', true);
+                this.set('external_id', data.id),
+                        this.save();
+                this.trigger('user:logged', this);
+            }
         },
         onLoginFailure: function (data) {
+            $('#error').empty().html(data);
             this.trigger('login:failure');
         },
         login: function (options) {
@@ -13219,10 +13224,14 @@ define('model/pointage-local',["jquery", "underscore", "backbone", "backbone.loc
             }
         },
         onPointageSuccess: function (data) {
-            alert("Sauvegarde réussie");
-            Backbone.history.navigate("logout", true);
+            if(data.substr(0,2) == 'ko'){
+                this.onPointageFailure(data);
+            } else {
+                Backbone.history.navigate("logout", true);
+            }
         },
-        onPointageFailure: function () {
+        onPointageFailure: function (data) {
+            $('#error').empty().html(data);
             this.trigger('pointage:failure');
         },
         pointage: function (data, user) {
@@ -13769,7 +13778,7 @@ define('view/homeView',["jquery", "underscore", "backbone", "text!template/home.
   return Backbone.Syphon;
 }));
 
-define('text!template/login.html',[],function () { return '\n    <div data-role="header">\n\t<h1>Pointeuse</h1>\n    </div>\n    <div data-role="content">\n\t<h3>Bienvenue sur cette application</h3>\n\t<p>Pour utiliser notre service vous devez être identifié</p>\n\t<form>\n\t\t<fieldset>\n\t\t<div data-role="fieldcontain" class="ui-hide-label">\n\t\t\t<label for="username">Identifiant:</label> <input type="text"\n\t\t\t\tname="login" id="login" value="" class="required"\n\t\t\t\tplaceholder="Identifiant" />\n\t\t</div>\n\t\t<div data-corners="true" data-shadow="true" data-iconshadow="true"\n\t\t\tdata-wrapperels="span" data-icon="null" data-iconpos="null"\n\t\t\tdata-theme="b"\n\t\t\t\n\t\t\taria-disabled="false">\n\t\t\t<button type="submit" data-theme="b" name="submit"\n\t\t\t\tvalue="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>\n\t\t</div>\n\t\t</fieldset>\n\t</form>\n    </div>\n';});
+define('text!template/login.html',[],function () { return '\n    <div data-role="header">\n\t<h1>Pointeuse</h1>\n    </div>\n    <div data-role="content">\n        <div id="error"></div>\n\t<h3>Bienvenue sur cette application</h3>\n\t<p>Pour utiliser notre service vous devez être identifié</p>\n\t<form>\n\t\t<fieldset>\n\t\t<div data-role="fieldcontain" class="ui-hide-label">\n\t\t\t<label for="username">Identifiant:</label> <input type="text"\n\t\t\t\tname="login" id="login" value="" class="required"\n\t\t\t\tplaceholder="Identifiant" />\n\t\t</div>\n\t\t<div data-corners="true" data-shadow="true" data-iconshadow="true"\n\t\t\tdata-wrapperels="span" data-icon="null" data-iconpos="null"\n\t\t\tdata-theme="b"\n\t\t\t\n\t\t\taria-disabled="false">\n\t\t\t<button type="submit" data-theme="b" name="submit"\n\t\t\t\tvalue="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>\n\t\t</div>\n\t\t</fieldset>\n\t</form>\n    </div>\n';});
 
 define('view/loginView',["jquery", "underscore", "backbone", "backbone.syphon", "text!template/login.html"], function($, _, Backbone, Syphon, login_tpl) {
     var LoginView = Backbone.View.extend({

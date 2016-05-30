@@ -14,14 +14,18 @@ define(["jquery", "underscore", "backbone", "backbone.localStorage"], function (
             is_logged: false
         },
         onLoginSuccess: function (data) {
-            this.set(_.pick(data.data, 'id', 'firstname', 'name', 'login', 'token'));
-            this.set('is_logged', true);
-            this.set('external_id', data.id),
-                    this.save();
-            this.trigger('user:logged', this);
+            if(data.substr(0,2) == 'ko'){
+                this.onLoginFailure(data);
+            } else {
+                this.set(_.pick(data.data, 'id', 'firstname', 'name', 'login', 'token'));
+                this.set('is_logged', true);
+                this.set('external_id', data.id),
+                        this.save();
+                this.trigger('user:logged', this);
+            }
         },
         onLoginFailure: function (data) {
-            console.log(data);
+            $('#error').empty().html(data);
             this.trigger('login:failure');
         },
         login: function (options) {

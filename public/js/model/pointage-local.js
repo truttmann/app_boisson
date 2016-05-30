@@ -11,10 +11,14 @@ define(["jquery", "underscore", "backbone", "backbone.localStorage"], function (
             }
         },
         onPointageSuccess: function (data) {
-            alert("Sauvegarde réussie");
-            Backbone.history.navigate("logout", true);
+            if(data.substr(0,2) == 'ko'){
+                this.onPointageFailure(data);
+            } else {
+                Backbone.history.navigate("logout", true);
+            }
         },
-        onPointageFailure: function () {
+        onPointageFailure: function (data) {
+            $('#error').empty().html(data);
             this.trigger('pointage:failure');
         },
         pointage: function (data, user) {

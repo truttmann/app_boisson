@@ -1,4 +1,4 @@
-define(["jquery", "underscore", "backbone", 'backbone.localStorage', "backbone.token", "backbone.queryparams", "backbone.route-filter", "model/user-local", "view/homeView", "view/loginView"], function($, _, Backbone, QueryParams, RouterFilter, LocalStorage, Token, UserLocalModel, HomeView, LoginView) {
+define(["jquery", "underscore", "backbone", 'backbone.localStorage', "backbone.token", "backbone.queryparams", "backbone.route-filter", "model/user-local",  "model/pointage-local", "view/homeView", "view/loginView"], function($, _, Backbone, QueryParams, RouterFilter, LocalStorage, Token, UserLocalModel, PointageLocalModel, HomeView, LoginView) {
     
 
     var userLocal = new UserLocalModel();
@@ -55,7 +55,8 @@ define(["jquery", "underscore", "backbone", 'backbone.localStorage', "backbone.t
         },
         home: function() {
             var view = new HomeView({
-                user: this.userLocal
+                user: this.userLocal,
+                pointeuse: new PointageLocalModel()
             });
             view.render();
             this.changePage(view);

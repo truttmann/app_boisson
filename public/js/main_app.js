@@ -13174,7 +13174,7 @@ define('model/user-local',["jquery", "underscore", "backbone", "backbone.localSt
     var UserLocalModel = Backbone.Model.extend({
         localStorage: new Backbone.LocalStorage("main-user"),
         initialize: function () {
-            _.bindAll(this, "onLoginSuccess", "onLoginFailure", "onPointageSuccess", "onPointageFailure");
+            _.bindAll(this, "onLoginSuccess", "onLoginFailure");
             uid = this.localStorage.records[0];
             if (!uid) {
                 this.localStorage.create(this);
@@ -13193,8 +13193,30 @@ define('model/user-local',["jquery", "underscore", "backbone", "backbone.localSt
             this.trigger('user:logged', this);
         },
         onLoginFailure: function (data) {
-            alert("login échoué..."+data);
             this.trigger('login:failure');
+        },
+        login: function (options) {
+            var xhr = $.get(config.api_url + "/rest-login/" + options.login, null, null, 'jsonp');
+            xhr.done(this.onLoginSuccess);
+            xhr.fail(this.onLoginFailure);
+        },
+        logout: function() {
+            this.trigger('user:logout', this);
+        }
+    });
+    return UserLocalModel;
+});
+define('model/pointage-local',["jquery", "underscore", "backbone", "backbone.localStorage"], function ($, _, Backbone, LocalStorage) {
+    var PointageLocalModel = Backbone.Model.extend({
+        localStorage: new Backbone.LocalStorage("main-user"),
+        initialize: function () {
+            _.bindAll(this, "onPointageSuccess", "onPointageFailure");
+            uid = this.localStorage.records[0];
+            if (!uid) {
+                this.localStorage.create(this);
+            } else {
+                this.id = uid;
+            }
         },
         onPointageSuccess: function (data) {
             alert("Sauvegarde réussie");
@@ -13203,21 +13225,13 @@ define('model/user-local',["jquery", "underscore", "backbone", "backbone.localSt
         onPointageFailure: function () {
             this.trigger('pointage:failure');
         },
-        login: function (options) {
-            var xhr = $.get(config.api_url + "/rest-login/" + options.login, null, null, 'json');
-            xhr.done(this.onLoginSuccess);
-            xhr.fail(this.onLoginFailure);
-        },
-        pointage: function (data) {
-            var xhr = $.post(config.api_url + "/rest-pointage", {"token": this.get('token'), "login": this.get('login'), "action": data}, null, 'json');
+        pointage: function (data, user) {
+            var xhr = $.post(config.api_url + "/rest-pointage/"+user.get('login'), {"token": user.get('token'), "action": data}, null, 'jsonp');
             xhr.done(this.onPointageSuccess);
             xhr.fail(this.onPointageFailure);
         },
-        logout: function() {
-            this.trigger('user:logout', this);
-        }
     });
-    return UserLocalModel;
+    return PointageLocalModel;
 });
 define('text',{load: function(id){throw new Error("Dynamic load not allowed: " + id);}});
 
@@ -13232,6 +13246,7 @@ define('view/homeView',["jquery", "underscore", "backbone", "text!template/home.
         
         initialize: function(options) {
             this.user = options.user;
+            this.pointeuse = options.pointeuse;
             this.listenToOnce(this.user, 'pointage:failure', function() {
                 _.delay(this.loadingStop);
                 alert('Erreur de sauvegarde, Veuillez vous déconnecter et recommencer');
@@ -13256,9 +13271,9 @@ define('view/homeView',["jquery", "underscore", "backbone", "text!template/home.
             var el = e.target;
             if($(el).attr("name") == "entree") {
                 this.loadingStart("Sauvegarde de votre pointage ...");
-                this.user.pointage("entree");
+                this.pointeuse.pointage("entree", this.user);
             } else if($(el).attr("name") == "sortie") {
-                this.user.pointage("sortie");
+                this.pointeuse.pointage("sortie", this.user);
             }
         },
         
@@ -13812,7 +13827,7 @@ define('view/loginView',["jquery", "underscore", "backbone", "backbone.syphon", 
     });
     return LoginView;
 });
-define('router/app',["jquery", "underscore", "backbone", 'backbone.localStorage', "backbone.token", "backbone.queryparams", "backbone.route-filter", "model/user-local", "view/homeView", "view/loginView"], function($, _, Backbone, QueryParams, RouterFilter, LocalStorage, Token, UserLocalModel, HomeView, LoginView) {
+define('router/app',["jquery", "underscore", "backbone", 'backbone.localStorage', "backbone.token", "backbone.queryparams", "backbone.route-filter", "model/user-local",  "model/pointage-local", "view/homeView", "view/loginView"], function($, _, Backbone, QueryParams, RouterFilter, LocalStorage, Token, UserLocalModel, PointageLocalModel, HomeView, LoginView) {
     
 
     var userLocal = new UserLocalModel();
@@ -13869,7 +13884,8 @@ define('router/app',["jquery", "underscore", "backbone", 'backbone.localStorage'
         },
         home: function() {
             var view = new HomeView({
-                user: this.userLocal
+                user: this.userLocal,
+                pointeuse: new PointageLocalModel()
             });
             view.render();
             this.changePage(view);

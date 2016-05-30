@@ -2,7 +2,7 @@ define(["jquery", "underscore", "backbone", "backbone.localStorage"], function (
     var UserLocalModel = Backbone.Model.extend({
         localStorage: new Backbone.LocalStorage("main-user"),
         initialize: function () {
-            _.bindAll(this, "onLoginSuccess", "onLoginFailure", "onPointageSuccess", "onPointageFailure");
+            _.bindAll(this, "onLoginSuccess", "onLoginFailure");
             uid = this.localStorage.records[0];
             if (!uid) {
                 this.localStorage.create(this);
@@ -21,25 +21,12 @@ define(["jquery", "underscore", "backbone", "backbone.localStorage"], function (
             this.trigger('user:logged', this);
         },
         onLoginFailure: function (data) {
-            alert("login échoué..."+data);
             this.trigger('login:failure');
         },
-        onPointageSuccess: function (data) {
-            alert("Sauvegarde réussie");
-            Backbone.history.navigate("logout", true);
-        },
-        onPointageFailure: function () {
-            this.trigger('pointage:failure');
-        },
         login: function (options) {
-            var xhr = $.get(config.api_url + "/rest-login/" + options.login, null, null, 'json');
+            var xhr = $.get(config.api_url + "/rest-login/" + options.login, null, null, 'jsonp');
             xhr.done(this.onLoginSuccess);
             xhr.fail(this.onLoginFailure);
-        },
-        pointage: function (data) {
-            var xhr = $.post(config.api_url + "/rest-pointage", {"token": this.get('token'), "login": this.get('login'), "action": data}, null, 'json');
-            xhr.done(this.onPointageSuccess);
-            xhr.fail(this.onPointageFailure);
         },
         logout: function() {
             this.trigger('user:logout', this);

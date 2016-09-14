@@ -1,22 +1,18 @@
-define(["jquery", "underscore", "backbone", "text!template/home.html"], function($, _, Backbone, home_tpl) {
-    var HomeView = Backbone.View.extend({
+define(["jquery", "underscore", "backbone", "text!template/encours_facturation.html"], function($, _, Backbone, encours_fac_tpl) {
+    var EncoursFacturationView = Backbone.View.extend({
         
-        id: 'home-view',
+        id: 'param-acc-view',
 
-        template: _.template(home_tpl),
+        template: _.template(encours_fac_tpl),
         
         initialize: function(options) {
             this.user = options.user;
-            this.listenToOnce(this.user, 'pointage:failure', function() {
-                _.delay(this.loadingStop);
-                alert('Erreur de sauvegarde, Veuillez vous déconnecter et recommencer');
-            });
             this.bind('render:completed', function() {
                $('a.ui-btn').removeClass('ui-btn');
             });
         },
         
-        loadingStart: function(text_show) {
+        /*loadingStart: function(text_show) {
             $.mobile.loading('show', {
                 text: text_show,
                 textVisible: true,
@@ -32,13 +28,13 @@ define(["jquery", "underscore", "backbone", "text!template/home.html"], function
         onClickFilter: function(e){
             e.preventDefault();
             var el = e.target;
-            /*if($(el).attr("name") == "entree") {
+            if($(el).attr("name") == "entree") {
                 this.loadingStart("Sauvegarde de votre pointage ...");
                 this.pointeuse.pointage("entree", this.user);
             } else if($(el).attr("name") == "sortie") {
                 this.pointeuse.pointage("sortie", this.user);
-            }*/
-        },
+            }
+        },*/
         
         render: function(eventName) {
             this.$el.empty();
@@ -50,5 +46,5 @@ define(["jquery", "underscore", "backbone", "text!template/home.html"], function
             return this;
         }
     });
-    return HomeView;
+    return EncoursFacturationView;
 });

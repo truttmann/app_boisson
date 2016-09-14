@@ -41,7 +41,35 @@ define(["jquery", "underscore", "backbone", "backbone.syphon", "text!template/lo
         },
         
         events: {
-            "submit": "onSubmit"
+            "submit": "onSubmit",
+            "click a#submitform": "submitform",
+            "click a#creation_compte": "creationcompte",
+        },
+        
+        submitform: function(e) {
+            e.preventDefault();
+            $('body form').submit();
+        },
+        
+        sendPassword: function(e){
+            var _this = this;
+            e.preventDefault();
+            var xhr = $.get(config.api_url + "/rest-password", {"token": _this.user.get('token')}, null, 'jsonp');
+            xhr.done( function(data){
+                _this.$el.empty();
+                _this.$el.append(_this.template({
+                    categorie: data.result,
+                    user: _this.user.toJSON()
+                }));
+                _this.trigger('render:completed', _this);
+                _this.$el.find('.comm_1_cat').on('click', _.bind(_this.onClickFilter, _this));
+                return _this;
+            });            
+        },
+        
+        creationcompte: function(e) {
+            e.preventDefault();
+            Backbone.history.navigate("creationcompte", true);
         },
         
         render: function(eventName) {

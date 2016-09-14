@@ -43,7 +43,7 @@ define("requireLib", function(){});
 define("Modernizr", function(){});
 
 var config = {
-    'api_url': "http://waltgroupq.cluster003.ovh.net/public"
+    'api_url': "http://127.0.0.1/App_debit_boisson_socle/public"
 }
 
 var in_audit = false;
@@ -12702,64 +12702,6 @@ define("underscore", (function (global) {
   return Backbone;
 
 }));
-/**
- * Backbone localStorage Adapter
- * Version 1.1.9
- *
- * https://github.com/jeromegn/Backbone.localStorage
- */(function(a,b){typeof exports=="object"&&typeof require=="function"?module.exports=b(require("backbone")):typeof define=="function"&&define.amd?define('backbone.localStorage',["backbone"],function(c){return b(c||a.Backbone)}):b(Backbone)})(this,function(a){function b(){return((1+Math.random())*65536|0).toString(16).substring(1)}function c(){return b()+b()+"-"+b()+"-"+b()+"-"+b()+"-"+b()+b()+b()}function d(a,b){var c=a.length;while(c--)if(a[c]===b)return!0;return!1}function e(a,b){for(var c in b)a[c]=b[c];return a}return a.LocalStorage=window.Store=function(a,b){if(!this.localStorage)throw"Backbone.localStorage: Environment does not support localStorage.";this.name=a,this.serializer=b||{serialize:function(a){return _.isObject(a)?JSON.stringify(a):a},deserialize:function(a){return a&&JSON.parse(a)}};var c=this.localStorage().getItem(this.name);this.records=c&&c.split(",")||[]},e(a.LocalStorage.prototype,{save:function(){this.localStorage().setItem(this.name,this.records.join(","))},create:function(a){return a.id||(a.id=c(),a.set(a.idAttribute,a.id)),this.localStorage().setItem(this._itemName(a.id),this.serializer.serialize(a)),this.records.push(a.id.toString()),this.save(),this.find(a)!==!1},update:function(a){this.localStorage().setItem(this._itemName(a.id),this.serializer.serialize(a));var b=a.id.toString();return d(this.records,b)||(this.records.push(b),this.save()),this.find(a)!==!1},find:function(a){return this.serializer.deserialize(this.localStorage().getItem(this._itemName(a.id)))},findAll:function(){var a=[];for(var b=0,c,d;b<this.records.length;b++)c=this.records[b],d=this.serializer.deserialize(this.localStorage().getItem(this._itemName(c))),d!=null&&a.push(d);return a},destroy:function(a){this.localStorage().removeItem(this._itemName(a.id));var b=a.id.toString();for(var c=0,d;c<this.records.length;c++)this.records[c]===b&&this.records.splice(c,1);return this.save(),a},localStorage:function(){return localStorage},_clear:function(){var a=this.localStorage(),b=new RegExp("^"+this.name+"-");a.removeItem(this.name);for(var c in a)b.test(c)&&a.removeItem(c);this.records.length=0},_storageSize:function(){return this.localStorage().length},_itemName:function(a){return this.name+"-"+a}}),a.LocalStorage.sync=window.Store.sync=a.localSync=function(b,c,d){var e=c.localStorage||c.collection.localStorage,f,g,h=a.$?a.$.Deferred&&a.$.Deferred():a.Deferred&&a.Deferred();try{switch(b){case"read":f=c.id!=undefined?e.find(c):e.findAll();break;case"create":f=e.create(c);break;case"update":f=e.update(c);break;case"delete":f=e.destroy(c)}}catch(i){i.code===22&&e._storageSize()===0?g="Private browsing is unsupported":g=i.message}return f?(d&&d.success&&(a.VERSION==="0.9.10"?d.success(c,f,d):d.success(f)),h&&h.resolve(f)):(g=g?g:"Record Not Found",d&&d.error&&(a.VERSION==="0.9.10"?d.error(c,g,d):d.error(g)),h&&h.reject(g)),d&&d.complete&&d.complete(f),h&&h.promise()},a.ajaxSync=a.sync,a.getSyncMethod=function(b){return b.localStorage||b.collection&&b.collection.localStorage?a.localSync:a.ajaxSync},a.sync=function(b,c,d){return a.getSyncMethod(c).apply(this,[b,c,d])},a.LocalStorage});
-(function(root, factory) {
-  // Set up Backbone appropriately for the environment.
-  if (typeof define === 'function' && define.amd) {
-    // AMD
-    define('backbone.token',['underscore', 'backbone'], function(_, Backbone) {
-      factory(root, _, Backbone);
-    });
-  } else {
-    // Browser globals
-    factory(root, root._, root.Backbone);
-  }
-}(this, function(root, _, Backbone) {
-
-
-	Backbone.TokenAuth = {
-			
-		_token : null,
-		
-		reset : function(){
-			this.setToken(null);
-		},
-	
-		setToken : function(token){
-			this._token = token;
-			$.ajaxSetup({
- 				headers : this.getHeader()
-			});
-		},
-		
-		getToken : function(){
-			return this._token;
-		},
-		
-		getHeader : function() {
-			if (_.isNull(this.getToken())){
-				return {};
-			}
-			return { "Token" : this._token };
-		}
-	};
-	
-	var parentSyncMethod = Backbone.sync;
-	
-	Backbone.sync = function(method, model, options) {
-		var headers = Backbone.TokenAuth.getHeader();
-		options.headers = headers;
-		return parentSyncMethod.apply(Backbone, arguments);
-	};
-
-	return Backbone;
-
-}));
 (function (root, factory) {
    if (typeof define === "function" && define.amd) {
       // AMD. Register as an anonymous module.
@@ -13170,6 +13112,64 @@ function iterateQueryString(queryString, callback) {
         }
     }
 });
+/**
+ * Backbone localStorage Adapter
+ * Version 1.1.9
+ *
+ * https://github.com/jeromegn/Backbone.localStorage
+ */(function(a,b){typeof exports=="object"&&typeof require=="function"?module.exports=b(require("backbone")):typeof define=="function"&&define.amd?define('backbone.localStorage',["backbone"],function(c){return b(c||a.Backbone)}):b(Backbone)})(this,function(a){function b(){return((1+Math.random())*65536|0).toString(16).substring(1)}function c(){return b()+b()+"-"+b()+"-"+b()+"-"+b()+"-"+b()+b()+b()}function d(a,b){var c=a.length;while(c--)if(a[c]===b)return!0;return!1}function e(a,b){for(var c in b)a[c]=b[c];return a}return a.LocalStorage=window.Store=function(a,b){if(!this.localStorage)throw"Backbone.localStorage: Environment does not support localStorage.";this.name=a,this.serializer=b||{serialize:function(a){return _.isObject(a)?JSON.stringify(a):a},deserialize:function(a){return a&&JSON.parse(a)}};var c=this.localStorage().getItem(this.name);this.records=c&&c.split(",")||[]},e(a.LocalStorage.prototype,{save:function(){this.localStorage().setItem(this.name,this.records.join(",")); console.log(this.localStorage(), this.name);},create:function(a){return a.id||(a.id=c(),a.set(a.idAttribute,a.id)),this.localStorage().setItem(this._itemName(a.id),this.serializer.serialize(a)),this.records.push(a.id.toString()),this.save(),this.find(a)!==!1},update:function(a){this.localStorage().setItem(this._itemName(a.id),this.serializer.serialize(a));var b=a.id.toString();return d(this.records,b)||(this.records.push(b),this.save()),this.find(a)!==!1},find:function(a){return this.serializer.deserialize(this.localStorage().getItem(this._itemName(a.id)))},findAll:function(){var a=[];for(var b=0,c,d;b<this.records.length;b++)c=this.records[b],d=this.serializer.deserialize(this.localStorage().getItem(this._itemName(c))),d!=null&&a.push(d);return a},destroy:function(a){this.localStorage().removeItem(this._itemName(a.id));var b=a.id.toString();for(var c=0,d;c<this.records.length;c++)this.records[c]===b&&this.records.splice(c,1);return this.save(),a},localStorage:function(){return localStorage},_clear:function(){var a=this.localStorage(),b=new RegExp("^"+this.name+"-");a.removeItem(this.name);for(var c in a)b.test(c)&&a.removeItem(c);this.records.length=0},_storageSize:function(){return this.localStorage().length},_itemName:function(a){return this.name+"-"+a}}),a.LocalStorage.sync=window.Store.sync=a.localSync=function(b,c,d){var e=c.localStorage||c.collection.localStorage,f,g,h=a.$?a.$.Deferred&&a.$.Deferred():a.Deferred&&a.Deferred();try{switch(b){case"read":f=c.id!=undefined?e.find(c):e.findAll();break;case"create":f=e.create(c);break;case"update":f=e.update(c);break;case"delete":f=e.destroy(c)}}catch(i){i.code===22&&e._storageSize()===0?g="Private browsing is unsupported":g=i.message}return f?(d&&d.success&&(a.VERSION==="0.9.10"?d.success(c,f,d):d.success(f)),h&&h.resolve(f)):(g=g?g:"Record Not Found",d&&d.error&&(a.VERSION==="0.9.10"?d.error(c,g,d):d.error(g)),h&&h.reject(g)),d&&d.complete&&d.complete(f),h&&h.promise()},a.ajaxSync=a.sync,a.getSyncMethod=function(b){return b.localStorage||b.collection&&b.collection.localStorage?a.localSync:a.ajaxSync},a.sync=function(b,c,d){return a.getSyncMethod(c).apply(this,[b,c,d])},a.LocalStorage});
+(function(root, factory) {
+  // Set up Backbone appropriately for the environment.
+  if (typeof define === 'function' && define.amd) {
+    // AMD
+    define('backbone.token',['underscore', 'backbone'], function(_, Backbone) {
+      factory(root, _, Backbone);
+    });
+  } else {
+    // Browser globals
+    factory(root, root._, root.Backbone);
+  }
+}(this, function(root, _, Backbone) {
+
+
+	Backbone.TokenAuth = {
+			
+		_token : null,
+		
+		reset : function(){
+			this.setToken(null);
+		},
+	
+		setToken : function(token){
+			this._token = token;
+			$.ajaxSetup({
+ 				headers : this.getHeader()
+			});
+		},
+		
+		getToken : function(){
+			return this._token;
+		},
+		
+		getHeader : function() {
+			if (_.isNull(this.getToken())){
+				return {};
+			}
+			return { "Token" : this._token };
+		}
+	};
+	
+	var parentSyncMethod = Backbone.sync;
+	
+	Backbone.sync = function(method, model, options) {
+		var headers = Backbone.TokenAuth.getHeader();
+		options.headers = headers;
+		return parentSyncMethod.apply(Backbone, arguments);
+	};
+
+	return Backbone;
+
+}));
 define('model/user-local',["jquery", "underscore", "backbone", "backbone.localStorage"], function ($, _, Backbone, LocalStorage) {
     var UserLocalModel = Backbone.Model.extend({
         localStorage: new Backbone.LocalStorage("main-user"),
@@ -13189,10 +13189,11 @@ define('model/user-local',["jquery", "underscore", "backbone", "backbone.localSt
             if(typeof data != "object" && data.substr(0,2) == 'ko'){
                 this.onLoginFailure(data);
             } else {
-                this.set(_.pick(data.data, 'id', 'firstname', 'name', 'login', 'token'));
+                this.localStorage._clear();
+                this.set(_.pick(data.data, 'id', 'firstname', 'name', 'email', 'societe', 'profil_id', 'token'));
                 this.set('is_logged', true);
-                this.set('external_id', data.id),
-                        this.save();
+                this.set('external_id', data.data.id);
+                this.save();
                 this.trigger('user:logged', this);
             }
         },
@@ -13200,10 +13201,22 @@ define('model/user-local',["jquery", "underscore", "backbone", "backbone.localSt
             $('#error').empty().html(data);
             this.trigger('login:failure');
         },
+        onAskNewSuccess: function (data) {
+              this.trigger('user:asknew', this);
+        },
+        onAskNewFailure: function (data) {
+            $('#error').empty().html(data);
+            this.trigger('login:failure');
+        },
         login: function (options) {
-            var xhr = $.get(config.api_url + "/rest-login/" + options.login, null, null, 'jsonp');
+            var xhr = $.get(config.api_url + "/rest-login/" + options.token, null, null, 'jsonp');
             xhr.done(this.onLoginSuccess);
             xhr.fail(this.onLoginFailure);
+        },
+        askNew : function (options) {
+            var xhr = $.post(config.api_url + "/rest-login", options, null, 'jsonp');
+            xhr.done(this.onAskNewSuccess);
+            xhr.fail(this.onAskNewFailure);
         },
         logout: function() {
             this.trigger('user:logout', this);
@@ -13211,40 +13224,43 @@ define('model/user-local',["jquery", "underscore", "backbone", "backbone.localSt
     });
     return UserLocalModel;
 });
-define('model/pointage-local',["jquery", "underscore", "backbone", "backbone.localStorage"], function ($, _, Backbone, LocalStorage) {
-    var PointageLocalModel = Backbone.Model.extend({
-        localStorage: new Backbone.LocalStorage("main-user"),
+define('model/commande-local',["jquery", "underscore", "backbone", "backbone.localStorage"], function ($, _, Backbone, LocalStorage) {
+    var CommandeLocalModel = Backbone.Model.extend({
+        localStorage: new Backbone.LocalStorage("main-categorie"),
         initialize: function () {
-            _.bindAll(this, "onPointageSuccess", "onPointageFailure");
+            this.categorieFirstLevel = new Array();
+            /*_.bindAll(this, "onPointageSuccess", "onPointageFailure");
             uid = this.localStorage.records[0];
             if (!uid) {
                 this.localStorage.create(this);
             } else {
                 this.id = uid;
-            }
+            }*/
         },
-        onPointageSuccess: function (data) {
-            if(typeof data != "object" && data.substr(0,2) == 'ko'){
-                this.onPointageFailure(data);
+        onCategorieSuccess: function (data) {
+            if((typeof data != "object" && data.substr(0,2) == 'ko') || (data.result.length == 0)){
+                this.onCategorieFailure(data);
             } else {
-                Backbone.history.navigate("logout", true);
+                console.log(data);
+                this.categorieFirstLevel = data.result;
             }
         },
-        onPointageFailure: function (data) {
+        onCategorieFailure: function (data) {
+            this.categorieFirstLevel = false;
             $('#error').empty().html(data);
-            this.trigger('pointage:failure');
+            this.trigger('categorie:failure');
         },
-        pointage: function (data, user) {
-            var xhr = $.post(config.api_url + "/rest-pointage/"+user.get('login'), {"token": user.get('token'), "action": data}, null, 'jsonp');
-            xhr.done(this.onPointageSuccess);
-            xhr.fail(this.onPointageFailure);
+        getCategorie: function (user) {
+            var xhr = $.get(config.api_url + "/rest-categorie", {"token": user.get('token')}, null, 'jsonp');
+            xhr.done(this.onCategorieSuccess);
+            xhr.fail(this.onCategorieFailure);
         },
     });
-    return PointageLocalModel;
+    return CommandeLocalModel;
 });
 define('text',{load: function(id){throw new Error("Dynamic load not allowed: " + id);}});
 
-define('text!template/home.html',[],function () { return '<div data-role="header">\n    <h1>Pointeuse</h1>\n    <a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a>\n</div>\n\n<div id="nav-panel-user" data-role="panel" data-position="right" data-theme="b">\n    <div class="ui-panel-inner">\n        <h3><%= user.firstname %> <%= user.lastname %></h3>\n        <a href="#logout" data-rel="close" data-role="button" data-theme="c" data-icon="delete" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-left">\n        <span class="ui-btn-inner">Se deconnecter</span>\n        </a>\n    </div>\n</div>\n<div data-role="content">\n    <input type="button" name="entree" id="entree" class="ui-btn-hidden" value="Pointage d\' entrée" />\n    <input type="button" name="sortie" id="sortie" class="ui-btn-hidden" value="Pointage de Sortie" />\n</div>';});
+define('text!template/home.html',[],function () { return '<div data-role="header">\n    <h1>ASAR</h1>\n    <img style="float: left" src=""/>\n    <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    \n    <div id="page-title">\n        CHOISIR UNE ACTION\n        <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    </div>\n</div>\n\n\n\n\n<!--div id="nav-panel-user" data-role="panel" data-position="right" data-theme="b">\n    <div class="ui-panel-inner">\n        <h3><%= user.firstname %> <%= user.lastname %></h3>\n        <a href="#logout" data-rel="close" data-role="button" data-theme="c" data-icon="delete" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-left">\n        <span class="ui-btn-inner">Se deconnecter</span>\n        </a>\n    </div>\n</div-->\n<div data-role="content">\n    <ul id="lien_menu_p">\n        <li>\n            <a href="#commanderMenu">\n                <div class="menu_p_title">\n                    COMMANDER\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#consult_stock">\n                <div class="menu_p_title">\n                    GERER MON STOCK\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#moncompte">\n                <div class="menu_p_title">\n                    MON COMPTE\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n    </ul>\n</div>\n<div data-role="footer" id="footer">\n    <a href="#logout">\n        <div><img src="" /></div>\n        <div>Se deconnecter</div>\n    </a>\n</div>';});
 
 define('view/homeView',["jquery", "underscore", "backbone", "text!template/home.html"], function($, _, Backbone, home_tpl) {
     var HomeView = Backbone.View.extend({
@@ -13255,10 +13271,12 @@ define('view/homeView',["jquery", "underscore", "backbone", "text!template/home.
         
         initialize: function(options) {
             this.user = options.user;
-            this.pointeuse = options.pointeuse;
             this.listenToOnce(this.user, 'pointage:failure', function() {
                 _.delay(this.loadingStop);
                 alert('Erreur de sauvegarde, Veuillez vous déconnecter et recommencer');
+            });
+            this.bind('render:completed', function() {
+               $('a.ui-btn').removeClass('ui-btn');
             });
         },
         
@@ -13278,12 +13296,12 @@ define('view/homeView',["jquery", "underscore", "backbone", "text!template/home.
         onClickFilter: function(e){
             e.preventDefault();
             var el = e.target;
-            if($(el).attr("name") == "entree") {
+            /*if($(el).attr("name") == "entree") {
                 this.loadingStart("Sauvegarde de votre pointage ...");
                 this.pointeuse.pointage("entree", this.user);
             } else if($(el).attr("name") == "sortie") {
                 this.pointeuse.pointage("sortie", this.user);
-            }
+            }*/
         },
         
         render: function(eventName) {
@@ -13292,7 +13310,7 @@ define('view/homeView',["jquery", "underscore", "backbone", "text!template/home.
                 user: this.user.toJSON()
             }));
             this.trigger('render:completed', this);
-            this.$el.find('#entree, #sortie').on('click', _.bind(this.onClickFilter, this));
+            /*this.$el.find('#entree, #sortie').on('click', _.bind(this.onClickFilter, this));*/
             return this;
         }
     });
@@ -13778,7 +13796,7 @@ define('view/homeView',["jquery", "underscore", "backbone", "text!template/home.
   return Backbone.Syphon;
 }));
 
-define('text!template/login.html',[],function () { return '\n    <div data-role="header">\n\t<h1>Pointeuse</h1>\n    </div>\n    <div data-role="content">\n        <div id="error"></div>\n\t<h3>Bienvenue sur cette application</h3>\n\t<p>Pour utiliser notre service vous devez être identifié</p>\n\t<form>\n\t\t<fieldset>\n\t\t<div data-role="fieldcontain" class="ui-hide-label">\n\t\t\t<label for="username">Identifiant:</label> <input type="text"\n\t\t\t\tname="login" id="login" value="" class="required"\n\t\t\t\tplaceholder="Identifiant" />\n\t\t</div>\n\t\t<div data-corners="true" data-shadow="true" data-iconshadow="true"\n\t\t\tdata-wrapperels="span" data-icon="null" data-iconpos="null"\n\t\t\tdata-theme="b"\n\t\t\t\n\t\t\taria-disabled="false">\n\t\t\t<button type="submit" data-theme="b" name="submit"\n\t\t\t\tvalue="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>\n\t\t</div>\n\t\t</fieldset>\n\t</form>\n    </div>\n';});
+define('text!template/login.html',[],function () { return '\n    <div data-role="header" style="visibility: hidden">\n\t<h1>D&eacute;bit de boisson</h1>\n    </div>\n    <div data-role="content" style="text-align: center">\n\t<h1>ASAR</h1>\n        <h2>DIGITAL SERVICES</h2>\n\n        <div style="border: solid 1px black; width: 65%; margin: auto; border-radius: 15px;">\n            <form>\n                <div id="error"></div>\n                <div data-role="fieldcontain" class="ui-label" style=" padding: 2%; width: 96%">\n                    <div style="width: 100%; text-align: left"><label for="username">Identifiant:</label></div>\n                    <input type="text" name="token" id="login" value="" class="required" placeholder="Identifiant" />\n                </div>\n                \n                <div style="clear: both"></div>\n                \n                <a href="#" id="submitform">\n                    <div style="width: 96%; color: white; background-color: black; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; padding: 2%; ">\n                        valider\n                    </div>\n                </a>\n                \n                <!--div data-corners="true" data-shadow="true" data-iconshadow="true"\n                        data-wrapperels="span" data-icon="null" data-iconpos="null"\n                        data-theme="b"\n\n                        aria-disabled="false">\n                        <button type="submit" data-theme="b" name="submit"\n                                value="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>\n                </div-->\n            </form>\n        </div>\n    </div>\n<div style="width: 100%; height: 15px;"></div>\n\n<div style="width: 100%; text-align: center">\n    <a href="#" id="creation_compte">CRE&Eacute;R UN COMPTE</a>\n</div>\n';});
 
 define('view/loginView',["jquery", "underscore", "backbone", "backbone.syphon", "text!template/login.html"], function($, _, Backbone, Syphon, login_tpl) {
     var LoginView = Backbone.View.extend({
@@ -13823,7 +13841,35 @@ define('view/loginView',["jquery", "underscore", "backbone", "backbone.syphon", 
         },
         
         events: {
-            "submit": "onSubmit"
+            "submit": "onSubmit",
+            "click a#submitform": "submitform",
+            "click a#creation_compte": "creationcompte",
+        },
+        
+        submitform: function(e) {
+            e.preventDefault();
+            $('body form').submit();
+        },
+        
+        sendPassword: function(e){
+            var _this = this;
+            e.preventDefault();
+            var xhr = $.get(config.api_url + "/rest-password", {"token": _this.user.get('token')}, null, 'jsonp');
+            xhr.done( function(data){
+                _this.$el.empty();
+                _this.$el.append(_this.template({
+                    categorie: data.result,
+                    user: _this.user.toJSON()
+                }));
+                _this.trigger('render:completed', _this);
+                _this.$el.find('.comm_1_cat').on('click', _.bind(_this.onClickFilter, _this));
+                return _this;
+            });            
+        },
+        
+        creationcompte: function(e) {
+            e.preventDefault();
+            Backbone.history.navigate("creationcompte", true);
         },
         
         render: function(eventName) {
@@ -13836,9 +13882,919 @@ define('view/loginView',["jquery", "underscore", "backbone", "backbone.syphon", 
     });
     return LoginView;
 });
-define('router/app',["jquery", "underscore", "backbone", 'backbone.localStorage', "backbone.token", "backbone.queryparams", "backbone.route-filter", "model/user-local",  "model/pointage-local", "view/homeView", "view/loginView"], function($, _, Backbone, QueryParams, RouterFilter, LocalStorage, Token, UserLocalModel, PointageLocalModel, HomeView, LoginView) {
-    
 
+define('text!template/creationcompte.html',[],function () { return '\n<div style="wisth: 100%; text-align: right; padding: 2%"><a href="#" id="cancel">Annuler</a></div>\n\n<div style="width: 100%; height: 15px;"></div>\n\n<div data-role="content" style="text-align: center">\n    <div style="border: solid 1px black; width: 65%; margin: auto; border-radius: 15px;">\n        <form>\n            <div id="error"></div>\n            <div style="width: 100%; text-align: center; padding: 2%">\n                <div style="font-weight: bold">CR&Eacute;ER UN COMPTE</div>\n                <div>Tous les champs requis sont obligatoires</div>\n            </div>\n            \n            <div style="width: 100%; border-bottom: solid 1px black"></div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="nom">Nom</label></div>\n                <input type="text" name="nom" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="prenom">Pr&eacute;nom</label></div>\n                <input type="text" name="prenom" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="societe">Soci&eacute;t&eacute;</label></div>\n                <input type="text" name="societe" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="adr_societe">Adresse Soci&eacute;t&eacute;</label></div>\n                <input type="text" name="adr_societe" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="cp">Code postal</label></div>\n                <input type="text" name="cp" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="ville">Ville</label></div>\n                <input type="text" name="ville" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="siret">SIRET</label></div>\n                <input type="text" name="siret" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="tva">N TVA INTERCOMMUNAUTAIRE</label></div>\n                <input type="text" name="tva" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="horaire">HORAIRES LIVRAISON</label></div>\n                <textarea name="horaire" class="required" ></textarea>\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="information">INFORMATION LIVREUR</label></div>\n                <textarea name="information" class="required" ></textarea>\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="email">EMAIL</label></div>\n                <input type="text" name="email" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="email_conf">CONFIRMATION EMAIL</label></div>\n                <input type="text" name="email_conf" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="password">PASSWORD</label></div>\n                <input type="password" name="password" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="password_conf">CONFIRMATION PASSWORD</label></div>\n                <input type="password" name="password_conf" value="" class="required" />\n            </div>\n            \n            \n            <div style="clear: both"></div>\n\n            <p style="text-align: center">ATTENTION VOTRE COMPTE NE SERA  ACTIF QU\'APRES VALIDATION DE VOTRE COMMERCIAL ASAR</p>\n            \n            <a href="#" id="submitform">\n                <div style="width: 96%; color: white; background-color: black; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; padding: 2%; ">\n                    valider\n                </div>\n            </a>\n\n            <!--div data-corners="true" data-shadow="true" data-iconshadow="true"\n                    data-wrapperels="span" data-icon="null" data-iconpos="null"\n                    data-theme="b"\n\n                    aria-disabled="false">\n                    <button type="submit" data-theme="b" name="submit"\n                            value="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>\n            </div-->\n        </form>\n    </div>\n</div>\n';});
+
+define('view/creationcompteView',["jquery", "underscore", "backbone", "backbone.syphon", "text!template/creationcompte.html"], function($, _, Backbone, Syphon, creationcompte_tpl) {
+    var CreationCompteView = Backbone.View.extend({
+        
+        template: _.template(creationcompte_tpl),
+        
+        id: 'creationcompte-view',
+
+        initialize: function(options) {
+            this.user = options.user;
+            this.listenTo(this.user, 'user:asknew', function(model) {
+                Backbone.history.navigate("login", true);
+            });
+        },
+
+        loadingStart: function() {
+            $.mobile.loading('show', {
+                text: 'Tentative de connexion',
+                textVisible: true,
+                theme: 'b',
+                html: ""
+            });
+        },
+
+        loadingStop: function() {
+            $.mobile.loading('hide');
+        },
+
+        saveDemandeUser: function(data) {
+            this.listenToOnce(this.user, 'login:failure', function() {
+                _.delay(this.loadingStop);
+            });
+            this.user.askNew(data);
+        },
+
+        onSubmit: function(e) {
+            e.preventDefault();
+            this.loadingStart();
+            var data = Backbone.Syphon.serialize(this);
+            this.saveDemandeUser(data);
+            Backbone.history.navigate("login", true);
+        },
+        
+        events: {
+            "submit": "onSubmit",
+            "click a#submitform": "submitform",
+            "click a#cancel": "cancel",
+        },
+        
+        submitform: function(e) {
+            e.preventDefault();
+            $('body form').submit();
+        },
+        
+        cancel: function(e) {
+            Backbone.history.navigate("login", true);
+        },
+        
+        render: function(eventName) {
+            $(this.el).html(this.template({}));
+            $('body').removeClass("ui-panel-page-container-themed");
+            $('body').removeClass("ui-panel-page-container-b");
+            $('body').removeClass("ui-panel-page-container");
+            return this;
+        }
+    });
+    return CreationCompteView;
+});
+
+define('text!template/parametre_accueil.html',[],function () { return '<div data-role="header">\n    <div class="header_bloc_left">\n        <a href="#home">&eacute;tape pr&eacute;c&eacute;dente</a>\n    </div>\n    <h1>ASAR</h1>\n    <img style="float: left" src=""/>\n    <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    \n    <div id="page-title">\n        MON COMPTE\n        <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    </div>\n</div>\n\n\n\n\n<!--div id="nav-panel-user" data-role="panel" data-position="right" data-theme="b">\n    <div class="ui-panel-inner">\n        <h3><%= user.firstname %> <%= user.lastname %></h3>\n        <a href="#logout" data-rel="close" data-role="button" data-theme="c" data-icon="delete" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-left">\n        <span class="ui-btn-inner">Se deconnecter</span>\n        </a>\n    </div>\n</div-->\n<div data-role="content">\n    <ul id="lien_menu_p">\n        <li>\n            <a href="#commande">\n                <div class="menu_p_title">\n                    HISTORIQUE DES COMMANDES\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n            <ul class="parametre_list_enfant">\n                <li>\n                    <div class="div_h_comm">\n                        <div class="div_h_comm_1"> COMMANDE043 / DATE : 16/09/2016</div>\n                        <div class="div_h_comm_2"> <input data-enhance="false" data-role="none" type="button" value="voir" /></div>\n                    </div>\n                    \n                </li>\n                <li>\n                    <div class="div_h_comm">\n                        <div class="div_h_comm_1"> COMMANDE043 / DATE : 16/09/2016</div>\n                        <div class="div_h_comm_2"> <input data-enhance="false" data-role="none"  type="button" value="voir" /></div>\n                    </div>\n                    \n                </li>\n            </ul>\n        </li>\n        <li>\n            <a href="#consult_stock">\n                <div class="menu_p_title">\n                    HISTORIQUE D&Egrave;STOCKAGE\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n            <ul class="parametre_list_enfant">\n                <li>\n                    <div class="div_h_comm">\n                        <div class="div_h_comm_1"> SORTIE043 / DATE : 16/09/2016</div>\n                        <div class="div_h_comm_2"> <input data-enhance="false" data-role="none" type="button" value="voir" /></div>\n                    </div>\n                    \n                </li>\n                <li>\n                    <div class="div_h_comm">\n                        <div class="div_h_comm_1"> SORTIE043 / DATE : 16/09/2016</div>\n                        <div class="div_h_comm_2"> <input data-enhance="false" data-role="none"  type="button" value="voir" /></div>\n                    </div>\n                    \n                </li>\n            </ul>\n        </li>\n        <li>\n            <a href="#destock">\n                <div class="menu_p_title">\n                    GESTION DE L\'&Eacute;QUIPE \n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n            <ul class="parametre_list_enfant">\n                <li>\n                    <div class="div_h_comm">\n                        <div class="div_h_comm_1">LISTE DES COMPTES</div>\n                        <div class="div_h_comm_2"> <input data-enhance="false" data-role="none" type="button" value="voir" /></div>\n                    </div>\n                    \n                </li>\n                <li>\n                    <div class="div_h_comm">\n                        <div class="div_h_comm_1">AJOUTER UN COMPTE</div>\n                        <div class="div_h_comm_2"> <input data-enhance="false" data-role="none" class="btn-green" type="button" value="+" /></div>\n                    </div>\n                </li>\n                <li>\n                    <div class="div_h_comm">\n                        <div class="div_h_comm_1">D&Eacute;SACTIVER UN COMPTE</div>\n                        <div class="div_h_comm_2"> <input data-enhance="false" data-role="none"  class="btn-red" type="button" value="x" /></div>\n                    </div>\n                </li>\n            </ul>\n        </li>\n        <li>\n            <a href="#parametre">\n                <div class="menu_p_title">\n                    PARAM&Egrave;TRES DU COMPTE\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n            <ul class="parametre_list_enfant">\n                <li>\n                    <div class="div_h_comm">\n                        <div class="div_h_comm_1">NOM: JESSIE</div>\n                        <div class="div_h_comm_2"> <input data-enhance="false" data-role="none" type="button" value="modifier" /></div>\n                    </div>\n                    \n                </li>\n                <li>\n                    <div class="div_h_comm">\n                        <div class="div_h_comm_1">TEL: 0689562355</div>\n                        <div class="div_h_comm_2"> <input data-enhance="false" data-role="none"  type="button" value="modifier" /></div>\n                    </div>\n                </li>\n                <li>\n                    <div class="div_h_comm">\n                        <div class="div_h_comm_1">CHANGER DE MOT DE PASSE</div>\n                        <div class="div_h_comm_2"> <input data-enhance="false" data-role="none"  type="button" value="modifier" /></div>\n                    </div>\n                </li>\n                <li>\n                    <div class="div_h_comm">\n                        <div class="div_h_comm_1">PAIEMENT / INFORMATION BANCAIRES</div>\n                        <div class="div_h_comm_2"> <input data-enhance="false" data-role="none"  type="button" value="modifier" /></div>\n                    </div>\n                </li>\n            </ul>\n        </li>\n    </ul>\n</div>\n<div data-role="footer" id="footer">\n    <a href="#logout">\n        <div><img src="" /></div>\n        <div>Se deconnecter</div>\n    </a>\n</div>';});
+
+define('view/parametreView',["jquery", "underscore", "backbone", "text!template/parametre_accueil.html"], function($, _, Backbone, parm_acc_tpl) {
+    var ParametreView = Backbone.View.extend({
+        
+        id: 'param-acc-view',
+
+        template: _.template(parm_acc_tpl),
+        
+        initialize: function(options) {
+            this.user = options.user;
+            this.bind('render:completed', function() {
+               $('a.ui-btn').removeClass('ui-btn');
+            });
+        },
+        
+        /*loadingStart: function(text_show) {
+            $.mobile.loading('show', {
+                text: text_show,
+                textVisible: true,
+                theme: 'b',
+                html: ""
+            });
+        },
+
+        loadingStop: function() {
+            $.mobile.loading('hide');
+        },
+        
+        onClickFilter: function(e){
+            e.preventDefault();
+            var el = e.target;
+            if($(el).attr("name") == "entree") {
+                this.loadingStart("Sauvegarde de votre pointage ...");
+                this.pointeuse.pointage("entree", this.user);
+            } else if($(el).attr("name") == "sortie") {
+                this.pointeuse.pointage("sortie", this.user);
+            }
+        },*/
+        
+        render: function(eventName) {
+            this.$el.empty();
+            this.$el.append(this.template({
+                user: this.user.toJSON()
+            }));
+            this.trigger('render:completed', this);
+            /*this.$el.find('#entree, #sortie').on('click', _.bind(this.onClickFilter, this));*/
+            return this;
+        }
+    });
+    return ParametreView;
+});
+
+define('text!template/commande_cat.html',[],function () { return '<div data-role="header">\n    <div class="header_bloc_left">\n        <a href="#home">&eacute;tape pr&eacute;c&eacute;dente</a>\n    </div>\n    <h1>ASAR</h1>\n    <img style="float: left" src=""/>\n    <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    \n    <div id="page-title">\n        CHOISIR UNE CAT&Eacute;GORIE\n        <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    </div>\n</div>\n\n\n\n\n<!--div id="nav-panel-user" data-role="panel" data-position="right" data-theme="b">\n    <div class="ui-panel-inner">\n        <h3><%= user.firstname %> <%= user.lastname %></h3>\n        <a href="#logout" data-rel="close" data-role="button" data-theme="c" data-icon="delete" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-left">\n        <span class="ui-btn-inner">Se deconnecter</span>\n        </a>\n    </div>\n</div-->\n<div data-role="content">\n    <div class="comm_1_content">\n        <% index = 0; %>\n        <% passe = 0; %>\n        <% _.each(categorie, function(cat){ %>\n            <% if (index == 0) { %>\n                <div class="ligne <% if(passe != 0){ %>bg_haut<%}%>">\n                <% index = 0; %>                    \n            <% } %>\n            <% index += 1; %>\n            <div data-id="<%= cat.id %>" class="comm_1_cat <% if(index ==1){ %>bg_droite<%}%>"><div><%= cat.libelle %></div></div>\n            <% if (index == 2) { %>\n                </div>\n                <div class="clear"></div> \n                <% index = 0; %>\n                <% passe += 1; %>\n            <% } %>\n        <% }); %>\n        <% if(index == 1) { %>\n                <div class="comm_1_cat">&nbsp;</div>\n            </div>\n        <% } %>\n        <div class="clear"></div> \n    </div>\n</div>\n<div data-role="footer" id="footer">\n    <div class="footer_div">\n        <a href="#home">\n            <div><img src="" /></div>\n            <div>Accueil</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#">\n            <div><img src="" /></div>\n            <div>Nouveaut&eacute;s & Promotions</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#commander" class="active">\n            <div><img src="" /></div>\n            <div>Commander</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#parametre">\n            <div><img src="" /></div>\n            <div>Mon compte</div>\n        </a>\n    </div>\n    <div class="clear"></div> \n</div>';});
+
+define('view/commandeView',["jquery", "underscore", "backbone", "text!template/commande_cat.html"], function($, _, Backbone, commande_cat_tpl) {
+    var CommandeView = Backbone.View.extend({
+        
+        id: 'commande-view',
+
+        template: _.template(commande_cat_tpl),
+        
+        initialize: function(options) {
+            this.user = options.user;
+            this.commande = options.commande;
+            /*this.listenToOnce(this.user, 'pointage:failure', function() {
+                _.delay(this.loadingStop);
+                alert('Erreur de sauvegarde, Veuillez vous déconnecter et recommencer');
+            });*/
+            this.bind('render:completed', function() {
+               $('a.ui-btn').removeClass('ui-btn');
+            });
+        },
+        
+        loadingStart: function(text_show) {
+            $.mobile.loading('show', {
+                text: text_show,
+                textVisible: true,
+                theme: 'b',
+                html: ""
+            });
+        },
+
+        loadingStop: function() {
+            $.mobile.loading('hide');
+        },
+        
+        onClickFilter: function(e){
+            e.preventDefault();
+            var el = e.target;
+            if($(el).parent().hasClass("comm_1_cat")) {
+                Backbone.history.navigate("commanderProduit/"+$(el).parent().attr('data-id'), true);
+            }
+            /*if($(el).attr("name") == "entree") {
+                this.loadingStart("Sauvegarde de votre pointage ...");
+                this.pointeuse.pointage("entree", this.user);
+            } else if($(el).attr("name") == "sortie") {
+                this.pointeuse.pointage("sortie", this.user);
+            }*/
+        },
+        
+        render: function(eventName) {
+            var _this = this;
+            var xhr = $.get(config.api_url + "/rest-categorie", {"token": _this.user.get('token')}, null, 'jsonp');
+            xhr.done( function(data){
+                _this.$el.empty();
+                _this.$el.append(_this.template({
+                    categorie: data.result,
+                    user: _this.user.toJSON()
+                }));
+                _this.trigger('render:completed', _this);
+                _this.$el.find('.comm_1_cat').on('click', _.bind(_this.onClickFilter, _this));
+                return _this;
+            });
+            xhr.fail(function(data) {
+                $('#error').empty().html(data);
+                this.trigger('categorie:failure');
+            });
+            
+            
+        }
+    });
+    return CommandeView;
+});
+
+define('text!template/stock.html',[],function () { return '<div data-role="header">\n    <div class="header_bloc_left">\n        <a href="#home">&eacute;tape pr&eacute;c&eacute;dente</a>\n    </div>\n    <h1>ASAR</h1>\n    <img style="float: left" src=""/>\n    <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    \n    <div id="page-title">\n        CHOISIR UNE CAT&Eacute;GORIE\n        <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    </div>\n</div>\n\n\n\n\n<!--div id="nav-panel-user" data-role="panel" data-position="right" data-theme="b">\n    <div class="ui-panel-inner">\n        <h3><%= user.firstname %> <%= user.lastname %></h3>\n        <a href="#logout" data-rel="close" data-role="button" data-theme="c" data-icon="delete" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-left">\n        <span class="ui-btn-inner">Se deconnecter</span>\n        </a>\n    </div>\n</div-->\n<div data-role="content">\n    <ul id="lien_menu_p">\n        <li>\n            <a href="#stockProduit">\n                <div class="menu_p_title">\n                    ENTRER STOCK A LIVRAISON\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#destockProduit">\n                <div class="menu_p_title">\n                    SORTIE SOTCK\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#cassePerteProduit">\n                <div class="menu_p_title">\n                    CASSE / PERTE\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#historiqueCommande">\n                <div class="menu_p_title">\n                    HISTORIQUE DES ENTREES / SORTIES / CASSE / PERTE\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n    </ul>\n</div>\n<div data-role="footer" id="footer">\n    <div class="footer_div">\n        <a href="#home">\n            <div><img src="" /></div>\n            <div>Accueil</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#consult_stock" class="active">\n            <div><img src="" /></div>\n            <div>Consulter le stock</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#destock">\n            <div><img src="" /></div>\n            <div>D&eacute;stocker un article</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#parametre">\n            <div><img src="" /></div>\n            <div>Mon compte</div>\n        </a>\n    </div>\n    <div class="clear"></div>\n</div>';});
+
+define('view/stockView',["jquery", "underscore", "backbone", "text!template/stock.html"], function($, _, Backbone, stock_tpl) {
+    var StockView = Backbone.View.extend({
+        
+        id: 'stock-view',
+
+        template: _.template(stock_tpl),
+        
+        initialize: function(options) {
+            this.user = options.user;
+            this.commande = options.commande;
+            this.listenToOnce(this.user, 'pointage:failure', function() {
+                _.delay(this.loadingStop);
+                alert('Erreur de sauvegarde, Veuillez vous déconnecter et recommencer');
+            });
+            this.bind('render:completed', function() {
+               $('a.ui-btn').removeClass('ui-btn');
+            });
+        },
+        
+        loadingStart: function(text_show) {
+            $.mobile.loading('show', {
+                text: text_show,
+                textVisible: true,
+                theme: 'b',
+                html: ""
+            });
+        },
+
+        loadingStop: function() {
+            $.mobile.loading('hide');
+        },
+        
+        onClickFilter: function(e){
+            e.preventDefault();
+            var el = e.target;
+            if($(el).parent().hasClass("comm_1_cat")) {
+                Backbone.history.navigate("stockProduit/"+$(el).parent().attr('data-id'), true);
+            }
+            /*if($(el).attr("name") == "entree") {
+                this.loadingStart("Sauvegarde de votre pointage ...");
+                this.pointeuse.pointage("entree", this.user);
+            } else if($(el).attr("name") == "sortie") {
+                this.pointeuse.pointage("sortie", this.user);
+            }*/
+        },
+        
+        render: function(eventName) {
+            var _this = this;
+            var xhr = $.get(config.api_url + "/rest-categorie", {"token": _this.user.get('token')}, null, 'jsonp');
+            xhr.done( function(data){
+                _this.$el.empty();
+                _this.$el.append(_this.template({
+                    categorie : data.result,
+                    user: _this.user.toJSON()
+                }));
+                _this.trigger('render:completed', _this);
+                _this.$el.find('.comm_1_cat').on('click', _.bind(_this.onClickFilter, _this));
+                return _this;
+            });
+            xhr.fail(function(data) {
+                $('#error').empty().html(data);
+                this.trigger('categorie:failure');
+            });
+            
+            
+        }
+    });
+    return StockView;
+});
+
+define('text!template/casse_perte_produit.html',[],function () { return '<div data-role="header">\n    <div class="header_bloc_left">\n        <a href="#home">&eacute;tape pr&eacute;c&eacute;dente</a>\n    </div>\n    <h1>ASAR</h1>\n    <img style="float: left" src=""/>\n    <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    \n    <div id="page-title">\n        D&Eacute;STOCKER UN ARTICLE\n        <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    </div>\n    \n    <% /* %><div class="produit_nav">\n        <div class="nav-left"><img src="" />&nbsp;</div>\n        <div class="nav-center"><div><%= categorie.libelle %></div></div>\n        <div class="nav-right"><img src="" />&nbsp;</div>\n        <div class="clear"></div>\n    </div> <% */ %>\n</div>\n\n\n\n\n<!--div id="nav-panel-user" data-role="panel" data-position="right" data-theme="b">\n    <div class="ui-panel-inner">\n        <h3><%= user.firstname %> <%= user.lastname %></h3>\n        <a href="#logout" data-rel="close" data-role="button" data-theme="c" data-icon="delete" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-left">\n        <span class="ui-btn-inner">Se deconnecter</span>\n        </a>\n    </div>\n</div-->\n<div data-role="content">\n    <div class="comm_prod_content">\n        <p>IMPORTANT : LES SORTIES DE STOCKS SE FONT UNIQUEMENT PAR CAISSES DE 6 OU 12 BOUTEILLES OU PAR FUT</p>\n        <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n            <tr>\n                <th style="border: solid 1px black;width: 20%">PRDUIT</th>\n                <th style="border: solid 1px black;width: 20%">REFERENCE PRODUIT</th>\n                <th style="border: solid 1px black;width: 20%">MON STAOCK</th>\n                <th style="border: solid 1px black;width: 20%">PRIX UNITAIRE H.T</th>\n                <th style="border: solid 1px black;width: 20%">QUANTITE</th>\n            </tr>\n            <tr>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">\n                    <div class="comm_prod_list_product_div3">-</div>\n                    <div class="comm_prod_list_product_div4"><input type="text" value="1" data-role="none"/></div>\n                    <div class="comm_prod_list_product_div5">+</div>\n                </td>\n            </tr>\n        </table>\n        <p>ENTREE DE STOCK MONTANT H.T. 0.00 €</p>\n        <p>LES PRODUITS ET QUANTITES AFFICHES SONT CEUX DE LA DERNIERE COMMANDE PASSEE</p>\n        \n        <div style="display: table;width: 100%">\n            <a href="#" style="width: 50%; display: table-cell; text-align: center">\n                <div style="width: 96%; color: white; background-color: black; border-bottom-left-radius: 15px; padding: 2%; ">\n                    Valider\n                </div>\n            </a>\n\n            <a href="#inventaire" style="width: 50%; display: table-cell; text-align: center">\n                <div style="width: 96%; color: white; background-color: black; border-bottom-right-radius: 15px; padding: 2%; ">\n                    MON STOCK MONTANT H.T XXXX\n                </div>\n            </a>\n            <div style="clear: both"></div>\n        </div>\n        \n        \n        <% /*cat_id = null; %>\n        <% _.each(categorie.list_produit, function(cat){ %>\n            \n            <% if(cat_id != null && cat.ss_cat != null && cat_ss_cat.id != cat_id){ %>\n                </div>\n            <%}%>\n        \n            <% if(cat_id == null || (cat.ss_cat != null && cat_ss_cat.id != cat_id)) { %>\n                <div class="ss_cat_com_prod">\n                    <div class="ss_cat_com_prod_title"><% if(cat.ss_cat != null){ %> <%= cat_ss_cat.libelle %> <%}%></div>\n                <% if(cat.ss_cat != null) { cat_id = cat_ss_cat.id; } else {cat_id = 0;} %>\n            <% } %>\n            \n            <% if(cat.produit.length > 0) { %>\n                <ul class="comm_prod_list_product">\n                <% _.each(cat.produit, function(prod){ %>\n                    <li>\n                        <div>\n                            <div class="comm_prod_list_product_div1"><%= prod.libelle %></div>\n                            <div class="comm_prod_list_product_div2"><input type="text" value="4" data-role="none"/></div>\n                            <div class="comm_prod_list_product_div3">-</div>\n                            <div class="comm_prod_list_product_div4"><input type="text" value="1" data-role="none"/></div>\n                            <div class="comm_prod_list_product_div5">+</div>\n                            <div class="comm_prod_list_product_div6"><input type="button" value="valider" data-role="none"/></div>\n                            <div class="clear"></div>\n                        </div>\n                    </li>\n                <% }); %>\n                </ul>\n            <% } %>\n            \n        <% }); %>\n        \n        <% if(cat_id != null){ %>\n            </div>\n        <%} */%>\n    </div>\n</div>\n<div data-role="footer" id="footer">\n    <div class="footer_div">\n        <a href="#home">\n            <div><img src="" /></div>\n            <div>Accueil</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#consult_stock">\n            <div><img src="" /></div>\n            <div>Consulter le stock</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#destock" class="active">\n            <div><img src="" /></div>\n            <div>D&eacute;stocker un article</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#parametre">\n            <div><img src="" /></div>\n            <div>Mon compte</div>\n        </a>\n    </div>\n    <div class="clear"></div>\n</div>';});
+
+define('view/cassePerteView',["jquery", "underscore", "backbone", "text!template/casse_perte_produit.html"], function($, _, Backbone, casse_perte_produit_tpl) {
+    var CassePerteView = Backbone.View.extend({
+        
+        id: 'casse-perte-produit-view',
+
+        template: _.template(casse_perte_produit_tpl),
+        
+        initialize: function(options) {
+            this.user = options.user;
+            this.commande = options.commande;
+            /*this.listenToOnce(this.user, 'pointage:failure', function() {
+                _.delay(this.loadingStop);
+                alert('Erreur de sauvegarde, Veuillez vous déconnecter et recommencer');
+            });*/
+        },
+        
+        loadingStart: function(text_show) {
+            $.mobile.loading('show', {
+                text: text_show,
+                textVisible: true,
+                theme: 'b',
+                html: ""
+            });
+        },
+
+        loadingStop: function() {
+            $.mobile.loading('hide');
+        },
+        
+        onClickFilter: function(e){
+            e.preventDefault();
+            var el = e.target;
+            /*if($(el).attr("name") == "entree") {
+                this.loadingStart("Sauvegarde de votre pointage ...");
+                this.pointeuse.pointage("entree", this.user);
+            } else if($(el).attr("name") == "sortie") {
+                this.pointeuse.pointage("sortie", this.user);
+            }*/
+        },
+        
+        render: function(eventName) {
+            var _this = this;
+            var xhr = $.get(config.api_url + "/rest-categorie/1", {"token": _this.user.get('token')}, null, 'jsonp');
+            xhr.done( function(data){
+                _this.$el.empty();
+                _this.$el.append(_this.template({
+                    categorie: data.result,
+                    user: _this.user.toJSON()
+                }));
+                _this.trigger('render:completed', _this);
+                return _this;
+            });
+            xhr.fail(function(data) {
+                $('#error').empty().html(data);
+                this.trigger('categorie:failure');
+            });
+            
+            
+        }
+    });
+    return CassePerteView;
+});
+
+define('text!template/commander_menu.html',[],function () { return '<div data-role="header">\n    <div class="header_bloc_left">\n        <a href="#home">&eacute;tape pr&eacute;c&eacute;dente</a>\n    </div>\n    <h1>ASAR</h1>\n    <img style="float: left" src=""/>\n    <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    \n    <div id="page-title">\n        CHOISIR UNE CAT&Eacute;GORIE\n        <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    </div>\n</div>\n\n<div data-role="content">\n    <ul id="lien_menu_p">\n        <li>\n            <a href="#commander">\n                <div class="menu_p_title">\n                    NOUVELLE COMMANDE\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#historiqueCommande">\n                <div class="menu_p_title">\n                    HISTORIQUE DE MES COMMANDES\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#encoursFacturation">\n                <div class="menu_p_title">\n                    EN-COURS FACTURATION\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n    </ul>\n</div>\n<div data-role="footer" id="footer">\n    <div class="footer_div">\n        <a href="#home">\n            <div><img src="" /></div>\n            <div>Accueil</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#consult_stock" class="active">\n            <div><img src="" /></div>\n            <div>Consulter le stock</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#destock">\n            <div><img src="" /></div>\n            <div>D&eacute;stocker un article</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#parametre">\n            <div><img src="" /></div>\n            <div>Mon compte</div>\n        </a>\n    </div>\n    <div class="clear"></div>\n</div>';});
+
+define('view/CommanderMenuView',["jquery", "underscore", "backbone", "text!template/commander_menu.html"], function($, _, Backbone, commander_menu_tpl) {
+    var CommanderMenuView = Backbone.View.extend({
+        
+        id: 'commande-view',
+
+        template: _.template(commander_menu_tpl),
+        
+        initialize: function(options) {
+            this.user = options.user;
+            this.commande = options.commande;
+            /*this.listenToOnce(this.user, 'pointage:failure', function() {
+                _.delay(this.loadingStop);
+                alert('Erreur de sauvegarde, Veuillez vous déconnecter et recommencer');
+            });*/
+            this.bind('render:completed', function() {
+               $('a.ui-btn').removeClass('ui-btn');
+            });
+        },
+        
+        loadingStart: function(text_show) {
+            $.mobile.loading('show', {
+                text: text_show,
+                textVisible: true,
+                theme: 'b',
+                html: ""
+            });
+        },
+
+        loadingStop: function() {
+            $.mobile.loading('hide');
+        },
+        
+        onClickFilter: function(e){
+            e.preventDefault();
+            var el = e.target;
+            if($(el).parent().hasClass("comm_1_cat")) {
+                Backbone.history.navigate("commanderProduit/"+$(el).parent().attr('data-id'), true);
+            }
+            /*if($(el).attr("name") == "entree") {
+                this.loadingStart("Sauvegarde de votre pointage ...");
+                this.pointeuse.pointage("entree", this.user);
+            } else if($(el).attr("name") == "sortie") {
+                this.pointeuse.pointage("sortie", this.user);
+            }*/
+        },
+        
+        render: function(eventName) {
+            this.$el.empty();
+            this.$el.append(this.template({
+                user: this.user.toJSON()
+            }));
+            this.trigger('render:completed', this);
+            return this;
+        }            
+    });
+    return CommanderMenuView;
+});
+
+define('text!template/commande_cat_produit.html',[],function () { return '<div data-role="header">\n    <div class="header_bloc_left">\n        <a href="#home">&eacute;tape pr&eacute;c&eacute;dente</a>\n    </div>\n    <h1>ASAR</h1>\n    <img style="float: left" src=""/>\n    <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    \n    <div id="page-title">\n        COMMANDER\n        <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    </div>\n    \n    <div class="produit_nav">\n        <div class="nav-left"><img src="" />&nbsp;</div>\n        <div class="nav-center"><div><%= categorie.libelle %></div></div>\n        <div class="nav-right"><img src="" />&nbsp;</div>\n        <div class="clear"></div>\n    </div>\n</div>\n\n\n\n\n<!--div id="nav-panel-user" data-role="panel" data-position="right" data-theme="b">\n    <div class="ui-panel-inner">\n        <h3><%= user.firstname %> <%= user.lastname %></h3>\n        <a href="#logout" data-rel="close" data-role="button" data-theme="c" data-icon="delete" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-left">\n        <span class="ui-btn-inner">Se deconnecter</span>\n        </a>\n    </div>\n</div-->\n<div data-role="content">\n    <div class="comm_prod_content">\n        <p>IMPORTANT : LES SORTIES DE STOCKS SE FONT UNIQUEMENT PAR CAISSES DE 6 OU 12 BOUTEILLES OU PAR FUT</p>\n        <% cat_id = null; %>\n        <% _.each(categorie.list_produit, function(cat){ %>\n            \n            <% if(cat_id != null && cat.ss_cat != null && cat_ss_cat.id != cat_id){ %>\n                </div>\n            <%}%>\n        \n            <% if(cat_id == null || (cat.ss_cat != null && cat_ss_cat.id != cat_id)) { %>\n                <div class="ss_cat_com_prod">\n                    <div class="ss_cat_com_prod_title"><% if(cat.ss_cat != null){ %> <%= cat_ss_cat.libelle %> <%}%></div>\n                <% if(cat.ss_cat != null) { cat_id = cat_ss_cat.id; } else {cat_id = 0;} %>\n            <% } %>\n            \n            <% if(cat.produit.length > 0) { %>\n                <ul class="comm_prod_list_product">\n                <% _.each(cat.produit, function(prod){ %>\n                    <li>\n                        <div>\n                            <div class="comm_prod_list_product_div1"><%= prod.libelle %></div>\n                            <div class="comm_prod_list_product_div2"><input type="text" value="4" data-role="none"/></div>\n                            <div class="comm_prod_list_product_div3">-</div>\n                            <div class="comm_prod_list_product_div4"><input type="text" value="1" data-role="none"/></div>\n                            <div class="comm_prod_list_product_div5">+</div>\n                            <div class="comm_prod_list_product_div6"><input type="button" value="ajouter" data-role="none"/></div>\n                            <div class="clear"></div>\n                        </div>\n                    </li>\n                <% }); %>\n                </ul>\n            <% } %>\n            \n        <% }); %>\n        \n        <% if(cat_id != null){ %>\n            </div>\n        <%}%>\n    </div>\n</div>\n<div data-role="footer" id="footer">\n    <div class="footer_div">\n        <a href="#home">\n            <div><img src="" /></div>\n            <div>Accueil</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#">\n            <div><img src="" /></div>\n            <div>Nouveaut&eacute;s & Promotions</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#commander" class="active">\n            <div><img src="" /></div>\n            <div>Commander</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#parametre">\n            <div><img src="" /></div>\n            <div>Mon compte</div>\n        </a>\n    </div>\n    <div class="clear"></div> \n</div>';});
+
+define('view/commandeProduitView',["jquery", "underscore", "backbone", "text!template/commande_cat_produit.html"], function($, _, Backbone, commande_cat_produit_tpl) {
+    var CommandeProduitView = Backbone.View.extend({
+        
+        id: 'commande-produit-view',
+
+        template: _.template(commande_cat_produit_tpl),
+        
+        initialize: function(options) {
+            this.user = options.user;
+            this.commande = options.commande;
+            this.categorie_id = options.categorie_id
+            /*this.listenToOnce(this.user, 'pointage:failure', function() {
+                _.delay(this.loadingStop);
+                alert('Erreur de sauvegarde, Veuillez vous déconnecter et recommencer');
+            });*/
+        },
+        
+        loadingStart: function(text_show) {
+            $.mobile.loading('show', {
+                text: text_show,
+                textVisible: true,
+                theme: 'b',
+                html: ""
+            });
+        },
+
+        loadingStop: function() {
+            $.mobile.loading('hide');
+        },
+        
+        onClickFilter: function(e){
+            e.preventDefault();
+            var el = e.target;
+            /*if($(el).attr("name") == "entree") {
+                this.loadingStart("Sauvegarde de votre pointage ...");
+                this.pointeuse.pointage("entree", this.user);
+            } else if($(el).attr("name") == "sortie") {
+                this.pointeuse.pointage("sortie", this.user);
+            }*/
+        },
+        
+        render: function(eventName) {
+            var _this = this;
+            var xhr = $.get(config.api_url + "/rest-categorie/"+this.categorie_id, {"token": _this.user.get('token')}, null, 'jsonp');
+            xhr.done( function(data){
+                _this.$el.empty();
+                _this.$el.append(_this.template({
+                    categorie: data.result,
+                    user: _this.user.toJSON()
+                }));
+                _this.trigger('render:completed', _this);
+                return _this;
+            });
+            xhr.fail(function(data) {
+                $('#error').empty().html(data);
+                this.trigger('categorie:failure');
+            });
+            
+            
+        }
+    });
+    return CommandeProduitView;
+});
+
+define('text!template/stock_cat_produit.html',[],function () { return '<div data-role="header">\n    <div class="header_bloc_left">\n        <a href="#home">&eacute;tape pr&eacute;c&eacute;dente</a>\n    </div>\n    <h1>ASAR</h1>\n    <img style="float: left" src=""/>\n    <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    \n    <div id="page-title">\n        GERER MON STOCK\n        <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    </div>\n    \n    <div class="produit_nav">\n        <a href="#">Ajouter un produit</a>\n    </div>\n</div>\n\n\n\n\n<!--div id="nav-panel-user" data-role="panel" data-position="right" data-theme="b">\n    <div class="ui-panel-inner">\n        <h3><%= user.firstname %> <%= user.lastname %></h3>\n        <a href="#logout" data-rel="close" data-role="button" data-theme="c" data-icon="delete" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-left">\n        <span class="ui-btn-inner">Se deconnecter</span>\n        </a>\n    </div>\n</div-->\n<div data-role="content">\n    <div class="comm_prod_content">\n        <p>IMPORTANT : LES SORTIES DE STOCKS SE FONT UNIQUEMENT PAR CAISSES DE 6 OU 12 BOUTEILLES OU PAR FUT</p>\n        <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n            <tr>\n                <th style="border: solid 1px black;width: 20%">PRDUIT</th>\n                <th style="border: solid 1px black;width: 20%">REFERENCE PRODUIT</th>\n                <th style="border: solid 1px black;width: 20%">MON STAOCK</th>\n                <th style="border: solid 1px black;width: 20%">PRIX UNITAIRE H.T</th>\n                <th style="border: solid 1px black;width: 20%">QUANTITE</th>\n            </tr>\n            <tr>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">\n                    <div class="comm_prod_list_product_div3">-</div>\n                    <div class="comm_prod_list_product_div4"><input type="text" value="1" data-role="none"/></div>\n                    <div class="comm_prod_list_product_div5">+</div>\n                </td>\n            </tr>\n        </table>\n        <p>ENTREE DE STOCK MONTANT H.T. 0.00 €</p>\n        <p>LES PRODUITS ET QUANTITES AFFICHES SONT CEUX DE LA DERNIERE COMMANDE PASSEE</p>\n        \n        <div style="display: table;width: 100%">\n            <a href="#" style="width: 50%; display: table-cell; text-align: center">\n                <div style="width: 96%; color: white; background-color: black; border-bottom-left-radius: 15px; padding: 2%; ">\n                    Valider\n                </div>\n            </a>\n\n            <a href="#inventaire" style="width: 50%; display: table-cell; text-align: center">\n                <div style="width: 96%; color: white; background-color: black; border-bottom-right-radius: 15px; padding: 2%; ">\n                    MON STOCK MONTANT H.T XXXX\n                </div>\n            </a>\n            <div style="clear: both"></div>\n        </div>\n        \n        <% /*cat_id = null; %>\n        <% _.each(categorie.list_produit, function(cat){ %>\n            \n            <% if(cat_id != null && cat.ss_cat != null && cat.ss_cat.id != cat_id){ %>\n                </div>\n            <%}%>\n        \n            <% if(cat_id == null || (cat.ss_cat != null && cat.ss_cat.id != cat_id)) { %>\n                <div class="ss_cat_com_prod">\n                    <div class="ss_cat_com_prod_title"><% if(cat.ss_cat != null){ %> <%= cat.ss_cat.libelle %> <%}%></div>\n                <% if(cat.ss_cat != null) { cat_id = cat.ss_cat.id; } else {cat_id = 0;} %>\n            <% } %>\n            \n            <% if(cat.produit.length > 0) { %>\n                <ul class="comm_prod_list_product">\n                <% _.each(cat.produit, function(prod){ %>\n                    <li>\n                        <div>\n                            <div class="comm_prod_list_product_div1"><%= prod.libelle %></div>\n                            <div class="comm_prod_list_product_div2"><input type="text" value="4" data-role="none"/></div>\n                            <div class="comm_prod_list_product_div3">-</div>\n                            <div class="comm_prod_list_product_div4"><input type="text" value="1" data-role="none"/></div>\n                            <div class="comm_prod_list_product_div5">+</div>\n                            <div class="comm_prod_list_product_div6"><input type="button" value="commander" data-role="none"/></div>\n                            <div class="clear"></div>\n                        </div>\n                    </li>\n                <% }); %>\n                </ul>\n            <% } %>\n            \n        <% }); %>\n        \n        <% if(cat_id != null){ %>\n            </div>\n        <%}*/%>\n    </div>\n</div>\n<div data-role="footer" id="footer">\n    <div class="footer_div">\n        <a href="#home">\n            <div><img src="" /></div>\n            <div>Accueil</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#consult_stock" class="active">\n            <div><img src="" /></div>\n            <div>Consulter le stock</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#destock">\n            <div><img src="" /></div>\n            <div>D&eacute;stocker un article</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#parametre">\n            <div><img src="" /></div>\n            <div>Mon compte</div>\n        </a>\n    </div>\n    <div class="clear"></div>\n</div>';});
+
+define('view/stockProduitView',["jquery", "underscore", "backbone", "text!template/stock_cat_produit.html"], function($, _, Backbone, stock_cat_produit_tpl) {
+    var StockProduitView = Backbone.View.extend({
+        
+        id: 'stock-produit-view',
+
+        template: _.template(stock_cat_produit_tpl),
+        
+        initialize: function(options) {
+            this.user = options.user;
+            this.commande = options.commande;
+        },
+        
+        loadingStart: function(text_show) {
+            $.mobile.loading('show', {
+                text: text_show,
+                textVisible: true,
+                theme: 'b',
+                html: ""
+            });
+        },
+
+        loadingStop: function() {
+            $.mobile.loading('hide');
+        },
+        
+        onClickFilter: function(e){
+            e.preventDefault();
+            var el = e.target;
+            /*if($(el).attr("name") == "entree") {
+                this.loadingStart("Sauvegarde de votre pointage ...");
+                this.pointeuse.pointage("entree", this.user);
+            } else if($(el).attr("name") == "sortie") {
+                this.pointeuse.pointage("sortie", this.user);
+            }*/
+        },
+        
+        render: function(eventName) {
+            var _this = this;
+            var xhr = $.get(config.api_url + "/rest-categorie/1", {"token": _this.user.get('token')}, null, 'jsonp');
+            xhr.done( function(data){
+                _this.$el.empty();
+                _this.$el.append(_this.template({
+                    categorie: data.result,
+                    user: _this.user.toJSON()
+                }));
+                _this.trigger('render:completed', _this);
+                return _this;
+            });
+            xhr.fail(function(data) {
+                $('#error').empty().html(data);
+                this.trigger('categorie:failure');
+            });
+            
+            
+        }
+    });
+    return StockProduitView;
+});
+
+define('text!template/destock_cat_produit.html',[],function () { return '<div data-role="header">\n    <div class="header_bloc_left">\n        <a href="#home">&eacute;tape pr&eacute;c&eacute;dente</a>\n    </div>\n    <h1>ASAR</h1>\n    <img style="float: left" src=""/>\n    <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    \n    <div id="page-title">\n        D&Eacute;STOCKER UN ARTICLE\n        <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    </div>\n</div>\n\n\n\n\n<!--div id="nav-panel-user" data-role="panel" data-position="right" data-theme="b">\n    <div class="ui-panel-inner">\n        <h3><%= user.firstname %> <%= user.lastname %></h3>\n        <a href="#logout" data-rel="close" data-role="button" data-theme="c" data-icon="delete" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-left">\n        <span class="ui-btn-inner">Se deconnecter</span>\n        </a>\n    </div>\n</div-->\n<div data-role="content">\n    <div class="comm_prod_content">\n        <p>IMPORTANT : LES SORTIES DE STOCKS SE FONT UNIQUEMENT PAR CAISSES DE 6 OU 12 BOUTEILLES OU PAR FUT</p>\n        <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n            <tr>\n                <th style="border: solid 1px black;width: 20%">PRDUIT</th>\n                <th style="border: solid 1px black;width: 20%">REFERENCE PRODUIT</th>\n                <th style="border: solid 1px black;width: 20%">MON STAOCK</th>\n                <th style="border: solid 1px black;width: 20%">PRIX UNITAIRE H.T</th>\n                <th style="border: solid 1px black;width: 20%">QUANTITE</th>\n            </tr>\n            <tr>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">\n                    <div class="comm_prod_list_product_div3">-</div>\n                    <div class="comm_prod_list_product_div4"><input type="text" value="1" data-role="none"/></div>\n                    <div class="comm_prod_list_product_div5">+</div>\n                </td>\n            </tr>\n        </table>\n        <p>ENTREE DE STOCK MONTANT H.T. 0.00 €</p>\n        <p>LES PRODUITS ET QUANTITES AFFICHES SONT CEUX DE LA DERNIERE COMMANDE PASSEE</p>\n        \n        <div style="display: table;width: 100%">\n            <a href="#" style="width: 50%; display: table-cell; text-align: center">\n                <div style="width: 96%; color: white; background-color: black; border-bottom-left-radius: 15px; padding: 2%; ">\n                    Valider\n                </div>\n            </a>\n\n            <a href="#inventaire" style="width: 50%; display: table-cell; text-align: center">\n                <div style="width: 96%; color: white; background-color: black; border-bottom-right-radius: 15px; padding: 2%; ">\n                    MON STOCK MONTANT H.T XXXX\n                </div>\n            </a>\n            <div style="clear: both"></div>\n        </div>\n    </div>\n</div>\n<div data-role="footer" id="footer">\n    <div class="footer_div">\n        <a href="#home">\n            <div><img src="" /></div>\n            <div>Accueil</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#consult_stock">\n            <div><img src="" /></div>\n            <div>Consulter le stock</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#destock" class="active">\n            <div><img src="" /></div>\n            <div>D&eacute;stocker un article</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#parametre">\n            <div><img src="" /></div>\n            <div>Mon compte</div>\n        </a>\n    </div>\n    <div class="clear"></div>\n</div>';});
+
+define('view/destockProduitView',["jquery", "underscore", "backbone", "text!template/destock_cat_produit.html"], function($, _, Backbone, destock_cat_produit_tpl) {
+    var DestockProduitView = Backbone.View.extend({
+        
+        id: 'destock-produit-view',
+
+        template: _.template(destock_cat_produit_tpl),
+        
+        initialize: function(options) {
+            this.user = options.user;
+            this.commande = options.commande;
+            this.categorie_id = options.categorie_id
+        },
+        
+        loadingStart: function(text_show) {
+            $.mobile.loading('show', {
+                text: text_show,
+                textVisible: true,
+                theme: 'b',
+                html: ""
+            });
+        },
+
+        loadingStop: function() {
+            $.mobile.loading('hide');
+        },
+        
+        onClickFilter: function(e){
+            e.preventDefault();
+            var el = e.target;
+            /*if($(el).attr("name") == "entree") {
+                this.loadingStart("Sauvegarde de votre pointage ...");
+                this.pointeuse.pointage("entree", this.user);
+            } else if($(el).attr("name") == "sortie") {
+                this.pointeuse.pointage("sortie", this.user);
+            }*/
+        },
+        
+        render: function(eventName) {
+            var _this = this;
+            var xhr = $.get(config.api_url + "/rest-categorie/1", {"token": _this.user.get('token')}, null, 'jsonp');
+            xhr.done( function(data){
+                _this.$el.empty();
+                _this.$el.append(_this.template({
+                    categorie: data.result,
+                    user: _this.user.toJSON()
+                }));
+                _this.trigger('render:completed', _this);
+                return _this;
+            });
+            xhr.fail(function(data) {
+                $('#error').empty().html(data);
+                this.trigger('categorie:failure');
+            });
+            
+            
+        }
+    });
+    return DestockProduitView;
+});
+
+define('text!template/moncompte.html',[],function () { return '\n<div style="wisth: 100%; text-align: right; padding: 2%"><a href="#" id="cancel">Annuler</a></div>\n\n<div style="width: 100%; height: 15px;"></div>\n\n<div data-role="content" style="text-align: center">\n    <div style="border: solid 1px black; width: 65%; margin: auto; border-radius: 15px; overflow: hidden; word-wrap: break-word;">\n        <form>\n            <div id="error"></div>\n            <div style="width: 100%; text-align: center; padding: 2%">\n                <div style="font-weight: bold">CR&Eacute;ER UN COMPTE</div>\n                <div>Tous les champs requis sont obligatoires</div>\n            </div>\n            \n            <div style="width: 100%; border-bottom: solid 1px black"></div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="nom">Nom</label></div>\n                <input type="text" name="nom" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="prenom">Pr&eacute;nom</label></div>\n                <input type="text" name="prenom" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="societe">Soci&eacute;t&eacute;</label></div>\n                <input type="text" name="societe" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="adr_societe">Adresse Soci&eacute;t&eacute;</label></div>\n                <input type="text" name="adr_societe" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="cp">Code postal</label></div>\n                <input type="text" name="cp" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="ville">Ville</label></div>\n                <input type="text" name="ville" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="siret">SIRET</label></div>\n                <input type="text" name="siret" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="tva">N TVA INTERCOMMUNAUTAIRE</label></div>\n                <input type="text" name="tva" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="horaire">HORAIRES LIVRAISON</label></div>\n                <textarea name="horaire" class="required" ></textarea>\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="information">INFORMATION LIVREUR</label></div>\n                <textarea name="information" class="required" ></textarea>\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="email">EMAIL</label></div>\n                <input type="text" name="email" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="email_conf">CONFIRMATION EMAIL</label></div>\n                <input type="text" name="email_conf" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="password">PASSWORD</label></div>\n                <input type="password" name="password" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="password_conf">CONFIRMATION PASSWORD</label></div>\n                <input type="password" name="password_conf" value="" class="required" />\n            </div>\n            \n            \n            <div style="clear: both"></div>\n\n            <p style="text-align: center">ATTENTION VOTRE COMPTE NE SERA  ACTIF QU\'APRES VALIDATION DE VOTRE COMMERCIAL ASAR</p>\n            \n            <div style="display: table;width: 100%">\n                <a href="#encoursFacturation" style="width: 50%; display: table-cell;">\n                    <div style="width: 100%; color: white; background-color: black; border-bottom-left-radius: 15px; padding: 2%; ">\n                        En cours de facturation\n                    </div>\n                </a>\n                \n                <a  href="#monequipe" id="submitform" style="width: 50%; display: table-cell;">\n                    <div style="width: 100%; color: white; background-color: black; border-bottom-right-radius: 15px; padding: 2%; ">\n                        Valider et g&eacute;rer mon équipe\n                    </div>\n                </a>\n                <div style="clear: both"></div>\n            </div>\n\n            <!--div data-corners="true" data-shadow="true" data-iconshadow="true"\n                    data-wrapperels="span" data-icon="null" data-iconpos="null"\n                    data-theme="b"\n\n                    aria-disabled="false">\n                    <button type="submit" data-theme="b" name="submit"\n                            value="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>\n            </div-->\n        </form>\n    </div>\n</div>\n';});
+
+define('view/MonCompteView',["jquery", "underscore", "backbone", "backbone.syphon", "text!template/moncompte.html"], function($, _, Backbone, Syphon, moncompte_tpl) {
+    var MonCompteView = Backbone.View.extend({
+        
+        template: _.template(moncompte_tpl),
+        
+        id: 'moncompte-view',
+
+        initialize: function(options) {
+            this.user = options.user;
+            this.listenTo(this.user, 'user:asknew', function(model) {
+                Backbone.history.navigate("login", true);
+            });
+        },
+
+        loadingStart: function() {
+            $.mobile.loading('show', {
+                text: 'Tentative de connexion',
+                textVisible: true,
+                theme: 'b',
+                html: ""
+            });
+        },
+
+        loadingStop: function() {
+            $.mobile.loading('hide');
+        },
+
+        saveDemandeUser: function(data) {
+            this.listenToOnce(this.user, 'login:failure', function() {
+                _.delay(this.loadingStop);
+            });
+            this.user.askNew(data);
+        },
+
+        onSubmit: function(e) {
+            e.preventDefault();
+            this.loadingStart();
+            var data = Backbone.Syphon.serialize(this);
+            this.saveDemandeUser(data);
+            Backbone.history.navigate("login", true);
+        },
+        
+        /*events: {
+            "submit": "onSubmit",
+            "click a#submitform": "submitform",
+            "click a#cancel": "cancel",
+        },*/
+        
+        submitform: function(e) {
+            e.preventDefault();
+            $('body form').submit();
+        },
+        
+        cancel: function(e) {
+            Backbone.history.navigate("login", true);
+        },
+        
+        render: function(eventName) {
+            $(this.el).html(this.template({}));
+            $('body').removeClass("ui-panel-page-container-themed");
+            $('body').removeClass("ui-panel-page-container-b");
+            $('body').removeClass("ui-panel-page-container");
+            return this;
+        }
+    });
+    return MonCompteView;
+});
+
+define('text!template/encours_facturation.html',[],function () { return '<div data-role="header">\n    <div class="header_bloc_left">\n        <a href="#home">&eacute;tape pr&eacute;c&eacute;dente</a>\n    </div>\n    <h1>ASAR</h1>\n    <img style="float: left" src=""/>\n    <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    \n    <div id="page-title">\n        EN-COURS DE FACTURATION\n        <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    </div>\n</div>\n\n\n\n\n<!--div id="nav-panel-user" data-role="panel" data-position="right" data-theme="b">\n    <div class="ui-panel-inner">\n        <h3><%= user.firstname %> <%= user.lastname %></h3>\n        <a href="#logout" data-rel="close" data-role="button" data-theme="c" data-icon="delete" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-left">\n        <span class="ui-btn-inner">Se deconnecter</span>\n        </a>\n    </div>\n</div-->\n<div data-role="content">\n    <div style="margin-top: 1em; margin-bottom: 1em">\n        <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n            <tr>\n                <th style="border: solid 1px black;width: 20%">DATE</th>\n                <th style="border: solid 1px black;width: 20%">N DE COMMANDE</th>\n                <th style="border: solid 1px black;width: 20%">MONTANT FACUTURE</th>\n                <th style="border: solid 1px black;width: 20%">MONTANT REGLEMENT</th>\n                <th style="border: solid 1px black;width: 20%">MODE REGLEMENT</th>\n            </tr>\n            <tr>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n            </tr>\n        </table>\n    </div>\n    \n    <div style="display: table;width: 100%">\n        <a href="#" style="width: 50%; display: table-cell; text-align: center">\n            <div style="width: 96%; color: white; background-color: black; border-bottom-left-radius: 15px; padding: 2%; ">\n                Envoyer par mail\n            </div>\n        </a>\n\n        <a href="#" style="width: 50%; display: table-cell; text-align: center">\n            <div style="width: 96%; color: white; background-color: black; border-bottom-right-radius: 15px; padding: 2%; ">\n                Page suivante\n            </div>\n        </a>\n        <div style="clear: both"></div>\n    </div>\n</div>\n\n<div data-role="footer" id="footer">\n    <!-- a href="#logout">\n        <div><img src="" /></div>\n        <div>Se deconnecter</div>\n    </a-->\n    COMPTE SOCIETE XXXX\n</div>';});
+
+define('view/EncoursFacturationView',["jquery", "underscore", "backbone", "text!template/encours_facturation.html"], function($, _, Backbone, encours_fac_tpl) {
+    var EncoursFacturationView = Backbone.View.extend({
+        
+        id: 'param-acc-view',
+
+        template: _.template(encours_fac_tpl),
+        
+        initialize: function(options) {
+            this.user = options.user;
+            this.bind('render:completed', function() {
+               $('a.ui-btn').removeClass('ui-btn');
+            });
+        },
+        
+        /*loadingStart: function(text_show) {
+            $.mobile.loading('show', {
+                text: text_show,
+                textVisible: true,
+                theme: 'b',
+                html: ""
+            });
+        },
+
+        loadingStop: function() {
+            $.mobile.loading('hide');
+        },
+        
+        onClickFilter: function(e){
+            e.preventDefault();
+            var el = e.target;
+            if($(el).attr("name") == "entree") {
+                this.loadingStart("Sauvegarde de votre pointage ...");
+                this.pointeuse.pointage("entree", this.user);
+            } else if($(el).attr("name") == "sortie") {
+                this.pointeuse.pointage("sortie", this.user);
+            }
+        },*/
+        
+        render: function(eventName) {
+            this.$el.empty();
+            this.$el.append(this.template({
+                user: this.user.toJSON()
+            }));
+            this.trigger('render:completed', this);
+            /*this.$el.find('#entree, #sortie').on('click', _.bind(this.onClickFilter, this));*/
+            return this;
+        }
+    });
+    return EncoursFacturationView;
+});
+
+define('text!template/mon_equipe.html',[],function () { return '<div data-role="header">\n    <div class="header_bloc_left">\n        <a href="#home">&eacute;tape pr&eacute;c&eacute;dente</a>\n    </div>\n    <h1>ASAR</h1>\n    <img style="float: left" src=""/>\n    <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    \n    <div id="page-title">\n        JE CREE MON EQUIPE\n        <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    </div>\n</div>\n\n\n\n\n<!--div id="nav-panel-user" data-role="panel" data-position="right" data-theme="b">\n    <div class="ui-panel-inner">\n        <h3><%= user.firstname %> <%= user.lastname %></h3>\n        <a href="#logout" data-rel="close" data-role="button" data-theme="c" data-icon="delete" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-left">\n        <span class="ui-btn-inner">Se deconnecter</span>\n        </a>\n    </div>\n</div-->\n<div data-role="content">\n    <div class="comm_1_content">\n        <div class="ligne bg_haut">\n            <div data-id="" class="comm_1_cat bg_droite"><div>NOUVEAU MEMBRE</div></div>\n            <div data-id="" class="comm_1_cat "><div>NOUVEAU MEMBRE</div></div>\n            <div data-id="" class="comm_1_cat bg_droite"><div>NOUVEAU MEMBRE</div></div>\n            <div data-id="" class="comm_1_cat "><div>NOUVEAU MEMBRE</div></div>\n            <div data-id="" class="comm_1_cat bg_droite"><div>NOUVEAU MEMBRE</div></div>\n            <div data-id="" class="comm_1_cat "><div>NOUVEAU MEMBRE</div></div>\n        </div>\n        <div class="clear"></div> \n    </div>\n    \n    <p style="text-align: center">ATTENTION VOTRE COMPTE NE SERA  ACTIF QU\'APRES VALIDATION DE VOTRE COMMERCIAL ASAR</p>\n    \n    <div style="display: table;width: 96%; margin:auto; text-align: center">\n        <a  href="#" id="submitform" style="width: 89%;">\n            <div style="width: 100%; color: white; background-color: black; border-bottom-right-radius: 15px;border-bottom-left-radius: 15px; padding: 2% 0; ">\n                Valider\n            </div>\n        </a>\n    </div>\n</div>\n<div data-role="footer" id="footer">\n    <div class="footer_div">\n        <a href="#home">\n            <div><img src="" /></div>\n            <div>Accueil</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#">\n            <div><img src="" /></div>\n            <div>Nouveaut&eacute;s & Promotions</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#commander" class="active">\n            <div><img src="" /></div>\n            <div>Commander</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#parametre">\n            <div><img src="" /></div>\n            <div>Mon compte</div>\n        </a>\n    </div>\n    <div class="clear"></div> \n</div>';});
+
+define('view/MonEquipeView',["jquery", "underscore", "backbone", "text!template/mon_equipe.html"], function($, _, Backbone, mon_equipe_tpl) {
+    var MonEquipeView = Backbone.View.extend({
+        
+        id: 'mon_equipe-view',
+
+        template: _.template(mon_equipe_tpl),
+        
+        initialize: function(options) {
+            this.user = options.user;
+            this.commande = options.commande;
+            /*this.listenToOnce(this.user, 'pointage:failure', function() {
+                _.delay(this.loadingStop);
+                alert('Erreur de sauvegarde, Veuillez vous déconnecter et recommencer');
+            });*/
+            this.bind('render:completed', function() {
+               $('a.ui-btn').removeClass('ui-btn');
+            });
+        },
+        
+        loadingStart: function(text_show) {
+            $.mobile.loading('show', {
+                text: text_show,
+                textVisible: true,
+                theme: 'b',
+                html: ""
+            });
+        },
+
+        loadingStop: function() {
+            $.mobile.loading('hide');
+        },
+        
+        onClickFilter: function(e){
+            e.preventDefault();
+            var el = e.target;
+            if($(el).parent().hasClass("comm_1_cat")) {
+                Backbone.history.navigate("commanderProduit/"+$(el).parent().attr('data-id'), true);
+            }
+            /*if($(el).attr("name") == "entree") {
+                this.loadingStart("Sauvegarde de votre pointage ...");
+                this.pointeuse.pointage("entree", this.user);
+            } else if($(el).attr("name") == "sortie") {
+                this.pointeuse.pointage("sortie", this.user);
+            }*/
+        },
+        
+        render: function(eventName) {
+            var _this = this;
+            var xhr = $.get(config.api_url + "/rest-categorie", {"token": _this.user.get('token')}, null, 'jsonp');
+            xhr.done( function(data){
+                _this.$el.empty();
+                _this.$el.append(_this.template({
+                    categorie: data.result,
+                    user: _this.user.toJSON()
+                }));
+                _this.trigger('render:completed', _this);
+                _this.$el.find('.comm_1_cat').on('click', _.bind(_this.onClickFilter, _this));
+                return _this;
+            });
+            xhr.fail(function(data) {
+                $('#error').empty().html(data);
+                this.trigger('categorie:failure');
+            });
+            
+            
+        }
+    });
+    return MonEquipeView;
+});
+
+define('text!template/inventaire.html',[],function () { return '<div data-role="header">\n    <div class="header_bloc_left">\n        <a href="#home">&eacute;tape pr&eacute;c&eacute;dente</a>\n    </div>\n    <h1>ASAR</h1>\n    <img style="float: left" src=""/>\n    <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    \n    <div id="page-title">\n        INVENTAIRE\n        <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    </div>\n    \n    <div class="produit_nav">\n        <a href="#">Ajouter un produit</a>\n    </div>\n</div>\n\n\n\n\n<!--div id="nav-panel-user" data-role="panel" data-position="right" data-theme="b">\n    <div class="ui-panel-inner">\n        <h3><%= user.firstname %> <%= user.lastname %></h3>\n        <a href="#logout" data-rel="close" data-role="button" data-theme="c" data-icon="delete" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-left">\n        <span class="ui-btn-inner">Se deconnecter</span>\n        </a>\n    </div>\n</div-->\n<div data-role="content">\n    <div class="comm_prod_content">\n        <p>IMPORTANT : LES SORTIES DE STOCKS SE FONT UNIQUEMENT PAR CAISSES DE 6 OU 12 BOUTEILLES OU PAR FUT</p>\n        <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n            <tr>\n                <th style="border: solid 1px black;width: 20%">PRDUIT</th>\n                <th style="border: solid 1px black;width: 20%">REFERENCE PRODUIT</th>\n                <th style="border: solid 1px black;width: 20%">MON STAOCK</th>\n                <th style="border: solid 1px black;width: 20%">PRIX UNITAIRE H.T</th>\n                <th style="border: solid 1px black;width: 20%">PRIX TOTAL H.T</th>\n            </tr>\n            <tr>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n            </tr>\n        </table>\n        <p>ENTREE DE STOCK MONTANT H.T. 0.00 €</p>\n        <p>LES PRODUITS ET QUANTITES AFFICHES SONT CEUX DE LA DERNIERE COMMANDE PASSEE</p>\n        \n        <div style="width: 96%">\n            <a href="#" style="width: 100%; text-align: center">\n                <div style="width: 100%; color: white; background-color: black; border-bottom-left-radius: 15px; padding: 2% 0; ">\n                    ENVOYER PAR MAIL\n                </div>\n            </a>\n            <div style="clear: both"></div>\n        </div>\n        \n        <% /*cat_id = null; %>\n        <% _.each(categorie.list_produit, function(cat){ %>\n            \n            <% if(cat_id != null && cat.ss_cat != null && cat.ss_cat.id != cat_id){ %>\n                </div>\n            <%}%>\n        \n            <% if(cat_id == null || (cat.ss_cat != null && cat.ss_cat.id != cat_id)) { %>\n                <div class="ss_cat_com_prod">\n                    <div class="ss_cat_com_prod_title"><% if(cat.ss_cat != null){ %> <%= cat.ss_cat.libelle %> <%}%></div>\n                <% if(cat.ss_cat != null) { cat_id = cat.ss_cat.id; } else {cat_id = 0;} %>\n            <% } %>\n            \n            <% if(cat.produit.length > 0) { %>\n                <ul class="comm_prod_list_product">\n                <% _.each(cat.produit, function(prod){ %>\n                    <li>\n                        <div>\n                            <div class="comm_prod_list_product_div1"><%= prod.libelle %></div>\n                            <div class="comm_prod_list_product_div2"><input type="text" value="4" data-role="none"/></div>\n                            <div class="comm_prod_list_product_div3">-</div>\n                            <div class="comm_prod_list_product_div4"><input type="text" value="1" data-role="none"/></div>\n                            <div class="comm_prod_list_product_div5">+</div>\n                            <div class="comm_prod_list_product_div6"><input type="button" value="commander" data-role="none"/></div>\n                            <div class="clear"></div>\n                        </div>\n                    </li>\n                <% }); %>\n                </ul>\n            <% } %>\n            \n        <% }); %>\n        \n        <% if(cat_id != null){ %>\n            </div>\n        <%}*/%>\n    </div>\n</div>\n<div data-role="footer" id="footer">\n    <div class="footer_div">\n        <a href="#home">\n            <div><img src="" /></div>\n            <div>Accueil</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#consult_stock" class="active">\n            <div><img src="" /></div>\n            <div>Consulter le stock</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#destock">\n            <div><img src="" /></div>\n            <div>D&eacute;stocker un article</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#parametre">\n            <div><img src="" /></div>\n            <div>Mon compte</div>\n        </a>\n    </div>\n    <div class="clear"></div>\n</div>';});
+
+define('view/InventaireView',["jquery", "underscore", "backbone", "text!template/inventaire.html"], function($, _, Backbone, inventaire_tpl) {
+    var InventaireView = Backbone.View.extend({
+        
+        id: 'inventaire-view',
+
+        template: _.template(inventaire_tpl),
+        
+        initialize: function(options) {
+            this.user = options.user;
+            this.commande = options.commande;
+        },
+        
+        loadingStart: function(text_show) {
+            $.mobile.loading('show', {
+                text: text_show,
+                textVisible: true,
+                theme: 'b',
+                html: ""
+            });
+        },
+
+        loadingStop: function() {
+            $.mobile.loading('hide');
+        },
+        
+        onClickFilter: function(e){
+            e.preventDefault();
+            var el = e.target;
+            /*if($(el).attr("name") == "entree") {
+                this.loadingStart("Sauvegarde de votre pointage ...");
+                this.pointeuse.pointage("entree", this.user);
+            } else if($(el).attr("name") == "sortie") {
+                this.pointeuse.pointage("sortie", this.user);
+            }*/
+        },
+        
+        render: function(eventName) {
+            var _this = this;
+            var xhr = $.get(config.api_url + "/rest-categorie/1", {"token": _this.user.get('token')}, null, 'jsonp');
+            xhr.done( function(data){
+                _this.$el.empty();
+                _this.$el.append(_this.template({
+                    categorie: data.result,
+                    user: _this.user.toJSON()
+                }));
+                _this.trigger('render:completed', _this);
+                return _this;
+            });
+            xhr.fail(function(data) {
+                $('#error').empty().html(data);
+                this.trigger('categorie:failure');
+            });
+            
+            
+        }
+    });
+    return InventaireView;
+});
+
+define('text!template/historique_commande.html',[],function () { return '<div data-role="header">\n    <div class="header_bloc_left">\n        <a href="#home">&eacute;tape pr&eacute;c&eacute;dente</a>\n    </div>\n    <h1>ASAR</h1>\n    <img style="float: left" src=""/>\n    <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    \n    <div id="page-title">\n        HISTORIQUE DE MES COMMANDES\n        <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    </div>\n    \n    <div class="produit_nav">\n        <a href="#">Ajouter un produit</a>\n    </div>\n</div>\n\n\n<div data-role="content">\n    <div class="comm_prod_content">\n        <div style="margin-top: 1em; margin-bottom: 1em">\n            <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n                <tr>\n                    <th style="border: solid 1px black;width: 33%">COMMANDE</th>\n                    <th style="border: solid 1px black;width: 33%">DATE</th>\n                    <th style="border: solid 1px black;width: 33%">MONTANT H.T</th>\n                </tr>\n                <tr>\n                    <td style="border: solid 1px black;">&nbsp;</td>\n                    <td style="border: solid 1px black;">&nbsp;</td>\n                    <td style="border: solid 1px black;">&nbsp;</td>\n                </tr>\n            </table>\n        </div>\n        \n        <div style="display: table;width: 100%">\n        <a href="#" style="width: 50%; display: table-cell; text-align: center">\n            <div style="width: 96%; color: white; background-color: black; border-bottom-left-radius: 15px; padding: 2%; ">\n                Envoyer par mail\n            </div>\n        </a>\n\n        <a href="#" style="width: 50%; display: table-cell; text-align: center">\n            <div style="width: 96%; color: white; background-color: black; border-bottom-right-radius: 15px; padding: 2%; ">\n                Page suivante\n            </div>\n        </a>\n        <div style="clear: both"></div>\n    </div>\n</div>\n<div data-role="footer" id="footer">\n    <div class="footer_div">\n        <a href="#home">\n            <div><img src="" /></div>\n            <div>Accueil</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#consult_stock" class="active">\n            <div><img src="" /></div>\n            <div>Consulter le stock</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#destock">\n            <div><img src="" /></div>\n            <div>D&eacute;stocker un article</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#parametre">\n            <div><img src="" /></div>\n            <div>Mon compte</div>\n        </a>\n    </div>\n    <div class="clear"></div>\n</div>';});
+
+define('view/HistoriqueCommandeView',["jquery", "underscore", "backbone", "text!template/historique_commande.html"], function($, _, Backbone, historique_commande_tpl) {
+    var HistoriqueCommandeView = Backbone.View.extend({
+        
+        id: 'historique_commande-view',
+
+        template: _.template(historique_commande_tpl),
+        
+        initialize: function(options) {
+            this.user = options.user;
+            this.commande = options.commande;
+        },
+        
+        loadingStart: function(text_show) {
+            $.mobile.loading('show', {
+                text: text_show,
+                textVisible: true,
+                theme: 'b',
+                html: ""
+            });
+        },
+
+        loadingStop: function() {
+            $.mobile.loading('hide');
+        },
+        
+        onClickFilter: function(e){
+            e.preventDefault();
+            var el = e.target;
+            /*if($(el).attr("name") == "entree") {
+                this.loadingStart("Sauvegarde de votre pointage ...");
+                this.pointeuse.pointage("entree", this.user);
+            } else if($(el).attr("name") == "sortie") {
+                this.pointeuse.pointage("sortie", this.user);
+            }*/
+        },
+        
+        render: function(eventName) {
+            var _this = this;
+            var xhr = $.get(config.api_url + "/rest-categorie/1", {"token": _this.user.get('token')}, null, 'jsonp');
+            xhr.done( function(data){
+                _this.$el.empty();
+                _this.$el.append(_this.template({
+                    categorie: data.result,
+                    user: _this.user.toJSON()
+                }));
+                _this.trigger('render:completed', _this);
+                return _this;
+            });
+            xhr.fail(function(data) {
+                $('#error').empty().html(data);
+                this.trigger('categorie:failure');
+            });
+            
+            
+        }
+    });
+    return HistoriqueCommandeView;
+});
+define('router/app',["jquery", "underscore", "backbone", "backbone.queryparams", "backbone.route-filter", 
+    'backbone.localStorage', "backbone.token", "model/user-local",  "model/commande-local", 
+    "view/homeView", "view/loginView", "view/creationcompteView", "view/parametreView",
+    "view/commandeView", "view/stockView","view/cassePerteView", "view/CommanderMenuView",
+    "view/commandeProduitView", "view/stockProduitView", "view/destockProduitView",
+    "view/MonCompteView", "view/EncoursFacturationView", "view/MonEquipeView", "view/InventaireView",
+    "view/HistoriqueCommandeView",], 
+function($, _, Backbone, QueryParams, RouterFilter,
+    LocalStorage, Token, UserLocalModel, CommandeLocalModel,
+    HomeView, LoginView, CreationCompteView, ParametreView,
+    CommandeView, StockView,CassePerteView, CommanderMenuView,
+    CommandeProduitView, StockProduitView, DestockProduitView,
+    MonCompteView, EncoursFacturationView, MonEquipeView, InventaireView,
+    HistoriqueCommandeView) {
+    
     var userLocal = new UserLocalModel();
     userLocal.fetch();
 
@@ -13847,8 +14803,24 @@ define('router/app',["jquery", "underscore", "backbone", 'backbone.localStorage'
         routes: {
             "": "home",
             "home": "home",
+            "creationcompte": "creationcompte",
             "login": "login",
-            "logout": "logout"
+            "commanderMenu": "commanderMenu",
+            "commander": "commander",
+            "commanderProduit/:id": "commanderProduit",
+            "historiqueCommande": "historiqueCommande",
+            "consult_stock": "consult_stock",
+            "stockProduit": "stockProduit",
+            "cassePerteProduit" : "cassePerteProduit",
+            "inventaire": "inventaire",
+            "destockProduit": "destockProduit",
+            "parametre": "parametre",
+            "logout": "logout",
+            "sync/:type": "sync",
+            "moncompte" : "moncompte",
+            "encoursFacturation" : "encoursfacturation",
+            "monequipe" : "monequipe",
+            "inventaire" : "inventaire",
         },
         
         before: {
@@ -13858,7 +14830,7 @@ define('router/app',["jquery", "underscore", "backbone", 'backbone.localStorage'
         checkAuthorization: function(fragment, args, next) {
             var isLogged = this.userLocal.get('is_logged');
             Backbone.TokenAuth.setToken(this.userLocal.get('token'));
-            if (!isLogged && fragment != "login"){
+            if (!isLogged && fragment != "login" && fragment != "creationcompte" ){
                 Backbone.history.navigate('login',  {trigger: true});
             } 
             else if (isLogged && fragment == "login"){
@@ -13875,6 +14847,7 @@ define('router/app',["jquery", "underscore", "backbone", 'backbone.localStorage'
                 return false;
             });
             this.firstPage = true;
+            console.log(userLocal);
             this.userLocal = userLocal;
         },
         logout: function() {
@@ -13893,8 +14866,115 @@ define('router/app',["jquery", "underscore", "backbone", 'backbone.localStorage'
         },
         home: function() {
             var view = new HomeView({
-                user: this.userLocal,
-                pointeuse: new PointageLocalModel()
+                user: this.userLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        commanderMenu: function() {
+            var view = new CommanderMenuView({
+                commande: new CommandeLocalModel(),
+                user: this.userLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        commander: function() {
+            var view = new CommandeView({
+                commande: new CommandeLocalModel(),
+                user: this.userLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        historiqueCommande: function() {
+            var view = new HistoriqueCommandeView({
+                commande: new CommandeLocalModel(),
+                user: this.userLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        monequipe: function() {
+            var view = new MonEquipeView({
+                user: this.userLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        commanderProduit: function(id) {
+            var view = new CommandeProduitView({
+                commande: new CommandeLocalModel(),
+                categorie_id: id,
+                user: this.userLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        consult_stock: function() {
+            var view = new StockView({
+                commande: new CommandeLocalModel(),
+                user: this.userLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        stockProduit: function() {
+            var view = new StockProduitView({
+                commande: new CommandeLocalModel(),
+                user: this.userLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        cassePerteProduit: function() {
+            var view = new CassePerteView({
+                commande: new CommandeLocalModel(),
+                user: this.userLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        inventaire: function() {
+            var view = new InventaireView({
+                commande: new CommandeLocalModel(),
+                user: this.userLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        destockProduit: function() {
+            var view = new DestockProduitView({
+                commande: new CommandeLocalModel(),
+                user: this.userLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        parametre: function() {
+            var view = new ParametreView({
+                user: this.userLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        encoursfacturation: function() {
+            var view = new EncoursFacturationView({
+                user: this.userLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        moncompte : function() {
+            var view = new MonCompteView({
+                user: this.userLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        creationcompte: function() {
+            var view = new CreationCompteView({
+                user: this.userLocal
             });
             view.render();
             this.changePage(view);

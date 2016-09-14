@@ -1,0 +1,117 @@
+
+<div style="wisth: 100%; text-align: right; padding: 2%"><a href="#" id="cancel">Annuler</a></div>
+
+<div style="width: 100%; height: 15px;"></div>
+
+<div data-role="content" style="text-align: center">
+    <div style="border: solid 1px black; width: 65%; margin: auto; border-radius: 15px; overflow: hidden; word-wrap: break-word;">
+        <form>
+            <div id="error"></div>
+            <div style="width: 100%; text-align: center; padding: 2%">
+                <div style="font-weight: bold">CR&Eacute;ER UN COMPTE</div>
+                <div>Tous les champs requis sont obligatoires</div>
+            </div>
+            
+            <div style="width: 100%; border-bottom: solid 1px black"></div>
+            
+            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
+                <div style="width: 100%; text-align: left"><label for="nom">Nom</label></div>
+                <input type="text" name="nom" value="" class="required" />
+            </div>
+            
+            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
+                <div style="width: 100%; text-align: left"><label for="prenom">Pr&eacute;nom</label></div>
+                <input type="text" name="prenom" value="" class="required" />
+            </div>
+            
+            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
+                <div style="width: 100%; text-align: left"><label for="societe">Soci&eacute;t&eacute;</label></div>
+                <input type="text" name="societe" value="" class="required" />
+            </div>
+            
+            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
+                <div style="width: 100%; text-align: left"><label for="adr_societe">Adresse Soci&eacute;t&eacute;</label></div>
+                <input type="text" name="adr_societe" value="" class="required" />
+            </div>
+            
+            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
+                <div style="width: 100%; text-align: left"><label for="cp">Code postal</label></div>
+                <input type="text" name="cp" value="" class="required" />
+            </div>
+            
+            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
+                <div style="width: 100%; text-align: left"><label for="ville">Ville</label></div>
+                <input type="text" name="ville" value="" class="required" />
+            </div>
+            
+            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
+                <div style="width: 100%; text-align: left"><label for="siret">SIRET</label></div>
+                <input type="text" name="siret" value="" class="required" />
+            </div>
+            
+            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
+                <div style="width: 100%; text-align: left"><label for="tva">N TVA INTERCOMMUNAUTAIRE</label></div>
+                <input type="text" name="tva" value="" class="required" />
+            </div>
+            
+            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
+                <div style="width: 100%; text-align: left"><label for="horaire">HORAIRES LIVRAISON</label></div>
+                <textarea name="horaire" class="required" ></textarea>
+            </div>
+            
+            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
+                <div style="width: 100%; text-align: left"><label for="information">INFORMATION LIVREUR</label></div>
+                <textarea name="information" class="required" ></textarea>
+            </div>
+            
+            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
+                <div style="width: 100%; text-align: left"><label for="email">EMAIL</label></div>
+                <input type="text" name="email" value="" class="required" />
+            </div>
+            
+            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
+                <div style="width: 100%; text-align: left"><label for="email_conf">CONFIRMATION EMAIL</label></div>
+                <input type="text" name="email_conf" value="" class="required" />
+            </div>
+            
+            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
+                <div style="width: 100%; text-align: left"><label for="password">PASSWORD</label></div>
+                <input type="password" name="password" value="" class="required" />
+            </div>
+            
+            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
+                <div style="width: 100%; text-align: left"><label for="password_conf">CONFIRMATION PASSWORD</label></div>
+                <input type="password" name="password_conf" value="" class="required" />
+            </div>
+            
+            
+            <div style="clear: both"></div>
+
+            <p style="text-align: center">ATTENTION VOTRE COMPTE NE SERA  ACTIF QU'APRES VALIDATION DE VOTRE COMMERCIAL ASAR</p>
+            
+            <div style="display: table;width: 100%">
+                <a href="#encoursFacturation" style="width: 50%; display: table-cell;">
+                    <div style="width: 100%; color: white; background-color: black; border-bottom-left-radius: 15px; padding: 2%; ">
+                        En cours de facturation
+                    </div>
+                </a>
+                
+                <a  href="#monequipe" id="submitform" style="width: 50%; display: table-cell;">
+                    <div style="width: 100%; color: white; background-color: black; border-bottom-right-radius: 15px; padding: 2%; ">
+                        Valider et g&eacute;rer mon équipe
+                    </div>
+                </a>
+                <div style="clear: both"></div>
+            </div>
+
+            <!--div data-corners="true" data-shadow="true" data-iconshadow="true"
+                    data-wrapperels="span" data-icon="null" data-iconpos="null"
+                    data-theme="b"
+
+                    aria-disabled="false">
+                    <button type="submit" data-theme="b" name="submit"
+                            value="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>
+            </div-->
+        </form>
+    </div>
+</div>

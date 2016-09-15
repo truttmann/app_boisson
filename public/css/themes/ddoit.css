@@ -11,7 +11,11 @@
     font-family: "ff_more_pro_medium";
     src: url('../fonts/FFMorePro-Medium.otf') format('truetype');
 }
-
+@font-face {
+    font-family: "ff_more_pro_bold";
+    src: url('../fonts/FFMorePro-Bold.otf') format('truetype');
+    font-weight: bold;
+}
 @font-face {
     font-family: "ff_more_pro_black";
     src: url('../fonts/FFMorePro-Black.otf') format('truetype');
@@ -25,6 +29,9 @@
 }
 a {
     text-decoration: none;
+}
+a:hover, a:visited {
+    color: black !important;
 }
 body {
     background-image: url("../images/icons-png/backgroundcenter.png");
@@ -78,6 +85,8 @@ body {
 }
 #lien_menu_p .menu_p_title {
     color: black !important;
+    text-align: left;
+    padding: 0.2em;
 }
 #lien_menu_p .menu_p_img{
     float: right;
@@ -295,8 +304,15 @@ a:visited {
     background: none !important;
 }
 
+.ui-content {
+    padding: 5em 2em 0 2em !important;
+}
+
 .text-left {
     text-align: left;
+}
+.text-center {
+    text-align: center;
 }
 
 .qua_pt {
@@ -318,6 +334,9 @@ a:visited {
 .ffmorepromed {
     font-family: "ff_more_pro_medium";
 }
+.ffmoreprbold {
+    font-family: "ff_more_pro_bold";
+}
 
 
 .formvalid {
@@ -329,8 +348,8 @@ a:visited {
 
 .ui-footer {
     background: white !important;
+    padding: 1em;
 }
-
-.cancel:before {
-    content:url(../images/icons-png/cancel.png);
+.required {
+    color: red;
 }

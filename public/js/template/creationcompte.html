@@ -1,96 +1,99 @@
+<div data-role="header" id="headerappli" style="position: relative">
+    <h1>ASAR</h1>
+    <div style="position: absolute; right: 1em; top: 3em;"><a href="#login" id="cancel"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>
+</div><!-- /header -->
 
-<div style="wisth: 100%; text-align: right; padding: 2%"><a href="#" id="cancel">Annuler</a></div>
-
-<div style="width: 100%; height: 15px;"></div>
+<div data-role="navbar">
+    <ul>
+        <li>CREATION DE COMPTE</li>
+    </ul>
+</div><!-- /navbar -->
 
 <div data-role="content" style="text-align: center">
     <div style="border: solid 1px black; width: 65%; margin: auto; border-radius: 15px;">
         <form>
             <div id="error"></div>
-            <div style="width: 100%; text-align: center; padding: 2%">
-                <div style="font-weight: bold">CR&Eacute;ER UN COMPTE</div>
-                <div>Tous les champs requis sont obligatoires</div>
-            </div>
+                
             
             <div style="width: 100%; border-bottom: solid 1px black"></div>
             
             <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
-                <div style="width: 100%; text-align: left"><label for="nom">Nom</label></div>
+                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="nom">Nom<span class="required">*</span></label></div>
                 <input type="text" name="nom" value="" class="required" required="required" />
             </div>
             
             <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
-                <div style="width: 100%; text-align: left"><label for="prenom">Pr&eacute;nom</label></div>
+                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="prenom">Pr&eacute;nom<span class="required">*</span></label></div>
                 <input type="text" name="prenom" value="" class="required" required="required" />
             </div>
             
             <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
-                <div style="width: 100%; text-align: left"><label for="societe">Soci&eacute;t&eacute;</label></div>
+                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="societe">Soci&eacute;t&eacute;<span class="required">*</span></label></div>
                 <input type="text" name="societe" value="" class="required" required="required" />
             </div>
             
             <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
-                <div style="width: 100%; text-align: left"><label for="adr_societe">Adresse Soci&eacute;t&eacute;</label></div>
+                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="adr_societe">Adresse Soci&eacute;t&eacute;<span class="required">*</span></label></div>
                 <input type="text" name="adr_societe" value="" class="required" required="required" />
             </div>
             
             <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
-                <div style="width: 100%; text-align: left"><label for="cp">Code postal</label></div>
+                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="cp">Code postal<span class="required">*</span></label></div>
                 <input type="text" name="cp" value="" class="required" required="required" />
             </div>
             
             <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
-                <div style="width: 100%; text-align: left"><label for="ville">Ville</label></div>
+                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="ville">Ville<span class="required">*</span></label></div>
                 <input type="text" name="ville" value="" class="required" required="required" />
             </div>
             
             <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
-                <div style="width: 100%; text-align: left"><label for="siret">SIRET</label></div>
+                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="siret">SIRET<span class="required">*</span></label></div>
                 <input type="text" name="siret" value="" class="required" required="required" />
             </div>
             
             <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
-                <div style="width: 100%; text-align: left"><label for="tva">N TVA INTERCOMMUNAUTAIRE</label></div>
+                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="tva">N TVA INTERCOMMUNAUTAIRE<span class="required">*</span></label></div>
                 <input type="text" name="tva" value="" class="required" required="required" />
             </div>
             
             <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
-                <div style="width: 100%; text-align: left"><label for="horaire">HORAIRES LIVRAISON</label></div>
+                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="horaire">HORAIRES LIVRAISON</label></div>
                 <textarea name="horaire" ></textarea>
             </div>
             
             <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
-                <div style="width: 100%; text-align: left"><label for="information">INFORMATION LIVREUR</label></div>
+                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="information">INFORMATION LIVREUR</label></div>
                 <textarea name="information" ></textarea>
             </div>
             
             <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
-                <div style="width: 100%; text-align: left"><label for="email">EMAIL</label></div>
+                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">EMAIL<span class="required">*</span></label></div>
                 <input type="text" name="email" value="" class="required" required="required" />
             </div>
             
             <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
-                <div style="width: 100%; text-align: left"><label for="email_conf">CONFIRMATION EMAIL</label></div>
+                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email_conf">CONFIRMATION EMAIL<span class="required">*</span></label></div>
                 <input type="text" name="email_conf" value="" class="required" required="required" />
             </div>
             
             <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
-                <div style="width: 100%; text-align: left"><label for="password">PASSWORD</label></div>
+                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="password">PASSWORD<span class="required">*</span></label></div>
                 <input type="password" name="password" value="" class="required" required="required" />
             </div>
             
             <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
-                <div style="width: 100%; text-align: left"><label for="password_conf">CONFIRMATION PASSWORD</label></div>
+                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="password_conf">CONFIRMATION PASSWORD<span class="required">*</span></label></div>
                 <input type="password" name="password_conf" value="" class="required" required="required" />
             </div>
             
             
             <div style="clear: both"></div>
-
-            <p style="text-align: center">ATTENTION VOTRE COMPTE NE SERA  ACTIF QU'APRES VALIDATION DE VOTRE COMMERCIAL ASAR</p>
+            <p class="diz_pt ffmorepromed text-left" style="color: red">* Tous les champs requis sont obligatoires</p>
+            <p class="diz_pt ffmorepromed text-left">ATTENTION VOTRE COMPTE NE SERA  ACTIF QU'APRES VALIDATION DE VOTRE COMMERCIAL ASAR</p>
             
             <a href="#" id="submitform">
-                <div style="width: 96%; color: white; background-color: black; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; padding: 2%; ">
+                <div  class="dou_pt ffmoreproblack formvalid" style="width: 96%;padding: 2%;">
                     valider
                 </div>
             </a>

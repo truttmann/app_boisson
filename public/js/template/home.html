@@ -1,13 +1,13 @@
-<div data-role="header">
+<div data-role="header" id="headerappli" style="position: relative">
     <h1>ASAR</h1>
-    <img style="float: left" src=""/>
-    <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->
-    
-    <div id="page-title">
-        CHOISIR UNE ACTION
-        <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->
-    </div>
-</div>
+    <div style="position: absolute; right: 1em; top: 3em;"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></div>
+</div><!-- /header -->
+
+<div data-role="navbar">
+    <ul>
+        <li>CHOISIR UNE ACTION</li>
+    </ul>
+</div><!-- /navbar -->
 
 
 
@@ -48,9 +48,14 @@
         </li>
     </ul>
 </div>
-<div data-role="footer" id="footer">
-    <a href="#logout">
-        <div><img src="" /></div>
-        <div>Se deconnecter</div>
-    </a>
+<div data-role="footer"  data-position="fixed">
+    <div data-enhance="false" id="test-container">
+        <a href="#logout">
+            <div style="text-center">
+                <img src="css/images/icons-png/cancel.png" />
+            </div>
+
+            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>
+        </a>
+    </div>
 </div>

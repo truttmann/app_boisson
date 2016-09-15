@@ -1,12 +1,45 @@
-.navbar .ui-btn .ui-btn-inner { padding-top: 40px !important; }
- .navbar .ui-btn .ui-icon { width: 30px!important; height: 30px!important; margin-left: -15px !important; box-shadow: none!important; -moz-box-shadow: none!important; -webkit-box-shadow: none!important; -webkit-border-radius: 0 !important; border-radius: 0 !important; }        
- 
- 
+@font-face {
+    font-family: "fontin_small_caps";
+    src: url('../fonts/Fontin-SmallCaps.ttf');  
+    src: url('../fonts/Fontin-SmallCaps.otf') format('truetype');
+}
+@font-face {
+    font-family: "ff_more_pro_book";
+    src: url('../fonts/FFMorePro-Book.otf') format('truetype');
+}
+@font-face {
+    font-family: "ff_more_pro_medium";
+    src: url('../fonts/FFMorePro-Medium.otf') format('truetype');
+}
+
+@font-face {
+    font-family: "ff_more_pro_black";
+    src: url('../fonts/FFMorePro-Black.otf') format('truetype');
+}
+
+* {
+    margin: 0;
+    padding: 0px;
+    text-align: center;
+    text-shadow: none !important;
+}
+a {
+    text-decoration: none;
+}
+body {
+    background-image: url("../images/icons-png/backgroundcenter.png");
+    background-repeat: repeat;
+}
+
 .ui-panel-wrapper > div {
     background-color: white !important;
     padding: 22px !important;
 }
-    
+   
+.error {
+    color: red;
+}
+
 #page-title {
     width: 100%;
     background-color: #313131;
@@ -231,4 +264,73 @@ a:visited {
     float: left;
     width: 20%;
     vertical-align: middle;
+}
+
+#headerappli {
+    color: #20201f;
+    background-color: white;
+    text-align: center;
+    padding: 50px 0;
+}
+
+#headerappli h1 {
+    margin: 0px; 
+    padding: 0px;
+    letter-spacing: 20px;
+    font-family: "fontin_small_caps";
+    font-size: 48pt;
+}
+
+.ui-navbar li {
+    height: 110px;
+    background-color: #313131;
+    text-align: center;
+    line-height: 110px;
+    color: white;
+    font-size: 18pt;
+    letter-spacing: 10px;
+}
+
+.ui-page, .ui_content {
+    background: none !important;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.qua_pt {
+    font-size: 14pt;
+}
+.dou_pt {
+    font-size: 12pt;
+}
+.diz_pt {
+    font-size: 10pt;
+}
+
+.ffmoreproblack {
+    font-family: "ff_more_pro_black";
+}
+.ffmoreprobook {
+    font-family: "ff_more_pro_book";
+}
+.ffmorepromed {
+    font-family: "ff_more_pro_medium";
+}
+
+
+.formvalid {
+    background-color: #303030;
+    border-bottom-left-radius: 15px; 
+    border-bottom-right-radius: 15px;
+    color: white;
+}
+
+.ui-footer {
+    background: white !important;
+}
+
+.cancel:before {
+    content:url(../images/icons-png/cancel.png);
 }

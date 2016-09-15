@@ -7,8 +7,23 @@ define(["jquery", "underscore", "backbone", "backbone.syphon", "text!template/cr
 
         initialize: function(options) {
             this.user = options.user;
-            this.listenTo(this.user, 'user:asknew', function(model) {
-                Backbone.history.navigate("login", true);
+            this.listenTo(this.user, 'user:endusercreated', function(model) {
+                Backbone.history.navigate("monequipehc", true);
+            });
+            this.listenTo(this.user, 'user:endfailureusercreated', function(model) {
+                //Backbone.history.navigate("monequipehc", true);
+                loadingStop();
+                Backbone.history.navigate("monequipehc", true);
+            });
+            this.bind('render:completed', function() {
+                jQuery('form').validate({
+                    rules: {
+                        email: {
+                            required: true,
+                            email: true
+                        }
+                    }
+                });
             });
         },
 
@@ -36,8 +51,22 @@ define(["jquery", "underscore", "backbone", "backbone.syphon", "text!template/cr
             e.preventDefault();
             this.loadingStart();
             var data = Backbone.Syphon.serialize(this);
+            if(data.email != data.email_conf) {
+                $('form').validate().showErrors({
+                    "email": "La valeur de votre email doit être identique à la confirmation d'email"
+                });
+                this.loadingStop();
+                return; 
+            }
+            if(data.password != data.password_conf) {
+                $('form').validate().showErrors({
+                    "password": "La valeur de votre mot de passe doit être identique à la confirmation du mot de passe"
+                });
+                this.loadingStop();
+                return; 
+            }
             this.saveDemandeUser(data);
-            Backbone.history.navigate("login", true);
+            /*Backbone.history.navigate("monequipehc", true);*/
         },
         
         events: {

@@ -5,6 +5,7 @@ requirejs.config({
 
     paths: {
         "jquery": 'lib/jquery',
+        "jquery.validate": 'lib/jquery.validate',
         "jqm-config": './jqm-config',
         "jquery-mobile": "lib/jquery.mobile-1.4.2",
         "underscore": "lib/underscore",
@@ -49,7 +50,7 @@ requirejs.config({
     }
 });
 
-requirejs(["router/app", "jqm-config", "jquery-mobile", "jquery"], function(AppRouter, jqm_config, jqm, $) {
+requirejs(["router/app", "jqm-config", "jquery-mobile", "jquery", "jquery.validate"], function(AppRouter, jqm_config, jqm, $, validate) {
     app = new AppRouter();
     Backbone.history.start();
 });

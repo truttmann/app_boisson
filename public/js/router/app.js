@@ -1,17 +1,17 @@
-define(["jquery", "underscore", "backbone", "backbone.queryparams", "backbone.route-filter", 
+define(["jquery", "jquery.validate", "underscore", "backbone", "backbone.queryparams", "backbone.route-filter", 
     'backbone.localStorage', "backbone.token", "model/user-local",  "model/commande-local", 
     "view/homeView", "view/loginView", "view/creationcompteView", "view/parametreView",
     "view/commandeView", "view/stockView","view/cassePerteView", "view/CommanderMenuView",
     "view/commandeProduitView", "view/stockProduitView", "view/destockProduitView",
     "view/MonCompteView", "view/EncoursFacturationView", "view/MonEquipeView", "view/InventaireView",
-    "view/HistoriqueCommandeView",], 
-function($, _, Backbone, QueryParams, RouterFilter,
+    "view/HistoriqueCommandeView", "view/MonEquipeHcView"], 
+function($, validate ,_, Backbone, QueryParams, RouterFilter,
     LocalStorage, Token, UserLocalModel, CommandeLocalModel,
     HomeView, LoginView, CreationCompteView, ParametreView,
     CommandeView, StockView,CassePerteView, CommanderMenuView,
     CommandeProduitView, StockProduitView, DestockProduitView,
     MonCompteView, EncoursFacturationView, MonEquipeView, InventaireView,
-    HistoriqueCommandeView) {
+    HistoriqueCommandeView, MonEquipeHcView) {
     
     var userLocal = new UserLocalModel();
     userLocal.fetch();
@@ -38,6 +38,7 @@ function($, _, Backbone, QueryParams, RouterFilter,
             "moncompte" : "moncompte",
             "encoursFacturation" : "encoursfacturation",
             "monequipe" : "monequipe",
+            "monequipehc" : "monequipehc",
             "inventaire" : "inventaire",
         },
         
@@ -48,7 +49,7 @@ function($, _, Backbone, QueryParams, RouterFilter,
         checkAuthorization: function(fragment, args, next) {
             var isLogged = this.userLocal.get('is_logged');
             Backbone.TokenAuth.setToken(this.userLocal.get('token'));
-            if (!isLogged && fragment != "login" && fragment != "creationcompte" ){
+            if (!isLogged && fragment != "login" && fragment != "creationcompte" && fragment != "monequipehc" ){
                 Backbone.history.navigate('login',  {trigger: true});
             } 
             else if (isLogged && fragment == "login"){
@@ -115,6 +116,13 @@ function($, _, Backbone, QueryParams, RouterFilter,
         },
         monequipe: function() {
             var view = new MonEquipeView({
+                user: this.userLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        monequipehc: function() {
+            var view = new MonEquipeHcView({
                 user: this.userLocal
             });
             view.render();

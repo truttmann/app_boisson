@@ -1,40 +1,52 @@
 
-    <div data-role="header" style="visibility: hidden">
-	<h1>D&eacute;bit de boisson</h1>
-    </div>
-    <div data-role="content" style="text-align: center">
-	<h1>ASAR</h1>
-        <h2>DIGITAL SERVICES</h2>
+<div data-role="header" id="headerappli" style="position: relative">
+    <h1>ASAR</h1>
+    <div style="position: absolute; right: 1em; top: 3em;"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></div>
+</div><!-- /header -->
 
-        <div style="border: solid 1px black; width: 65%; margin: auto; border-radius: 15px;">
-            <form>
-                <div id="error"></div>
-                <div data-role="fieldcontain" class="ui-label" style=" padding: 2%; width: 96%">
-                    <div style="width: 100%; text-align: left"><label for="username">Identifiant:</label></div>
-                    <input type="text" name="token" id="login" value="" class="required" placeholder="Identifiant" />
+<div data-role="navbar">
+    <ul>
+        <li>LOGIN</li>
+    </ul>
+</div><!-- /navbar -->
+
+<div data-role="content" style="margin: 0px; padding: 5em 2em 0 2em;">
+    <div style="border: solid 1px black; width: 65%; margin: auto; border-radius: 15px;">
+        <form>
+            <div id="error"></div>
+            <div data-role="fieldcontain" class="ui-label" style=" padding: 2%; width: 96%">
+                <div style="width: 100%; ">
+                    <label for="username" class="text-left qua_pt ffmoreprobook">Identifiant:</label>
                 </div>
-                
-                <div style="clear: both"></div>
-                
-                <a href="#" id="submitform">
-                    <div style="width: 96%; color: white; background-color: black; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; padding: 2%; ">
-                        valider
-                    </div>
-                </a>
-                
-                <!--div data-corners="true" data-shadow="true" data-iconshadow="true"
-                        data-wrapperels="span" data-icon="null" data-iconpos="null"
-                        data-theme="b"
+                <input type="text" name="token" id="login" value="" class="required" placeholder="Identifiant" />
+            </div>
 
-                        aria-disabled="false">
-                        <button type="submit" data-theme="b" name="submit"
-                                value="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>
-                </div-->
-            </form>
-        </div>
+            <div style="clear: both"></div>
+
+            <a href="#" id="submitform">
+                <div class="dou_pt ffmoreproblack formvalid" style="width: 96%; padding: 2%; ">
+                    valider
+                </div>
+            </a>
+
+            <!--div data-corners="true" data-shadow="true" data-iconshadow="true"
+                    data-wrapperels="span" data-icon="null" data-iconpos="null"
+                    data-theme="b"
+
+                    aria-disabled="false">
+                    <button type="submit" data-theme="b" name="submit"
+                            value="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>
+            </div-->
+        </form>
     </div>
-<div style="width: 100%; height: 15px;"></div>
+    <div style="width: 100%; height: 15px;"></div>
 
-<div style="width: 100%; text-align: center">
-    <a href="#" id="creation_compte">CRE&Eacute;R UN COMPTE</a>
+    <div style="width: 100%; text-align: center">
+        <a href="#"  class="diz_pt ffmorepromed" style="text-decoration: underline" id="creation_compte">CRE&Eacute;R UN COMPTE</a>
+    </div>
 </div>
+
+<div data-role="footer"  data-position="fixed">
+    <!-- div data-enhance="false" id="test-container"><a href="#" class="cancel" >Annuler</a></div -->
+</div>
+

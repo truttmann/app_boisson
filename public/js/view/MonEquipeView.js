@@ -7,14 +7,26 @@ define(["jquery", "underscore", "backbone", "text!template/mon_equipe.html"], fu
         
         initialize: function(options) {
             this.user = options.user;
-            this.commande = options.commande;
-            /*this.listenToOnce(this.user, 'pointage:failure', function() {
-                _.delay(this.loadingStop);
-                alert('Erreur de sauvegarde, Veuillez vous déconnecter et recommencer');
-            });*/
             this.bind('render:completed', function() {
-               $('a.ui-btn').removeClass('ui-btn');
+                var _this = this;
+                var xhr = $.get(config.api_url + "/rest-member?p="+_this.user.get('token'), null, null, 'jsonp');
+                xhr.done( function(data){
+                    $('#error').empty();
+                    _this.chargementMembre(data.data);                    
+                });
+                xhr.fail(function(data) {
+                    $('#error').empty().html(data);
+                });
             });
+        },
+        
+        chargementMembre : function(members) {
+            var chaine = "";
+            for(i in members) {
+                chaine += "<div class='member_div' ><div class='detailmember' attr-id='"+members[i].id+"'>"+members[i].name+' '+members[i].firstname+"</div></div>";
+            }
+            $('.moneq_1_content > div.tablerow').remove();
+            $('.moneq_1_content').append(chaine);
         },
         
         loadingStart: function(text_show) {
@@ -30,37 +42,29 @@ define(["jquery", "underscore", "backbone", "text!template/mon_equipe.html"], fu
             $.mobile.loading('hide');
         },
         
-        onClickFilter: function(e){
+        events: {
+            "click div.detailmember": "goToDetailMember",
+            "click a#addmember": "addMember",
+        },
+        
+        addMember: function(e){
             e.preventDefault();
-            var el = e.target;
-            if($(el).parent().hasClass("comm_1_cat")) {
-                Backbone.history.navigate("commanderProduit/"+$(el).parent().attr('data-id'), true);
-            }
-            /*if($(el).attr("name") == "entree") {
-                this.loadingStart("Sauvegarde de votre pointage ...");
-                this.pointeuse.pointage("entree", this.user);
-            } else if($(el).attr("name") == "sortie") {
-                this.pointeuse.pointage("sortie", this.user);
-            }*/
+            Backbone.history.navigate("memberAdd", true);
+        },
+
+        goToDetailMember: function(e) {
+            e.preventDefault();
+            Backbone.history.navigate("member/"+$(e.target).attr('attr-id'), true);
         },
         
         render: function(eventName) {
-            var _this = this;
-            var xhr = $.get(config.api_url + "/rest-categorie", {"token": _this.user.get('token')}, null, 'jsonp');
-            xhr.done( function(data){
-                _this.$el.empty();
-                _this.$el.append(_this.template({
-                    categorie: data.result,
-                    user: _this.user.toJSON()
-                }));
-                _this.trigger('render:completed', _this);
-                _this.$el.find('.comm_1_cat').on('click', _.bind(_this.onClickFilter, _this));
-                return _this;
-            });
-            xhr.fail(function(data) {
-                $('#error').empty().html(data);
-                this.trigger('categorie:failure');
-            });
+            this.loadingStart("Chargement des données");
+            this.$el.empty();
+            this.$el.append(this.template({
+                user: this.user.toJSON()
+            }));
+            this.trigger('render:completed', this);
+            return this;
             
             
         }

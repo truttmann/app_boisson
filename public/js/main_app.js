@@ -14734,13 +14734,56 @@ define('model/user-local',["jquery", "underscore", "backbone", "backbone.localSt
             this.trigger('login:failure');
         },
         login: function (options) {
-            var xhr = $.get(config.api_url + "/rest-login/" + options.token, null, null, 'jsonp');
+            var xhr = $.get(config.api_url + "/rest-user/" + options.token, null, null, 'jsonp');
             xhr.done(this.onLoginSuccess);
             xhr.fail(this.onLoginFailure);
         },
+        saveMember: function(options) {
+            var self = this;
+            var xhr = null;
+            if(options["id"] && options["id"] != "") {
+                xhr = $.ajax({
+                    url: config.api_url + "/rest-member/"+options['id'],
+                    type: 'PUT',
+                    data: options,
+                    dataType: "jsonp"
+                });
+            } else {
+                xhr = $.ajax({
+                    url: config.api_url + "/rest-member",
+                    type: 'POST',
+                    data: options,
+                    dataType: "jsonp"
+                });
+            }
+            xhr.done(function (data) {
+                self.trigger('user:endsuccesmemberupdated');
+            });
+            xhr.fail(function (data) {
+                self.trigger('user:endfailurememberupdated', data);
+            });
+        },
+        update : function (options) {
+            var self = this;
+            var xhr = $.ajax({
+                url: config.api_url + "/rest-user/"+options['id'],
+                type: 'PUT',
+                data: options,
+                dataType: "jsonp"
+            });
+            xhr.done(function (data) {
+                self.localStorage._clear();
+                self.set(_.pick(data.data, 'id', 'firstname', 'name', 'email', 'societe', 'profil_id', 'token'));
+                self.save();
+                self.trigger('user:endsuccesuserupdated');
+            });
+            xhr.fail(function (data) {
+                self.trigger('user:endfailureuserupdated', data);
+            });
+        },
         askNew : function (options) {
             var self = this;
-            var xhr = $.post(config.api_url + "/rest-login", options, null, 'jsonp');
+            var xhr = $.post(config.api_url + "/rest-user", options, null, 'jsonp');
             xhr.done(function (data) {
                 /*
                     this.localStorage._clear();
@@ -14799,7 +14842,7 @@ define('model/commande-local',["jquery", "underscore", "backbone", "backbone.loc
 });
 define('text',{load: function(id){throw new Error("Dynamic load not allowed: " + id);}});
 
-define('text!template/home.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>CHOISIR UNE ACTION</li>\n    </ul>\n</div><!-- /navbar -->\n\n\n\n\n<!--div id="nav-panel-user" data-role="panel" data-position="right" data-theme="b">\n    <div class="ui-panel-inner">\n        <h3><%= user.firstname %> <%= user.lastname %></h3>\n        <a href="#logout" data-rel="close" data-role="button" data-theme="c" data-icon="delete" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-left">\n        <span class="ui-btn-inner">Se deconnecter</span>\n        </a>\n    </div>\n</div-->\n<div data-role="content">\n    <ul id="lien_menu_p">\n        <li>\n            <a href="#commanderMenu">\n                <div class="menu_p_title">\n                    COMMANDER\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#consult_stock">\n                <div class="menu_p_title">\n                    GERER MON STOCK\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#moncompte">\n                <div class="menu_p_title">\n                    MON COMPTE\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n    </ul>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
+define('text!template/home.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>CHOISIR UNE ACTION</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <ul id="lien_menu_p">\n        <li>\n            <a href="#commanderMenu">\n                <div class="menu_p_title">\n                    COMMANDER\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#consult_stock">\n                <div class="menu_p_title">\n                    GERER MON STOCK\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#moncompte">\n                <div class="menu_p_title">\n                    MON COMPTE\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n    </ul>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
 
 define('view/homeView',["jquery", "underscore", "backbone", "text!template/home.html"], function($, _, Backbone, home_tpl) {
     var HomeView = Backbone.View.extend({
@@ -15422,7 +15465,7 @@ define('view/loginView',["jquery", "underscore", "backbone", "backbone.syphon", 
     return LoginView;
 });
 
-define('text!template/creationcompte.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#login" id="cancel"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>CREATION DE COMPTE</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content" style="text-align: center">\n    <div style="border: solid 1px black; width: 65%; margin: auto; border-radius: 15px;">\n        <form>\n            <div id="error"></div>\n                \n            \n            <div style="width: 100%; border-bottom: solid 1px black"></div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="nom">Nom<span class="required">*</span></label></div>\n                <input type="text" name="nom" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="prenom">Pr&eacute;nom<span class="required">*</span></label></div>\n                <input type="text" name="prenom" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="societe">Soci&eacute;t&eacute;<span class="required">*</span></label></div>\n                <input type="text" name="societe" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="adr_societe">Adresse Soci&eacute;t&eacute;<span class="required">*</span></label></div>\n                <input type="text" name="adr_societe" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="cp">Code postal<span class="required">*</span></label></div>\n                <input type="text" name="cp" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="ville">Ville<span class="required">*</span></label></div>\n                <input type="text" name="ville" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="siret">SIRET<span class="required">*</span></label></div>\n                <input type="text" name="siret" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="tva">N TVA INTERCOMMUNAUTAIRE<span class="required">*</span></label></div>\n                <input type="text" name="tva" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="horaire">HORAIRES LIVRAISON</label></div>\n                <textarea name="horaire" ></textarea>\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="information">INFORMATION LIVREUR</label></div>\n                <textarea name="information" ></textarea>\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">EMAIL<span class="required">*</span></label></div>\n                <input type="text" name="email" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email_conf">CONFIRMATION EMAIL<span class="required">*</span></label></div>\n                <input type="text" name="email_conf" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="password">PASSWORD<span class="required">*</span></label></div>\n                <input type="password" name="password" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="password_conf">CONFIRMATION PASSWORD<span class="required">*</span></label></div>\n                <input type="password" name="password_conf" value="" class="required" required="required" />\n            </div>\n            \n            \n            <div style="clear: both"></div>\n            <p class="diz_pt ffmorepromed text-left" style="color: red">Tous les champs requis sont obligatoires</p>\n            <p class="diz_pt ffmorepromed text-left">ATTENTION VOTRE COMPTE NE SERA  ACTIF QU\'APRES VALIDATION DE VOTRE COMMERCIAL ASAR</p>\n            \n            <a href="#" id="submitform">\n                <div  class="dou_pt ffmoreproblack formvalid" style="width: 96%;padding: 2%;">\n                    valider\n                </div>\n            </a>\n\n            <!--div data-corners="true" data-shadow="true" data-iconshadow="true"\n                    data-wrapperels="span" data-icon="null" data-iconpos="null"\n                    data-theme="b"\n\n                    aria-disabled="false">\n                    <button type="submit" data-theme="b" name="submit"\n                            value="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>\n            </div-->\n        </form>\n    </div>\n</div>\n';});
+define('text!template/creationcompte.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#login" id="cancel"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>CREATION DE COMPTE</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content" style="text-align: center">\n    <div style="border: solid 1px black; width: 65%; margin: auto; border-radius: 15px;">\n        <form>\n            <div id="error"></div>\n            <div id="success"></div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="nom">Nom<span class="required">*</span></label></div>\n                <input type="text" name="nom" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="prenom">Pr&eacute;nom<span class="required">*</span></label></div>\n                <input type="text" name="prenom" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="societe">Soci&eacute;t&eacute;<span class="required">*</span></label></div>\n                <input type="text" name="societe" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="adr_societe">Adresse Soci&eacute;t&eacute;<span class="required">*</span></label></div>\n                <input type="text" name="adr_societe" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="cp">Code postal<span class="required">*</span></label></div>\n                <input type="text" name="cp" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="ville">Ville<span class="required">*</span></label></div>\n                <input type="text" name="ville" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="siret">SIRET<span class="required">*</span></label></div>\n                <input type="text" name="siret" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="tva">N TVA INTERCOMMUNAUTAIRE<span class="required">*</span></label></div>\n                <input type="text" name="tva" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="horaire">HORAIRES LIVRAISON</label></div>\n                <textarea name="horaire" class=" text-left" ></textarea>\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="information">INFORMATION LIVREUR</label></div>\n                <textarea name="information" class=" text-left" ></textarea>\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">EMAIL<span class="required">*</span></label></div>\n                <input type="text" name="email" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email_conf">CONFIRMATION EMAIL<span class="required">*</span></label></div>\n                <input type="text" name="email_conf" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="password">PASSWORD<span class="required">*</span></label></div>\n                <input type="password" name="password" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="password_conf">CONFIRMATION PASSWORD<span class="required">*</span></label></div>\n                <input type="password" name="password_conf" value="" class="required" required="required" />\n            </div>\n            \n            \n            <div style="clear: both"></div>\n            <p class="diz_pt ffmorepromed text-left" style="color: red">* Tous les champs requis sont obligatoires</p>\n            <p class="diz_pt ffmorepromed text-left">ATTENTION VOTRE COMPTE NE SERA  ACTIF QU\'APRES VALIDATION DE VOTRE COMMERCIAL ASAR</p>\n            \n            <a href="#" id="submitform">\n                <div  class="dou_pt ffmoreproblack formvalid" style="width: 96%;padding: 2%;">\n                    valider\n                </div>\n            </a>\n\n            <!--div data-corners="true" data-shadow="true" data-iconshadow="true"\n                    data-wrapperels="span" data-icon="null" data-iconpos="null"\n                    data-theme="b"\n\n                    aria-disabled="false">\n                    <button type="submit" data-theme="b" name="submit"\n                            value="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>\n            </div-->\n        </form>\n    </div>\n</div>\n';});
 
 define('view/creationcompteView',["jquery", "underscore", "backbone", "backbone.syphon", "text!template/creationcompte.html"], function($, _, Backbone, Syphon, creationcompte_tpl) {
     var CreationCompteView = Backbone.View.extend({
@@ -16032,7 +16075,7 @@ define('view/destockProduitView',["jquery", "underscore", "backbone", "text!temp
     return DestockProduitView;
 });
 
-define('text!template/moncompte.html',[],function () { return '\n<div style="wisth: 100%; text-align: right; padding: 2%"><a href="#" id="cancel">Annuler</a></div>\n\n<div style="width: 100%; height: 15px;"></div>\n\n<div data-role="content" style="text-align: center">\n    <div style="border: solid 1px black; width: 65%; margin: auto; border-radius: 15px; overflow: hidden; word-wrap: break-word;">\n        <form>\n            <div id="error"></div>\n            <div style="width: 100%; text-align: center; padding: 2%">\n                <div style="font-weight: bold">CR&Eacute;ER UN COMPTE</div>\n                <div>Tous les champs requis sont obligatoires</div>\n            </div>\n            \n            <div style="width: 100%; border-bottom: solid 1px black"></div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="nom">Nom</label></div>\n                <input type="text" name="nom" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="prenom">Pr&eacute;nom</label></div>\n                <input type="text" name="prenom" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="societe">Soci&eacute;t&eacute;</label></div>\n                <input type="text" name="societe" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="adr_societe">Adresse Soci&eacute;t&eacute;</label></div>\n                <input type="text" name="adr_societe" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="cp">Code postal</label></div>\n                <input type="text" name="cp" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="ville">Ville</label></div>\n                <input type="text" name="ville" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="siret">SIRET</label></div>\n                <input type="text" name="siret" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="tva">N TVA INTERCOMMUNAUTAIRE</label></div>\n                <input type="text" name="tva" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="horaire">HORAIRES LIVRAISON</label></div>\n                <textarea name="horaire" class="required" ></textarea>\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="information">INFORMATION LIVREUR</label></div>\n                <textarea name="information" class="required" ></textarea>\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="email">EMAIL</label></div>\n                <input type="text" name="email" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="email_conf">CONFIRMATION EMAIL</label></div>\n                <input type="text" name="email_conf" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="password">PASSWORD</label></div>\n                <input type="password" name="password" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label for="password_conf">CONFIRMATION PASSWORD</label></div>\n                <input type="password" name="password_conf" value="" class="required" />\n            </div>\n            \n            \n            <div style="clear: both"></div>\n\n            <p style="text-align: center">ATTENTION VOTRE COMPTE NE SERA  ACTIF QU\'APRES VALIDATION DE VOTRE COMMERCIAL ASAR</p>\n            \n            <div style="display: table;width: 100%">\n                <a href="#encoursFacturation" style="width: 50%; display: table-cell;">\n                    <div style="width: 100%; color: white; background-color: black; border-bottom-left-radius: 15px; padding: 2%; ">\n                        En cours de facturation\n                    </div>\n                </a>\n                \n                <a  href="#monequipe" id="submitform" style="width: 50%; display: table-cell;">\n                    <div style="width: 100%; color: white; background-color: black; border-bottom-right-radius: 15px; padding: 2%; ">\n                        Valider et g&eacute;rer mon équipe\n                    </div>\n                </a>\n                <div style="clear: both"></div>\n            </div>\n\n            <!--div data-corners="true" data-shadow="true" data-iconshadow="true"\n                    data-wrapperels="span" data-icon="null" data-iconpos="null"\n                    data-theme="b"\n\n                    aria-disabled="false">\n                    <button type="submit" data-theme="b" name="submit"\n                            value="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>\n            </div-->\n        </form>\n    </div>\n</div>\n';});
+define('text!template/moncompte.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>MON COMPTE</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div style="border: solid 1px black; width: 65%; margin: auto; border-radius: 15px; overflow: hidden; word-wrap: break-word;">\n        <form>\n            <div id="error"></div>\n            <input type="hidden" name="id" value="" class="required" />\n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="nom">Nom</label></div>\n                <input type="text" name="nom" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="prenom">Pr&eacute;nom</label></div>\n                <input type="text" name="prenom" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="societe">Soci&eacute;t&eacute;</label></div>\n                <input type="text" name="societe" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="adr_societe">Adresse Soci&eacute;t&eacute;</label></div>\n                <input type="text" name="adr_societe" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="cp">Code postal</label></div>\n                <input type="text" name="cp" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="ville">Ville</label></div>\n                <input type="text" name="ville" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="siret">SIRET</label></div>\n                <input type="text" name="siret" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="tva">N TVA INTERCOMMUNAUTAIRE</label></div>\n                <input type="text" name="tva" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="horaire">HORAIRES LIVRAISON</label></div>\n                <textarea name="horaire" class="text-left" ></textarea>\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="information">INFORMATION LIVREUR</label></div>\n                <textarea name="information" class="text-left" ></textarea>\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">EMAIL</label></div>\n                <input type="text" name="email" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email_conf">CONFIRMATION EMAIL</label></div>\n                <input type="text" name="email_conf" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="password">PASSWORD</label></div>\n                <input type="password" name="password" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="password_conf">CONFIRMATION PASSWORD</label></div>\n                <input type="password" name="password_conf" value="" class="required" />\n            </div>\n            \n            \n            <p class="diz_pt ffmorepromed text-center">ATTENTION VOTRE COMPTE NE SERA  ACTIF QU\'APRES VALIDATION DE VOTRE COMMERCIAL ASAR</p>\n            <div style="display: table;width: 100%">\n                <a href="#encoursFacturation" style="width: 50%; display: table-cell;">\n                    <div class="dou_pt ffmoreproblack formvalid" style="width: 96%; border-bottom-right-radius: 0px !important;  padding: 2%; ">\n                        En cours de facturation\n                    </div>\n                </a>\n                \n                <a  href="#monequipe" id="submitform" style="width: 50%; display: table-cell;">\n                    <div class="dou_pt ffmoreproblack formvalid" style="width: 96%; border-bottom-left-radius: 0px !important; padding: 2%; ">\n                        Valider et g&eacute;rer mon équipe\n                    </div>\n                </a>\n                <div style="clear: both"></div>\n            </div>\n\n            <!--div data-corners="true" data-shadow="true" data-iconshadow="true"\n                    data-wrapperels="span" data-icon="null" data-iconpos="null"\n                    data-theme="b"\n\n                    aria-disabled="false">\n                    <button type="submit" data-theme="b" name="submit"\n                            value="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>\n            </div-->\n        </form>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>\n';});
 
 define('view/MonCompteView',["jquery", "underscore", "backbone", "backbone.syphon", "text!template/moncompte.html"], function($, _, Backbone, Syphon, moncompte_tpl) {
     var MonCompteView = Backbone.View.extend({
@@ -16043,14 +16086,52 @@ define('view/MonCompteView',["jquery", "underscore", "backbone", "backbone.sypho
 
         initialize: function(options) {
             this.user = options.user;
-            this.listenTo(this.user, 'user:asknew', function(model) {
-                Backbone.history.navigate("login", true);
+            this.listenToOnce(this.user, 'user:endfailureuserupdated', function(event, data) {
+                _.delay(this.loadingStop);
+                $('error').empty().html(data);
+                $('success').empty();
+                
+            });
+            this.listenToOnce(this.user, 'user:endsuccesuserupdated', function() {
+                _.delay(this.loadingStop);
+                $('error').empty();
+                $('success').empty().html('Sauvegarde effectu&eacute;e');
+                Backbone.history.navigate("monequipe", true);
+            });
+            this.bind('render:completed', function() {
+                this.loadingStart();
+                var _this = this;
+                var xhr = $.get(config.api_url + "/rest-user/"+_this.user.get('token'), {"token": _this.user.get('token')}, null, 'jsonp');
+                xhr.done( function(data){
+                    if(data.data){
+                        $('input[name="id"]').val(data.data.id);
+                        $('input[name="nom"]').val(data.data.name);
+                        $('input[name="prenom"]').val(data.data.firstname);
+                        $('input[name="societe"]').val(data.data.societe);
+                        $('input[name="adr_societe"]').val(data.data.adresse);
+                        $('input[name="cp"]').val(data.data.cp);
+                        $('input[name="ville"]').val(data.data.ville);
+                        $('input[name="siret"]').val(data.data.siret);
+                        $('input[name="tva"]').val(data.data.tva);
+                        $('textarea[name="horaire"]').val(data.data.horaire);
+                        $('textarea[name="information"]').val(data.data.information);
+                        $('input[name="email"]').val(data.data.email);
+                        $('input[name="email_conf"]').val(data.data.email);
+                    } else {
+                        $('#error').empty().html(data);
+                    }
+                    _this.loadingStop();
+                });
+                xhr.fail(function(data) {
+                    $('#error').empty().html(data);
+                    Backbone.history.navigate("home", true);
+                });
             });
         },
 
         loadingStart: function() {
             $.mobile.loading('show', {
-                text: 'Tentative de connexion',
+                text: 'Chargement des données',
                 textVisible: true,
                 theme: 'b',
                 html: ""
@@ -16065,7 +16146,7 @@ define('view/MonCompteView',["jquery", "underscore", "backbone", "backbone.sypho
             this.listenToOnce(this.user, 'login:failure', function() {
                 _.delay(this.loadingStop);
             });
-            this.user.askNew(data);
+            this.user.update(data);
         },
 
         onSubmit: function(e) {
@@ -16073,14 +16154,13 @@ define('view/MonCompteView',["jquery", "underscore", "backbone", "backbone.sypho
             this.loadingStart();
             var data = Backbone.Syphon.serialize(this);
             this.saveDemandeUser(data);
-            Backbone.history.navigate("login", true);
         },
         
-        /*events: {
+        events: {
             "submit": "onSubmit",
             "click a#submitform": "submitform",
-            "click a#cancel": "cancel",
-        },*/
+            /*"click a#cancel": "cancel",*/
+        },
         
         submitform: function(e) {
             e.preventDefault();
@@ -16088,14 +16168,12 @@ define('view/MonCompteView',["jquery", "underscore", "backbone", "backbone.sypho
         },
         
         cancel: function(e) {
-            Backbone.history.navigate("login", true);
+            Backbone.history.navigate("#home", true);
         },
         
         render: function(eventName) {
             $(this.el).html(this.template({}));
-            $('body').removeClass("ui-panel-page-container-themed");
-            $('body').removeClass("ui-panel-page-container-b");
-            $('body').removeClass("ui-panel-page-container");
+            this.trigger('render:completed', this);
             return this;
         }
     });
@@ -16155,7 +16233,7 @@ define('view/EncoursFacturationView',["jquery", "underscore", "backbone", "text!
     return EncoursFacturationView;
 });
 
-define('text!template/mon_equipe.html',[],function () { return '<div data-role="header">\n    <div class="header_bloc_left">\n        <a href="#home">&eacute;tape pr&eacute;c&eacute;dente</a>\n    </div>\n    <h1>ASAR</h1>\n    <img style="float: left" src=""/>\n    <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    \n    <div id="page-title">\n        JE CREE MON EQUIPE\n        <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    </div>\n</div>\n\n\n\n\n<!--div id="nav-panel-user" data-role="panel" data-position="right" data-theme="b">\n    <div class="ui-panel-inner">\n        <h3><%= user.firstname %> <%= user.lastname %></h3>\n        <a href="#logout" data-rel="close" data-role="button" data-theme="c" data-icon="delete" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-left">\n        <span class="ui-btn-inner">Se deconnecter</span>\n        </a>\n    </div>\n</div-->\n<div data-role="content">\n    <div class="comm_1_content">\n        <div class="ligne bg_haut">\n            <div data-id="" class="comm_1_cat bg_droite"><div>NOUVEAU MEMBRE</div></div>\n            <div data-id="" class="comm_1_cat "><div>NOUVEAU MEMBRE</div></div>\n            <div data-id="" class="comm_1_cat bg_droite"><div>NOUVEAU MEMBRE</div></div>\n            <div data-id="" class="comm_1_cat "><div>NOUVEAU MEMBRE</div></div>\n            <div data-id="" class="comm_1_cat bg_droite"><div>NOUVEAU MEMBRE</div></div>\n            <div data-id="" class="comm_1_cat "><div>NOUVEAU MEMBRE</div></div>\n        </div>\n        <div class="clear"></div> \n    </div>\n    \n    <p style="text-align: center">ATTENTION VOTRE COMPTE NE SERA  ACTIF QU\'APRES VALIDATION DE VOTRE COMMERCIAL ASAR</p>\n    \n    <div style="display: table;width: 96%; margin:auto; text-align: center">\n        <a  href="#" id="submitform" style="width: 89%;">\n            <div style="width: 100%; color: white; background-color: black; border-bottom-right-radius: 15px;border-bottom-left-radius: 15px; padding: 2% 0; ">\n                Valider\n            </div>\n        </a>\n    </div>\n</div>\n<div data-role="footer" id="footer">\n    <div class="footer_div">\n        <a href="#home">\n            <div><img src="" /></div>\n            <div>Accueil</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#">\n            <div><img src="" /></div>\n            <div>Nouveaut&eacute;s & Promotions</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#commander" class="active">\n            <div><img src="" /></div>\n            <div>Commander</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#parametre">\n            <div><img src="" /></div>\n            <div>Mon compte</div>\n        </a>\n    </div>\n    <div class="clear"></div> \n</div>';});
+define('text!template/mon_equipe.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>MON EQUIPE</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="moneq_1_content">\n        <!--div class="column1"></div>\n        <div class="column2"></div-->        \n    </div>\n    \n    <div style="display: table;width: 96%; margin:auto; text-align: center">\n        <a  href="#" id="addmember" style="width: 89%;">\n            <div class="dou_pt ffmoreproblack formvalid" style="margin: auto; width: 8em; border-radius: 15px; padding: 2% 0; ">\n                Ajouter un membre\n            </div>\n        </a>\n    </div>\n</div>\n\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
 
 define('view/MonEquipeView',["jquery", "underscore", "backbone", "text!template/mon_equipe.html"], function($, _, Backbone, mon_equipe_tpl) {
     var MonEquipeView = Backbone.View.extend({
@@ -16166,14 +16244,26 @@ define('view/MonEquipeView',["jquery", "underscore", "backbone", "text!template/
         
         initialize: function(options) {
             this.user = options.user;
-            this.commande = options.commande;
-            /*this.listenToOnce(this.user, 'pointage:failure', function() {
-                _.delay(this.loadingStop);
-                alert('Erreur de sauvegarde, Veuillez vous déconnecter et recommencer');
-            });*/
             this.bind('render:completed', function() {
-               $('a.ui-btn').removeClass('ui-btn');
+                var _this = this;
+                var xhr = $.get(config.api_url + "/rest-member?p="+_this.user.get('token'), null, null, 'jsonp');
+                xhr.done( function(data){
+                    $('#error').empty();
+                    _this.chargementMembre(data.data);                    
+                });
+                xhr.fail(function(data) {
+                    $('#error').empty().html(data);
+                });
             });
+        },
+        
+        chargementMembre : function(members) {
+            var chaine = "";
+            for(i in members) {
+                chaine += "<div class='member_div' ><div class='detailmember' attr-id='"+members[i].id+"'>"+members[i].name+' '+members[i].firstname+"</div></div>";
+            }
+            $('.moneq_1_content > div.tablerow').remove();
+            $('.moneq_1_content').append(chaine);
         },
         
         loadingStart: function(text_show) {
@@ -16189,37 +16279,29 @@ define('view/MonEquipeView',["jquery", "underscore", "backbone", "text!template/
             $.mobile.loading('hide');
         },
         
-        onClickFilter: function(e){
+        events: {
+            "click div.detailmember": "goToDetailMember",
+            "click a#addmember": "addMember",
+        },
+        
+        addMember: function(e){
             e.preventDefault();
-            var el = e.target;
-            if($(el).parent().hasClass("comm_1_cat")) {
-                Backbone.history.navigate("commanderProduit/"+$(el).parent().attr('data-id'), true);
-            }
-            /*if($(el).attr("name") == "entree") {
-                this.loadingStart("Sauvegarde de votre pointage ...");
-                this.pointeuse.pointage("entree", this.user);
-            } else if($(el).attr("name") == "sortie") {
-                this.pointeuse.pointage("sortie", this.user);
-            }*/
+            Backbone.history.navigate("memberAdd", true);
+        },
+
+        goToDetailMember: function(e) {
+            e.preventDefault();
+            Backbone.history.navigate("member/"+$(e.target).attr('attr-id'), true);
         },
         
         render: function(eventName) {
-            var _this = this;
-            var xhr = $.get(config.api_url + "/rest-categorie", {"token": _this.user.get('token')}, null, 'jsonp');
-            xhr.done( function(data){
-                _this.$el.empty();
-                _this.$el.append(_this.template({
-                    categorie: data.result,
-                    user: _this.user.toJSON()
-                }));
-                _this.trigger('render:completed', _this);
-                _this.$el.find('.comm_1_cat').on('click', _.bind(_this.onClickFilter, _this));
-                return _this;
-            });
-            xhr.fail(function(data) {
-                $('#error').empty().html(data);
-                this.trigger('categorie:failure');
-            });
+            this.loadingStart("Chargement des données");
+            this.$el.empty();
+            this.$el.append(this.template({
+                user: this.user.toJSON()
+            }));
+            this.trigger('render:completed', this);
+            return this;
             
             
         }
@@ -16411,20 +16493,200 @@ define('view/MonEquipeHcView',["jquery", "underscore", "backbone", "text!templat
     });
     return MonEquipeView;
 });
+
+define('text!template/member_detail.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>MON MEMBRE</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div style="border: solid 1px black; width: 65%; margin: auto; border-radius: 15px; overflow: hidden; word-wrap: break-word;">\n        <form>\n            <div id="error"></div>\n            <input type="hidden" name="id" value="" class="required" />\n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="nom">Nom</label></div>\n                <input type="text" name="name" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="prenom">Pr&eacute;nom</label></div>\n                <input type="text" name="firstname" value="" class="required" />\n            </div>\n            \n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">POSTE</label></div>\n                <input type="text" name="fonction" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">TELEPHONE</label></div>\n                <input type="text" name="telephone" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">EMAIL</label></div>\n                <input type="text" name="email" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label text-left" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">DROIT D\'ACCES</label></div>\n                <div data-enhance="false" class="text-left">\n                    <input type="radio" data-role="none" name="droit_mobile" value="1">Ce membre peut enregistrer des livraisons<br/>\n                    <input type="radio" data-role="none" name="droit_mobile" value="2">Ce membre peut commander<br/>\n                    <input type="radio" data-role="none" name="droit_mobile" value="3">ce membre peut g&eacute;rer le stock<br/>\n                </div>\n            </div>\n            \n            <div style="display: table;width: 100%">\n                <a  href="#" id="submitform" style="width: 96%;">\n                    <div class="dou_pt ffmoreproblack formvalid" style="width: 96%; border-bottom-left-radius: 0px !important; padding: 2%; ">\n                        Valider et g&eacute;rer mon équipe\n                    </div>\n                </a>\n                <div style="clear: both"></div>\n            </div>\n\n            <!--div data-corners="true" data-shadow="true" data-iconshadow="true"\n                    data-wrapperels="span" data-icon="null" data-iconpos="null"\n                    data-theme="b"\n\n                    aria-disabled="false">\n                    <button type="submit" data-theme="b" name="submit"\n                            value="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>\n            </div-->\n        </form>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>\n';});
+
+define('view/MemberDetailView',["jquery", "underscore", "backbone", "text!template/member_detail.html"], function($, _, Backbone, member_detail_tpl) {
+    var MemberDetailView = Backbone.View.extend({
+        
+        id: 'member_detail-view',
+
+        template: _.template(member_detail_tpl),
+        
+        initialize: function(options) {
+            this.user = options.user;
+            this.idMembre = options.id;
+            this.listenToOnce(this.user, 'user:endfailurememberupdated', function(event, data) {
+                _.delay(this.loadingStop);
+                $('error').empty().html(data);
+                $('success').empty();
+                
+            });
+            this.listenToOnce(this.user, 'user:endsuccesmemberupdated', function() {
+                _.delay(this.loadingStop);
+                $('error').empty();
+                $('success').empty().html('Sauvegarde effectu&eacute;e');
+                Backbone.history.navigate("monequipe", true);
+            });
+            this.bind('render:completed', function() {
+                var _this = this;
+                var xhr = $.get(config.api_url + "/rest-member/"+_this.idMembre, null, null, 'jsonp');
+                xhr.done( function(data){
+                    $('#error').empty();
+                    _this.chargementInfosMembre(data);                    
+                });
+                xhr.fail(function(data) {
+                    $('#error').empty().html(data);
+                });
+            });
+        },
+        
+        chargementInfosMembre : function(members) {
+            if(members.data){
+                $('input[name="id"]').val(members.data.id);
+                $('input[name="name"]').val(members.data.name);
+                $('input[name="firstname"]').val(members.data.firstname);
+                $('input[name="telephone"]').val(members.data.telephone);
+                $('input[name="fonction"]').val(members.data.fonction);
+                $('input[name="email"]').val(members.data.email);
+                $('input[name="droit_mobile"]').filter('[value='+members.data.droit_mobile+']').prop('checked', true);
+            } else {
+                $('#error').empty().html(members);
+            }
+        },
+        
+        loadingStart: function(text_show) {
+            $.mobile.loading('show', {
+                text: text_show,
+                textVisible: true,
+                theme: 'b',
+                html: ""
+            });
+        },
+
+        loadingStop: function() {
+            $.mobile.loading('hide');
+        },
+        
+        events: {
+            "submit": "onSubmit",
+            "click a#submitform": "submitform",
+        },
+        
+        onSubmit: function(e) {
+            e.preventDefault();
+            this.loadingStart();
+            var data = Backbone.Syphon.serialize(this);
+            data['token'] = this.user.get('token');
+            this.saveMember(data);
+            Backbone.history.navigate("monequipe", true);
+        },
+        
+        saveMember: function(data) {
+            this.user.saveMember(data);
+        },
+        
+        submitform: function(e) {
+            e.preventDefault();
+            $('body form').submit();
+        },
+        
+        render: function(eventName) {
+            this.loadingStart("Chargement des données");
+            this.$el.empty();
+            this.$el.append(this.template({
+                user: this.user.toJSON()
+            }));
+            this.trigger('render:completed', this);
+            return this;
+            
+            
+        }
+    });
+    return MemberDetailView;
+});
+define('view/MemberAddView',["jquery", "underscore", "backbone", "text!template/member_detail.html"], function($, _, Backbone, member_detail_tpl) {
+    var MemberAddView = Backbone.View.extend({
+        
+        id: 'member_add-view',
+
+        template: _.template(member_detail_tpl),
+        
+        initialize: function(options) {
+            this.user = options.user;
+            this.listenToOnce(this.user, 'user:endfailurememberupdated', function(event, data) {
+                _.delay(this.loadingStop);
+                $('error').empty().html(data);
+                $('success').empty();
+                
+            });
+            this.listenToOnce(this.user, 'user:endsuccesmemberupdated', function() {
+                _.delay(this.loadingStop);
+                $('error').empty();
+                $('success').empty().html('Sauvegarde effectu&eacute;e');
+                Backbone.history.navigate("monequipe", true);
+            });
+            this.bind('render:completed', function() {
+                
+            });
+        },
+        
+        loadingStart: function(text_show) {
+            $.mobile.loading('show', {
+                text: text_show,
+                textVisible: true,
+                theme: 'b',
+                html: ""
+            });
+        },
+
+        loadingStop: function() {
+            $.mobile.loading('hide');
+        },
+        
+        events: {
+            "submit": "onSubmit",
+            "click a#submitform": "submitform",
+        },
+        
+        onSubmit: function(e) {
+            e.preventDefault();
+            this.loadingStart();
+            var data = Backbone.Syphon.serialize(this);
+            data['token'] = this.user.get('token');
+            this.saveMember(data);
+            Backbone.history.navigate("monequipe", true);
+        },
+        
+        saveMember: function(data) {
+            this.user.saveMember(data);
+        },
+        
+        submitform: function(e) {
+            e.preventDefault();
+            $('body form').submit();
+        },
+        
+        render: function(eventName) {
+            this.loadingStart("Chargement des données");
+            this.$el.empty();
+            this.$el.append(this.template({
+                user: this.user.toJSON()
+            }));
+            this.trigger('render:completed', this);
+            return this;
+            
+            
+        }
+    });
+    return MemberAddView;
+});
 define('router/app',["jquery", "jquery.validate", "underscore", "backbone", "backbone.queryparams", "backbone.route-filter", 
     'backbone.localStorage', "backbone.token", "model/user-local",  "model/commande-local", 
     "view/homeView", "view/loginView", "view/creationcompteView", "view/parametreView",
     "view/commandeView", "view/stockView","view/cassePerteView", "view/CommanderMenuView",
     "view/commandeProduitView", "view/stockProduitView", "view/destockProduitView",
     "view/MonCompteView", "view/EncoursFacturationView", "view/MonEquipeView", "view/InventaireView",
-    "view/HistoriqueCommandeView", "view/MonEquipeHcView"], 
+    "view/HistoriqueCommandeView", "view/MonEquipeHcView", "view/MemberDetailView",
+    "view/MemberAddView"], 
 function($, validate ,_, Backbone, QueryParams, RouterFilter,
     LocalStorage, Token, UserLocalModel, CommandeLocalModel,
     HomeView, LoginView, CreationCompteView, ParametreView,
     CommandeView, StockView,CassePerteView, CommanderMenuView,
     CommandeProduitView, StockProduitView, DestockProduitView,
     MonCompteView, EncoursFacturationView, MonEquipeView, InventaireView,
-    HistoriqueCommandeView, MonEquipeHcView) {
+    HistoriqueCommandeView, MonEquipeHcView, MemberDetailView,
+    MemberAddView) {
     
     var userLocal = new UserLocalModel();
     userLocal.fetch();
@@ -16451,6 +16713,8 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             "moncompte" : "moncompte",
             "encoursFacturation" : "encoursfacturation",
             "monequipe" : "monequipe",
+            "member/:id" : "memberDetail",
+            "memberAdd" : "memberAdd",
             "monequipehc" : "monequipehc",
             "inventaire" : "inventaire",
         },
@@ -16479,7 +16743,6 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
                 return false;
             });
             this.firstPage = true;
-            console.log(userLocal);
             this.userLocal = userLocal;
         },
         logout: function() {
@@ -16610,6 +16873,22 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             });
             view.render();
             this.changePage(view);
+        },
+        memberDetail: function(id){
+           var view = new MemberDetailView({
+                user: this.userLocal,
+                id: id
+            });
+            view.render();
+            this.changePage(view); 
+        },
+        memberAdd: function(id){
+           var view = new MemberAddView({
+                user: this.userLocal,
+                id: id
+            });
+            view.render();
+            this.changePage(view); 
         },
         creationcompte: function() {
             var view = new CreationCompteView({

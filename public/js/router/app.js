@@ -4,14 +4,16 @@ define(["jquery", "jquery.validate", "underscore", "backbone", "backbone.querypa
     "view/commandeView", "view/stockView","view/cassePerteView", "view/CommanderMenuView",
     "view/commandeProduitView", "view/stockProduitView", "view/destockProduitView",
     "view/MonCompteView", "view/EncoursFacturationView", "view/MonEquipeView", "view/InventaireView",
-    "view/HistoriqueCommandeView", "view/MonEquipeHcView"], 
+    "view/HistoriqueCommandeView", "view/MonEquipeHcView", "view/MemberDetailView",
+    "view/MemberAddView"], 
 function($, validate ,_, Backbone, QueryParams, RouterFilter,
     LocalStorage, Token, UserLocalModel, CommandeLocalModel,
     HomeView, LoginView, CreationCompteView, ParametreView,
     CommandeView, StockView,CassePerteView, CommanderMenuView,
     CommandeProduitView, StockProduitView, DestockProduitView,
     MonCompteView, EncoursFacturationView, MonEquipeView, InventaireView,
-    HistoriqueCommandeView, MonEquipeHcView) {
+    HistoriqueCommandeView, MonEquipeHcView, MemberDetailView,
+    MemberAddView) {
     
     var userLocal = new UserLocalModel();
     userLocal.fetch();
@@ -38,6 +40,8 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             "moncompte" : "moncompte",
             "encoursFacturation" : "encoursfacturation",
             "monequipe" : "monequipe",
+            "member/:id" : "memberDetail",
+            "memberAdd" : "memberAdd",
             "monequipehc" : "monequipehc",
             "inventaire" : "inventaire",
         },
@@ -66,7 +70,6 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
                 return false;
             });
             this.firstPage = true;
-            console.log(userLocal);
             this.userLocal = userLocal;
         },
         logout: function() {
@@ -197,6 +200,22 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             });
             view.render();
             this.changePage(view);
+        },
+        memberDetail: function(id){
+           var view = new MemberDetailView({
+                user: this.userLocal,
+                id: id
+            });
+            view.render();
+            this.changePage(view); 
+        },
+        memberAdd: function(id){
+           var view = new MemberAddView({
+                user: this.userLocal,
+                id: id
+            });
+            view.render();
+            this.changePage(view); 
         },
         creationcompte: function() {
             var view = new CreationCompteView({

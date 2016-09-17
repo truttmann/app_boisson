@@ -299,7 +299,9 @@ a:visited {
     font-size: 18pt;
     letter-spacing: 10px;
 }
-
+.ui-page {
+    padding-bottom: 5.5em !important;
+}
 .ui-page, .ui_content {
     background: none !important;
 }
@@ -352,4 +354,26 @@ a:visited {
 }
 .required {
     color: red;
+}
+.moneq_1_content {
+    width: 100%;
+    padding-bottom: 5em;
+    clear: both;
+}
+div.moneq_1_content > div {
+    float: left;
+    width:  50%;
+    padding-bottom: 2em;
+}
+div.moneq_1_content > div > div {
+    border: solid 1px black;
+    border-radius: 15px;
+    height: 5em;
+    line-height: 5em;
+    width: 16em;
+    margin: auto;
+}
+
+.detailmember {
+    cursor: pointer;
 }

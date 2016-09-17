@@ -1,0 +1,81 @@
+<div data-role="header" id="headerappli" style="position: relative">
+    <h1>ASAR</h1>
+    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>
+</div><!-- /header -->
+
+<div data-role="navbar">
+    <ul>
+        <li>MON MEMBRE</li>
+    </ul>
+</div><!-- /navbar -->
+
+<div data-role="content">
+    <div style="border: solid 1px black; width: 65%; margin: auto; border-radius: 15px; overflow: hidden; word-wrap: break-word;">
+        <form>
+            <div id="error"></div>
+            <input type="hidden" name="id" value="" class="required" />
+            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
+                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="nom">Nom</label></div>
+                <input type="text" name="name" value="" class="required" />
+            </div>
+            
+            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
+                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="prenom">Pr&eacute;nom</label></div>
+                <input type="text" name="firstname" value="" class="required" />
+            </div>
+            
+            
+            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
+                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">POSTE</label></div>
+                <input type="text" name="fonction" value="" class="required" />
+            </div>
+            
+            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
+                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">TELEPHONE</label></div>
+                <input type="text" name="telephone" value="" class="required" />
+            </div>
+            
+            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">
+                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">EMAIL</label></div>
+                <input type="text" name="email" value="" class="required" />
+            </div>
+            
+            <div data-role="fieldcontain" class="ui-label text-left" style=" padding: 0 2%; width: 96%">
+                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">DROIT D'ACCES</label></div>
+                <div data-enhance="false" class="text-left">
+                    <input type="radio" data-role="none" name="droit_mobile" value="1">Ce membre peut enregistrer des livraisons<br/>
+                    <input type="radio" data-role="none" name="droit_mobile" value="2">Ce membre peut commander<br/>
+                    <input type="radio" data-role="none" name="droit_mobile" value="3">ce membre peut g&eacute;rer le stock<br/>
+                </div>
+            </div>
+            
+            <div style="display: table;width: 100%">
+                <a  href="#" id="submitform" style="width: 96%;">
+                    <div class="dou_pt ffmoreproblack formvalid" style="width: 96%; border-bottom-left-radius: 0px !important; padding: 2%; ">
+                        Valider et g&eacute;rer mon équipe
+                    </div>
+                </a>
+                <div style="clear: both"></div>
+            </div>
+
+            <!--div data-corners="true" data-shadow="true" data-iconshadow="true"
+                    data-wrapperels="span" data-icon="null" data-iconpos="null"
+                    data-theme="b"
+
+                    aria-disabled="false">
+                    <button type="submit" data-theme="b" name="submit"
+                            value="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>
+            </div-->
+        </form>
+    </div>
+</div>
+<div data-role="footer"  data-position="fixed">
+    <div data-enhance="false" id="test-container">
+        <a href="#logout">
+            <div style="text-center">
+                <img src="css/images/icons-png/cancel.png" />
+            </div>
+            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>
+        </a>
+    </div>
+</div>

@@ -7,14 +7,52 @@ define(["jquery", "underscore", "backbone", "backbone.syphon", "text!template/mo
 
         initialize: function(options) {
             this.user = options.user;
-            this.listenTo(this.user, 'user:asknew', function(model) {
-                Backbone.history.navigate("login", true);
+            this.listenToOnce(this.user, 'user:endfailureuserupdated', function(event, data) {
+                _.delay(this.loadingStop);
+                $('error').empty().html(data);
+                $('success').empty();
+                
+            });
+            this.listenToOnce(this.user, 'user:endsuccesuserupdated', function() {
+                _.delay(this.loadingStop);
+                $('error').empty();
+                $('success').empty().html('Sauvegarde effectu&eacute;e');
+                Backbone.history.navigate("monequipe", true);
+            });
+            this.bind('render:completed', function() {
+                this.loadingStart();
+                var _this = this;
+                var xhr = $.get(config.api_url + "/rest-user/"+_this.user.get('token'), {"token": _this.user.get('token')}, null, 'jsonp');
+                xhr.done( function(data){
+                    if(data.data){
+                        $('input[name="id"]').val(data.data.id);
+                        $('input[name="nom"]').val(data.data.name);
+                        $('input[name="prenom"]').val(data.data.firstname);
+                        $('input[name="societe"]').val(data.data.societe);
+                        $('input[name="adr_societe"]').val(data.data.adresse);
+                        $('input[name="cp"]').val(data.data.cp);
+                        $('input[name="ville"]').val(data.data.ville);
+                        $('input[name="siret"]').val(data.data.siret);
+                        $('input[name="tva"]').val(data.data.tva);
+                        $('textarea[name="horaire"]').val(data.data.horaire);
+                        $('textarea[name="information"]').val(data.data.information);
+                        $('input[name="email"]').val(data.data.email);
+                        $('input[name="email_conf"]').val(data.data.email);
+                    } else {
+                        $('#error').empty().html(data);
+                    }
+                    _this.loadingStop();
+                });
+                xhr.fail(function(data) {
+                    $('#error').empty().html(data);
+                    Backbone.history.navigate("home", true);
+                });
             });
         },
 
         loadingStart: function() {
             $.mobile.loading('show', {
-                text: 'Tentative de connexion',
+                text: 'Chargement des données',
                 textVisible: true,
                 theme: 'b',
                 html: ""
@@ -29,7 +67,7 @@ define(["jquery", "underscore", "backbone", "backbone.syphon", "text!template/mo
             this.listenToOnce(this.user, 'login:failure', function() {
                 _.delay(this.loadingStop);
             });
-            this.user.askNew(data);
+            this.user.update(data);
         },
 
         onSubmit: function(e) {
@@ -37,14 +75,13 @@ define(["jquery", "underscore", "backbone", "backbone.syphon", "text!template/mo
             this.loadingStart();
             var data = Backbone.Syphon.serialize(this);
             this.saveDemandeUser(data);
-            Backbone.history.navigate("login", true);
         },
         
-        /*events: {
+        events: {
             "submit": "onSubmit",
             "click a#submitform": "submitform",
-            "click a#cancel": "cancel",
-        },*/
+            /*"click a#cancel": "cancel",*/
+        },
         
         submitform: function(e) {
             e.preventDefault();
@@ -52,14 +89,12 @@ define(["jquery", "underscore", "backbone", "backbone.syphon", "text!template/mo
         },
         
         cancel: function(e) {
-            Backbone.history.navigate("login", true);
+            Backbone.history.navigate("#home", true);
         },
         
         render: function(eventName) {
             $(this.el).html(this.template({}));
-            $('body').removeClass("ui-panel-page-container-themed");
-            $('body').removeClass("ui-panel-page-container-b");
-            $('body').removeClass("ui-panel-page-container");
+            this.trigger('render:completed', this);
             return this;
         }
     });

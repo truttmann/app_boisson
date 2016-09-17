@@ -30,13 +30,56 @@ define(["jquery", "underscore", "backbone", "backbone.localStorage"], function (
             this.trigger('login:failure');
         },
         login: function (options) {
-            var xhr = $.get(config.api_url + "/rest-login/" + options.token, null, null, 'jsonp');
+            var xhr = $.get(config.api_url + "/rest-user/" + options.token, null, null, 'jsonp');
             xhr.done(this.onLoginSuccess);
             xhr.fail(this.onLoginFailure);
         },
+        saveMember: function(options) {
+            var self = this;
+            var xhr = null;
+            if(options["id"] && options["id"] != "") {
+                xhr = $.ajax({
+                    url: config.api_url + "/rest-member/"+options['id'],
+                    type: 'PUT',
+                    data: options,
+                    dataType: "jsonp"
+                });
+            } else {
+                xhr = $.ajax({
+                    url: config.api_url + "/rest-member",
+                    type: 'POST',
+                    data: options,
+                    dataType: "jsonp"
+                });
+            }
+            xhr.done(function (data) {
+                self.trigger('user:endsuccesmemberupdated');
+            });
+            xhr.fail(function (data) {
+                self.trigger('user:endfailurememberupdated', data);
+            });
+        },
+        update : function (options) {
+            var self = this;
+            var xhr = $.ajax({
+                url: config.api_url + "/rest-user/"+options['id'],
+                type: 'PUT',
+                data: options,
+                dataType: "jsonp"
+            });
+            xhr.done(function (data) {
+                self.localStorage._clear();
+                self.set(_.pick(data.data, 'id', 'firstname', 'name', 'email', 'societe', 'profil_id', 'token'));
+                self.save();
+                self.trigger('user:endsuccesuserupdated');
+            });
+            xhr.fail(function (data) {
+                self.trigger('user:endfailureuserupdated', data);
+            });
+        },
         askNew : function (options) {
             var self = this;
-            var xhr = $.post(config.api_url + "/rest-login", options, null, 'jsonp');
+            var xhr = $.post(config.api_url + "/rest-user", options, null, 'jsonp');
             xhr.done(function (data) {
                 /*
                     this.localStorage._clear();

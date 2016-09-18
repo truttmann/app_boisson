@@ -11,8 +11,11 @@ define(["jquery", "underscore", "backbone", "backbone.localStorage"], function (
             }
         },
         defaults: {
+            changeProduct: false,
+            idCommande: null,
         },
         addProduct: function(id, quantity) {
+            this.set('changeProduct', true);
             var t = this.get("product");
             if(t == undefined || t == null) {
                 t = new Array();
@@ -21,6 +24,34 @@ define(["jquery", "underscore", "backbone", "backbone.localStorage"], function (
             
             this.set('product', t);
             this.save();
+        },
+        changeData: function(){
+            this.set('changeProduct', true);
+            this.save();
+        },
+        saveNewStock: function(id) {
+            var self = this;
+            var xhr = null;
+            
+            var options = {};
+            options['product'] = this.get('product');
+            if(this.get('idCommande') != null) {
+                options['id_commande'] = this.get('idCommande');
+            }
+            options['id'] = id;
+            
+            xhr = $.ajax({
+                url: config.api_url + "/rest-stock/"+options['id'],
+                type: 'PUT',
+                data: options,
+                dataType: "jsonp"
+            });
+            xhr.done(function (data) {
+                self.trigger('lastcommande:endsuccesstockupdated');
+            });
+            xhr.fail(function (data) {
+                self.trigger('lastcommande:endfailurestockupdated', data);
+            });
         }
     });
     return LastcommandeLocalModel;

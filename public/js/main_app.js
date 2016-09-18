@@ -14785,14 +14785,6 @@ define('model/user-local',["jquery", "underscore", "backbone", "backbone.localSt
             var self = this;
             var xhr = $.post(config.api_url + "/rest-user", options, null, 'jsonp');
             xhr.done(function (data) {
-                /*
-                    this.localStorage._clear();
-                    this.set(_.pick(data.data, 'id', 'firstname', 'name', 'email', 'societe', 'profil_id', 'token'));
-                    this.set('is_logged', false);
-                    this.set('external_id', data.data.id);
-                    this.save();
-                 */
-                
                 self.trigger('user:endusercreated', this);
             });
             xhr.fail(function (data) {
@@ -14842,7 +14834,7 @@ define('model/commande-local',["jquery", "underscore", "backbone", "backbone.loc
 });
 define('text',{load: function(id){throw new Error("Dynamic load not allowed: " + id);}});
 
-define('text!template/home.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>CHOISIR UNE ACTION</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <ul id="lien_menu_p">\n        <li>\n            <a href="#commanderMenu">\n                <div class="menu_p_title">\n                    COMMANDER\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#monstock">\n                <div class="menu_p_title">\n                    GERER MON STOCK\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#moncompte">\n                <div class="menu_p_title">\n                    MON COMPTE\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n    </ul>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
+define('text!template/home.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>CHOISIR UNE ACTION</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="message"><%= message %></div>\n    <ul id="lien_menu_p">\n        <li>\n            <a href="#commanderMenu">\n                <div class="menu_p_title">\n                    COMMANDER\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#monstock">\n                <div class="menu_p_title">\n                    GERER MON STOCK\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#moncompte">\n                <div class="menu_p_title">\n                    MON COMPTE\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n    </ul>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
 
 define('view/homeView',["jquery", "underscore", "backbone", "text!template/home.html"], function($, _, Backbone, home_tpl) {
     var HomeView = Backbone.View.extend({
@@ -14852,13 +14844,15 @@ define('view/homeView',["jquery", "underscore", "backbone", "text!template/home.
         template: _.template(home_tpl),
         
         initialize: function(options) {
+            _.bindAll(this, 'render');             
             this.user = options.user;
+            this.message = options.message;
             this.listenToOnce(this.user, 'pointage:failure', function() {
                 _.delay(this.loadingStop);
                 alert('Erreur de sauvegarde, Veuillez vous déconnecter et recommencer');
             });
             this.bind('render:completed', function() {
-               $('a.ui-btn').removeClass('ui-btn');
+                
             });
         },
         
@@ -14878,7 +14872,8 @@ define('view/homeView',["jquery", "underscore", "backbone", "text!template/home.
         render: function(eventName) {
             this.$el.empty();
             this.$el.append(this.template({
-                user: this.user.toJSON()
+                user: this.user.toJSON(),
+                message: this.message.getMessage()
             }));
             this.trigger('render:completed', this);
             return this;
@@ -16616,6 +16611,7 @@ define('view/MonStockAddView',["jquery", "underscore", "backbone", "text!templat
         initialize: function(options) {
             this.user = options.user;
             this.lastcommande = options.lastcommande;
+            this.message = options.message;
             
             this.bind('render:completed', function() {
                 this.loadingStart("Chargement en cours");
@@ -16690,12 +16686,14 @@ define('view/MonStockAddView',["jquery", "underscore", "backbone", "text!templat
             var _this = this;
             $('.produit_moins').unbind('click').on('click', function(e){
                 e.preventDefault();
+                _this.lastcommande.changeData();
                 var v = parseInt($(this).parent().find('input').val());
                 $(this).parent().find('input').val(((v > 1)?v-1:1));      
                 _this.recalculMontantTotalHt();
             });
             $('.produit_plus').unbind('click').on('click', function(e){
                 e.preventDefault();
+                _this.lastcommande.changeData();
                 var v = parseInt($(this).parent().find('input').val());
                 $(this).parent().find('input').val(v+1);
                 _this.recalculMontantTotalHt();
@@ -16722,12 +16720,18 @@ define('view/MonStockAddView',["jquery", "underscore", "backbone", "text!templat
         },
         
         events: {
-            /* TODO : changement de catégorie */
             "click a.valid_entree": "valide_livraison"
         },
         
-        valide_livraison: function() {
-            
+        valide_livraison: function(e) {
+            e.preventDefault();
+            /* si pas de changement, nous validond la livraison */
+            if(this.lastcommande.get('changeProduct') == false) {
+                
+            } else {
+                /* sinon nous passons d'abord à l'étape des motifs */
+                Backbone.history.navigate("monstockAddValidate", true);
+            }
         },
 
         loadingStop: function() {
@@ -16984,8 +16988,11 @@ define('model/lastcommande-local',["jquery", "underscore", "backbone", "backbone
             }
         },
         defaults: {
+            changeProduct: false,
+            idCommande: null,
         },
         addProduct: function(id, quantity) {
+            this.set('changeProduct', true);
             var t = this.get("product");
             if(t == undefined || t == null) {
                 t = new Array();
@@ -16994,9 +17001,128 @@ define('model/lastcommande-local',["jquery", "underscore", "backbone", "backbone
             
             this.set('product', t);
             this.save();
+        },
+        changeData: function(){
+            this.set('changeProduct', true);
+            this.save();
+        },
+        saveNewStock: function(id) {
+            var self = this;
+            var xhr = null;
+            
+            var options = {};
+            options['product'] = this.get('product');
+            if(this.get('idCommande') != null) {
+                options['id_commande'] = this.get('idCommande');
+            }
+            options['id'] = id;
+            
+            xhr = $.ajax({
+                url: config.api_url + "/rest-stock/"+options['id'],
+                type: 'PUT',
+                data: options,
+                dataType: "jsonp"
+            });
+            xhr.done(function (data) {
+                self.trigger('lastcommande:endsuccesstockupdated');
+            });
+            xhr.fail(function (data) {
+                self.trigger('lastcommande:endfailurestockupdated', data);
+            });
         }
     });
     return LastcommandeLocalModel;
+});
+
+define('text!template/mon_stock_add_validate.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>ENTREE STOCK</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_prod_content">\n        <p class="qua_pt ffmorepromed text-left" style="padding: 1% 10%;">MOTIF DE MODIFICATION DE QUANTITE DE PRODUITS RECUS</p>\n        <div class="floatl" style="width:50%;margin-top: 10px;">\n            <a href="#" class="motif"><div class="cell_modif_entree">PRODUITS NON LIVRES</div></a>\n        </div>\n        <div class="floatl" style="width:50%;margin-top: 10px; ">\n            <a href="#" class="motif"><div class="cell_modif_entree">PRODUITS CASSES</div></a>\n        </div>\n        <div class="floatl" style="width:50%;margin-top: 10px; ">\n            <a href="#" class="motif"><div class="cell_modif_entree">PRODUITS DETERIORES OU NON CONFORMES</div></a>\n        </div>\n        <div class="floatl" style="width:50%;margin-top: 10px; ">\n            <a href="#" class="motif"><div class="cell_modif_entree">PRODUITS NON COMMANDES A REPRENDRE</div></a>\n        </div>\n        <div class="floatl" style="width:100%;margin-top: 10px; ">\n            <a href="#" class="motif"><div class="cell_modif_entree" style="width: 50%;">PRODUITS ACHETES A UN AUTRE DISTRIBUTEUR EN APPOINT</div></a>\n        </div>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
+
+define('view/MonStockAddValidateView',["jquery", "underscore", "backbone", "text!template/mon_stock_add_validate.html"], function($, _, Backbone, mon_stock_add_validate_tpl) {
+    var MonStockAddValidateView = Backbone.View.extend({
+        
+        id: 'mon_stock_add_validate-view',
+
+        template: _.template(mon_stock_add_validate_tpl),
+        
+        initialize: function(options) {
+            this.user = options.user;
+            this.lastcommande = options.lastcommande;
+            this.message = options.message;
+            
+            this.listenTo(this.lastcommande, 'lastcommande:endsuccesstockupdated', function(model) {
+                this.message.addMessage("Stock has been updated");
+                Backbone.history.navigate("home", true);
+            });
+            this.listenTo(this.lastcommande, 'lastcommande:endfailurestockupdated', function(model) {
+                alert("Error during saving, please try later");
+            });
+            
+            this.bind('render:completed', function() {
+                
+            });
+        },
+        
+        
+        loadingStart: function(text_show) {
+            $.mobile.loading('show', {
+                text: text_show,
+                textVisible: true,
+                theme: 'b',
+                html: ""
+            });
+        },
+        
+        events: {
+            /* TODO : changement de catégorie */
+            "click a.motif": "valide_livraison"
+        },
+        
+        valide_livraison: function(e) {
+            e.preventDefault();
+            /* envoi des produits et quantité à ajouter au stock */
+            this.lastcommande.saveNewStock(this.user.get('id'));
+        },
+
+        loadingStop: function() {
+            $.mobile.loading('hide');
+        },
+        
+        render: function(eventName) {
+            this.$el.empty();
+            this.$el.append(this.template({
+                user: this.user.toJSON()
+            }));
+            this.trigger('render:completed', this);
+            return this;
+        }
+    });
+    return MonStockAddValidateView;
+});
+define('model/message-local',["jquery", "underscore", "backbone", "backbone.localStorage"], function ($, _, Backbone, LocalStorage) {
+    var MessageLocalModel = Backbone.Model.extend({
+        localStorage: new Backbone.LocalStorage("main-message"),
+        initialize: function () {
+            uid = this.localStorage.records[0];
+            if (!uid) {
+                this.localStorage.create(this);
+            } else {
+                this.id = uid;
+            }
+        },
+        defaults: {
+            message: ""
+        },
+        addMessage: function (mess) {
+            this.set('message', (this.get('message')+mess));
+            this.save();
+        },
+        getMessage: function() {
+            var mess  = this.get('message');
+            this.set('message', "");
+            this.save();
+            return mess;
+        }
+    });
+    return MessageLocalModel;
 });
 define('router/app',["jquery", "jquery.validate", "underscore", "backbone", "backbone.queryparams", "backbone.route-filter", 
     'backbone.localStorage', "backbone.token", "model/user-local",  "model/commande-local", 
@@ -17006,7 +17132,8 @@ define('router/app',["jquery", "jquery.validate", "underscore", "backbone", "bac
     "view/MonCompteView", "view/EncoursFacturationView", "view/MonEquipeView", "view/InventaireView",
     "view/HistoriqueCommandeView", "view/MonEquipeHcView", "view/MemberDetailView",
     "view/MemberAddView","view/MonStockAddView","view/MonStockAddProductCatView",
-    "view/MonStockAddProductCatProdView", "model/lastcommande-local"], 
+    "view/MonStockAddProductCatProdView", "model/lastcommande-local",
+    "view/MonStockAddValidateView","model/message-local"], 
 function($, validate ,_, Backbone, QueryParams, RouterFilter,
     LocalStorage, Token, UserLocalModel, CommandeLocalModel,
     HomeView, LoginView, CreationCompteView, ParametreView,
@@ -17015,13 +17142,17 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
     MonCompteView, EncoursFacturationView, MonEquipeView, InventaireView,
     HistoriqueCommandeView, MonEquipeHcView, MemberDetailView,
     MemberAddView, MonStockAddView, MonStockAddProductCatView,
-    MonStockAddProductCatProdView, LastcommandeLocalModel) {
+    MonStockAddProductCatProdView, LastcommandeLocalModel,
+    MonStockAddValidateView,MessageLocalModel) {
     
     var userLocal = new UserLocalModel();
     userLocal.fetch();
     
     var lastcommandeLocal = new LastcommandeLocalModel();
     lastcommandeLocal.fetch();
+    
+    var messageLocal = new MessageLocalModel();
+    messageLocal.fetch();
 
     var AppRouter = Backbone.Router.extend({
         init: true,
@@ -17036,6 +17167,7 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             "historiqueCommande": "historiqueCommande",
             "monstock": "monstock",
             "monstockAdd": "monstockAdd",
+            "monstockAddValidate": "monstockAddValidate",
             "monstockAddProductCat": "monstockAddProductCat",
             "monstockAddProductCatProd/:id": "monstockAddProductCatProd",
             "stockProduit": "stockProduit",
@@ -17080,6 +17212,7 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             this.firstPage = true;
             this.userLocal = userLocal;
             this.lastcommandeLocal = lastcommandeLocal;
+            this.messageLocal = messageLocal;
         },
         logout: function() {
             this.userLocal.clear();
@@ -17097,7 +17230,8 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
         },
         home: function() {
             var view = new HomeView({
-                user: this.userLocal
+                user: this.userLocal,
+                message: this.messageLocal
             });
             view.render();
             this.changePage(view);
@@ -17159,7 +17293,17 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
         monstockAdd: function() {
             var view = new MonStockAddView({
                 user: this.userLocal,
-                lastcommande: this.lastcommandeLocal
+                lastcommande: this.lastcommandeLocal,
+                message: this.messageLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        monstockAddValidate : function(){
+            var view = new MonStockAddValidateView({
+                user: this.userLocal,
+                lastcommande: this.lastcommandeLocal,
+                message: this.messageLocal
             });
             view.render();
             this.changePage(view);

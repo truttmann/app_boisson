@@ -6,7 +6,8 @@ define(["jquery", "jquery.validate", "underscore", "backbone", "backbone.querypa
     "view/MonCompteView", "view/EncoursFacturationView", "view/MonEquipeView", "view/InventaireView",
     "view/HistoriqueCommandeView", "view/MonEquipeHcView", "view/MemberDetailView",
     "view/MemberAddView","view/MonStockAddView","view/MonStockAddProductCatView",
-    "view/MonStockAddProductCatProdView", "model/lastcommande-local"], 
+    "view/MonStockAddProductCatProdView", "model/lastcommande-local",
+    "view/MonStockAddValidateView","model/message-local"], 
 function($, validate ,_, Backbone, QueryParams, RouterFilter,
     LocalStorage, Token, UserLocalModel, CommandeLocalModel,
     HomeView, LoginView, CreationCompteView, ParametreView,
@@ -15,13 +16,17 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
     MonCompteView, EncoursFacturationView, MonEquipeView, InventaireView,
     HistoriqueCommandeView, MonEquipeHcView, MemberDetailView,
     MemberAddView, MonStockAddView, MonStockAddProductCatView,
-    MonStockAddProductCatProdView, LastcommandeLocalModel) {
+    MonStockAddProductCatProdView, LastcommandeLocalModel,
+    MonStockAddValidateView,MessageLocalModel) {
     
     var userLocal = new UserLocalModel();
     userLocal.fetch();
     
     var lastcommandeLocal = new LastcommandeLocalModel();
     lastcommandeLocal.fetch();
+    
+    var messageLocal = new MessageLocalModel();
+    messageLocal.fetch();
 
     var AppRouter = Backbone.Router.extend({
         init: true,
@@ -36,6 +41,7 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             "historiqueCommande": "historiqueCommande",
             "monstock": "monstock",
             "monstockAdd": "monstockAdd",
+            "monstockAddValidate": "monstockAddValidate",
             "monstockAddProductCat": "monstockAddProductCat",
             "monstockAddProductCatProd/:id": "monstockAddProductCatProd",
             "stockProduit": "stockProduit",
@@ -80,6 +86,7 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             this.firstPage = true;
             this.userLocal = userLocal;
             this.lastcommandeLocal = lastcommandeLocal;
+            this.messageLocal = messageLocal;
         },
         logout: function() {
             this.userLocal.clear();
@@ -97,7 +104,8 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
         },
         home: function() {
             var view = new HomeView({
-                user: this.userLocal
+                user: this.userLocal,
+                message: this.messageLocal
             });
             view.render();
             this.changePage(view);
@@ -159,7 +167,17 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
         monstockAdd: function() {
             var view = new MonStockAddView({
                 user: this.userLocal,
-                lastcommande: this.lastcommandeLocal
+                lastcommande: this.lastcommandeLocal,
+                message: this.messageLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        monstockAddValidate : function(){
+            var view = new MonStockAddValidateView({
+                user: this.userLocal,
+                lastcommande: this.lastcommandeLocal,
+                message: this.messageLocal
             });
             view.render();
             this.changePage(view);

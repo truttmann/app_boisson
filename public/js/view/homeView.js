@@ -6,13 +6,15 @@ define(["jquery", "underscore", "backbone", "text!template/home.html"], function
         template: _.template(home_tpl),
         
         initialize: function(options) {
+            _.bindAll(this, 'render');             
             this.user = options.user;
+            this.message = options.message;
             this.listenToOnce(this.user, 'pointage:failure', function() {
                 _.delay(this.loadingStop);
                 alert('Erreur de sauvegarde, Veuillez vous déconnecter et recommencer');
             });
             this.bind('render:completed', function() {
-               $('a.ui-btn').removeClass('ui-btn');
+                
             });
         },
         
@@ -32,7 +34,8 @@ define(["jquery", "underscore", "backbone", "text!template/home.html"], function
         render: function(eventName) {
             this.$el.empty();
             this.$el.append(this.template({
-                user: this.user.toJSON()
+                user: this.user.toJSON(),
+                message: this.message.getMessage()
             }));
             this.trigger('render:completed', this);
             return this;

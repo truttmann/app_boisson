@@ -411,3 +411,16 @@ div.moneq_1_content > div > div {
     line-height: 40px;
     background-color: #3893b4
 }
+
+.cell_modif_entree {
+    border: solid 1px black; 
+    width: 70%; 
+    margin: auto; 
+    min-height: 20px;
+    padding: 1em;
+}
+
+.message {
+    color: green;
+    font-size: 20px;
+}

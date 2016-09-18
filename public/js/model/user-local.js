@@ -81,14 +81,6 @@ define(["jquery", "underscore", "backbone", "backbone.localStorage"], function (
             var self = this;
             var xhr = $.post(config.api_url + "/rest-user", options, null, 'jsonp');
             xhr.done(function (data) {
-                /*
-                    this.localStorage._clear();
-                    this.set(_.pick(data.data, 'id', 'firstname', 'name', 'email', 'societe', 'profil_id', 'token'));
-                    this.set('is_logged', false);
-                    this.set('external_id', data.data.id);
-                    this.save();
-                 */
-                
                 self.trigger('user:endusercreated', this);
             });
             xhr.fail(function (data) {

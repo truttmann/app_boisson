@@ -8,6 +8,7 @@ define(["jquery", "underscore", "backbone", "text!template/mon_stock_add.html"],
         initialize: function(options) {
             this.user = options.user;
             this.lastcommande = options.lastcommande;
+            this.message = options.message;
             
             this.bind('render:completed', function() {
                 this.loadingStart("Chargement en cours");
@@ -82,12 +83,14 @@ define(["jquery", "underscore", "backbone", "text!template/mon_stock_add.html"],
             var _this = this;
             $('.produit_moins').unbind('click').on('click', function(e){
                 e.preventDefault();
+                _this.lastcommande.changeData();
                 var v = parseInt($(this).parent().find('input').val());
                 $(this).parent().find('input').val(((v > 1)?v-1:1));      
                 _this.recalculMontantTotalHt();
             });
             $('.produit_plus').unbind('click').on('click', function(e){
                 e.preventDefault();
+                _this.lastcommande.changeData();
                 var v = parseInt($(this).parent().find('input').val());
                 $(this).parent().find('input').val(v+1);
                 _this.recalculMontantTotalHt();
@@ -114,12 +117,18 @@ define(["jquery", "underscore", "backbone", "text!template/mon_stock_add.html"],
         },
         
         events: {
-            /* TODO : changement de catégorie */
             "click a.valid_entree": "valide_livraison"
         },
         
-        valide_livraison: function() {
-            
+        valide_livraison: function(e) {
+            e.preventDefault();
+            /* si pas de changement, nous validond la livraison */
+            if(this.lastcommande.get('changeProduct') == false) {
+                
+            } else {
+                /* sinon nous passons d'abord à l'étape des motifs */
+                Backbone.history.navigate("monstockAddValidate", true);
+            }
         },
 
         loadingStop: function() {

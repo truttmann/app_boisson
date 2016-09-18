@@ -1,32 +1,14 @@
-<div data-role="header">
-    <div class="header_bloc_left">
-        <a href="#home">&eacute;tape pr&eacute;c&eacute;dente</a>
-    </div>
+<div data-role="header" id="headerappli" style="position: relative">
     <h1>ASAR</h1>
-    <img style="float: left" src=""/>
-    <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->
-    
-    <div id="page-title">
-        GERER MON STOCK
-        <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->
-    </div>
-    
-    <div class="produit_nav">
-        <a href="#">Ajouter un produit</a>
-    </div>
-</div>
+    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>
+</div><!-- /header -->
 
+<div data-role="navbar">
+    <ul>
+        <li>ENTREE STOCK</li>
+    </ul>
+</div><!-- /navbar -->
 
-
-
-<!--div id="nav-panel-user" data-role="panel" data-position="right" data-theme="b">
-    <div class="ui-panel-inner">
-        <h3><%= user.firstname %> <%= user.lastname %></h3>
-        <a href="#logout" data-rel="close" data-role="button" data-theme="c" data-icon="delete" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-left">
-        <span class="ui-btn-inner">Se deconnecter</span>
-        </a>
-    </div>
-</div-->
 <div data-role="content">
     <div class="comm_prod_content">
         <p>IMPORTANT : LES SORTIES DE STOCKS SE FONT UNIQUEMENT PAR CAISSES DE 6 OU 12 BOUTEILLES OU PAR FUT</p>
@@ -106,30 +88,14 @@
         <%}*/%>
     </div>
 </div>
-<div data-role="footer" id="footer">
-    <div class="footer_div">
-        <a href="#home">
-            <div><img src="" /></div>
-            <div>Accueil</div>
+<div data-role="footer"  data-position="fixed">
+    <div data-enhance="false" id="test-container">
+        <a href="#logout">
+            <div style="text-center">
+                <img src="css/images/icons-png/cancel.png" />
+            </div>
+
+            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>
         </a>
     </div>
-    <div class="footer_div">
-        <a href="#consult_stock" class="active">
-            <div><img src="" /></div>
-            <div>Consulter le stock</div>
-        </a>
-    </div>
-    <div class="footer_div">
-        <a href="#destock">
-            <div><img src="" /></div>
-            <div>D&eacute;stocker un article</div>
-        </a>
-    </div>
-    <div class="footer_div">
-        <a href="#parametre">
-            <div><img src="" /></div>
-            <div>Mon compte</div>
-        </a>
-    </div>
-    <div class="clear"></div>
 </div>

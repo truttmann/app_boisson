@@ -1,19 +1,12 @@
-define(["jquery", "underscore", "backbone", "text!template/home.html"], function($, _, Backbone, home_tpl) {
-    var HomeView = Backbone.View.extend({
+define(["jquery", "underscore", "backbone", "text!template/mon_stock.html"], function($, _, Backbone, mon_stock_tpl) {
+    var MonStockView = Backbone.View.extend({
         
-        id: 'home-view',
+        id: 'mon-stock-view',
 
-        template: _.template(home_tpl),
+        template: _.template(mon_stock_tpl),
         
         initialize: function(options) {
             this.user = options.user;
-            this.listenToOnce(this.user, 'pointage:failure', function() {
-                _.delay(this.loadingStop);
-                alert('Erreur de sauvegarde, Veuillez vous déconnecter et recommencer');
-            });
-            this.bind('render:completed', function() {
-               $('a.ui-btn').removeClass('ui-btn');
-            });
         },
         
         loadingStart: function(text_show) {
@@ -38,5 +31,5 @@ define(["jquery", "underscore", "backbone", "text!template/home.html"], function
             return this;
         }
     });
-    return HomeView;
+    return MonStockView;
 });

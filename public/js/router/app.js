@@ -1,22 +1,27 @@
 define(["jquery", "jquery.validate", "underscore", "backbone", "backbone.queryparams", "backbone.route-filter", 
     'backbone.localStorage', "backbone.token", "model/user-local",  "model/commande-local", 
     "view/homeView", "view/loginView", "view/creationcompteView", "view/parametreView",
-    "view/commandeView", "view/stockView","view/cassePerteView", "view/CommanderMenuView",
+    "view/commandeView", "view/MonStockView","view/cassePerteView", "view/CommanderMenuView",
     "view/commandeProduitView", "view/stockProduitView", "view/destockProduitView",
     "view/MonCompteView", "view/EncoursFacturationView", "view/MonEquipeView", "view/InventaireView",
     "view/HistoriqueCommandeView", "view/MonEquipeHcView", "view/MemberDetailView",
-    "view/MemberAddView"], 
+    "view/MemberAddView","view/MonStockAddView","view/MonStockAddProductCatView",
+    "view/MonStockAddProductCatProdView", "model/lastcommande-local"], 
 function($, validate ,_, Backbone, QueryParams, RouterFilter,
     LocalStorage, Token, UserLocalModel, CommandeLocalModel,
     HomeView, LoginView, CreationCompteView, ParametreView,
-    CommandeView, StockView,CassePerteView, CommanderMenuView,
+    CommandeView, MonStockView,CassePerteView, CommanderMenuView,
     CommandeProduitView, StockProduitView, DestockProduitView,
     MonCompteView, EncoursFacturationView, MonEquipeView, InventaireView,
     HistoriqueCommandeView, MonEquipeHcView, MemberDetailView,
-    MemberAddView) {
+    MemberAddView, MonStockAddView, MonStockAddProductCatView,
+    MonStockAddProductCatProdView, LastcommandeLocalModel) {
     
     var userLocal = new UserLocalModel();
     userLocal.fetch();
+    
+    var lastcommandeLocal = new LastcommandeLocalModel();
+    lastcommandeLocal.fetch();
 
     var AppRouter = Backbone.Router.extend({
         init: true,
@@ -29,7 +34,10 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             "commander": "commander",
             "commanderProduit/:id": "commanderProduit",
             "historiqueCommande": "historiqueCommande",
-            "consult_stock": "consult_stock",
+            "monstock": "monstock",
+            "monstockAdd": "monstockAdd",
+            "monstockAddProductCat": "monstockAddProductCat",
+            "monstockAddProductCatProd/:id": "monstockAddProductCatProd",
             "stockProduit": "stockProduit",
             "cassePerteProduit" : "cassePerteProduit",
             "inventaire": "inventaire",
@@ -71,6 +79,7 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             });
             this.firstPage = true;
             this.userLocal = userLocal;
+            this.lastcommandeLocal = lastcommandeLocal;
         },
         logout: function() {
             this.userLocal.clear();
@@ -140,10 +149,33 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             view.render();
             this.changePage(view);
         },
-        consult_stock: function() {
-            var view = new StockView({
-                commande: new CommandeLocalModel(),
+        monstock: function() {
+            var view = new MonStockView({
                 user: this.userLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        monstockAdd: function() {
+            var view = new MonStockAddView({
+                user: this.userLocal,
+                lastcommande: this.lastcommandeLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        monstockAddProductCat: function() {
+            var view = new MonStockAddProductCatView({
+                user: this.userLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        monstockAddProductCatProd:  function(id) {
+            var view = new MonStockAddProductCatProdView({
+                user: this.userLocal,
+                idCategorie: id,
+                lastcommande: this.lastcommandeLocal
             });
             view.render();
             this.changePage(view);

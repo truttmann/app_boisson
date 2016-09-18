@@ -1,23 +1,25 @@
 define(["jquery", "jquery.validate", "underscore", "backbone", "backbone.queryparams", "backbone.route-filter", 
     'backbone.localStorage', "backbone.token", "model/user-local",  "model/commande-local", 
     "view/homeView", "view/loginView", "view/creationcompteView", "view/parametreView",
-    "view/commandeView", "view/MonStockView","view/cassePerteView", "view/CommanderMenuView",
+    "view/commandeView", "view/MonStockView","view/MonStockCassePerteView", "view/CommanderMenuView",
     "view/commandeProduitView", "view/stockProduitView", "view/MonStockDestockView",
     "view/MonCompteView", "view/EncoursFacturationView", "view/MonEquipeView", "view/InventaireView",
     "view/HistoriqueCommandeView", "view/MonEquipeHcView", "view/MemberDetailView",
     "view/MemberAddView","view/MonStockAddView","view/MonStockAddProductCatView",
     "view/MonStockAddProductCatProdView", "model/lastcommande-local",
-    "view/MonStockAddValidateView","model/message-local"], 
+    "view/MonStockAddValidateView","model/message-local","model/stock-local",
+    "view/MonStockCassePerteValidationView"], 
 function($, validate ,_, Backbone, QueryParams, RouterFilter,
     LocalStorage, Token, UserLocalModel, CommandeLocalModel,
     HomeView, LoginView, CreationCompteView, ParametreView,
-    CommandeView, MonStockView,CassePerteView, CommanderMenuView,
+    CommandeView, MonStockView,MonStockCassePerteView, CommanderMenuView,
     CommandeProduitView, StockProduitView, MonStockDestockView,
     MonCompteView, EncoursFacturationView, MonEquipeView, InventaireView,
     HistoriqueCommandeView, MonEquipeHcView, MemberDetailView,
     MemberAddView, MonStockAddView, MonStockAddProductCatView,
     MonStockAddProductCatProdView, LastcommandeLocalModel,
-    MonStockAddValidateView,MessageLocalModel) {
+    MonStockAddValidateView,MessageLocalModel,StockLocalModel,
+    MonStockCassePerteValidationView) {
     
     var userLocal = new UserLocalModel();
     userLocal.fetch();
@@ -27,6 +29,9 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
     
     var messageLocal = new MessageLocalModel();
     messageLocal.fetch();
+    
+    var stockLocal = new StockLocalModel();
+    stockLocal.fetch();
 
     var AppRouter = Backbone.Router.extend({
         init: true,
@@ -44,10 +49,11 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             "monstockAddValidate": "monstockAddValidate",
             "monstockAddProductCat": "monstockAddProductCat",
             "monstockAddProductCatProd/:id": "monstockAddProductCatProd",
+            "monstockDestock": "monstockDestock",
+            "monstockCassePerte" : "monstockCassePerte",
+            "monstockCassePerteValidate": "monstockCassePerteValidate",
             "stockProduit": "stockProduit",
-            "cassePerteProduit" : "cassePerteProduit",
             "inventaire": "inventaire",
-            "monstockdestock": "monstockdestock",
             "parametre": "parametre",
             "logout": "logout",
             "sync/:type": "sync",
@@ -87,6 +93,7 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             this.userLocal = userLocal;
             this.lastcommandeLocal = lastcommandeLocal;
             this.messageLocal = messageLocal;
+            this.stockLocal = stockLocal;
         },
         logout: function() {
             this.userLocal.clear();
@@ -198,7 +205,7 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             view.render();
             this.changePage(view);
         },
-        monstockdestock: function() {
+        monstockDestock: function() {
             var view = new MonStockDestockView({
                 user: this.userLocal,
                 message: this.messageLocal
@@ -206,16 +213,26 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             view.render();
             this.changePage(view);
         },
-        stockProduit: function() {
-            var view = new StockProduitView({
-                commande: new CommandeLocalModel(),
-                user: this.userLocal
+        monstockCassePerte: function() {
+            var view = new MonStockCassePerteView({
+                user: this.userLocal,
+                message: this.messageLocal,
+                stock: this.stockLocal
             });
             view.render();
             this.changePage(view);
         },
-        cassePerteProduit: function() {
-            var view = new CassePerteView({
+        monstockCassePerteValidate: function() {
+            var view = new MonStockCassePerteValidationView({
+                user: this.userLocal,
+                message: this.messageLocal,
+                stock: this.stockLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        stockProduit: function() {
+            var view = new StockProduitView({
                 commande: new CommandeLocalModel(),
                 user: this.userLocal
             });

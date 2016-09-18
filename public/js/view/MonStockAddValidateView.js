@@ -12,6 +12,7 @@ define(["jquery", "underscore", "backbone", "text!template/mon_stock_add_validat
             
             this.listenTo(this.lastcommande, 'lastcommande:endsuccesstockupdated', function(model) {
                 this.message.addMessage("Stock has been updated");
+                this.lastcommande.resetData();
                 Backbone.history.navigate("home", true);
             });
             this.listenTo(this.lastcommande, 'lastcommande:endfailurestockupdated', function(model) {
@@ -41,7 +42,7 @@ define(["jquery", "underscore", "backbone", "text!template/mon_stock_add_validat
         valide_livraison: function(e) {
             e.preventDefault();
             /* envoi des produits et quantité à ajouter au stock */
-            this.lastcommande.saveNewStock(this.user.get('id'));
+            this.lastcommande.saveNewStock(this.user.get('id'), $(e.currentTarget).attr("data-motif"));
         },
 
         loadingStop: function() {

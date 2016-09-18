@@ -1,20 +1,18 @@
-define(["jquery", "underscore", "backbone", "text!template/mon_stock_destock.html"], function($, _, Backbone, mon_stock_destock_tpl) {
-    var MonStockDestockView = Backbone.View.extend({
+define(["jquery", "underscore", "backbone", "text!template/mon_stock_casse_perte.html"], function($, _, Backbone, mon_stock_casse_perte_tpl) {
+    var MonStockCassePerteView = Backbone.View.extend({
         
-        id: 'destock-produit-view',
+        id: 'casse-perte-produit-view',
 
-        template: _.template(mon_stock_destock_tpl),
+        template: _.template(mon_stock_casse_perte_tpl),
         
         initialize: function(options) {
             this.user = options.user;
             this.message = options.message;
-            this.listenTo(this, 'stockdestock:endsuccesstockupdated', function(model) {
-                this.message.addMessage("Stock has been updated");
-                Backbone.history.navigate("home", true);
-            });
-            this.listenTo(this, 'stockdestock:endfailurestockupdated', function(model) {
-                alert("Error during saving, please try later");
-            });
+            this.stock = options.stock;
+            
+            /* initialisation du stock a null */
+            this.stock.setProduct({});
+            
             this.bind('render:completed', function() {
                 this.loadingStart("Chargement en cours");
                 var _this = this;
@@ -107,7 +105,6 @@ define(["jquery", "underscore", "backbone", "text!template/mon_stock_destock.htm
             var _this = this;
             
             var options = {};
-            options['motif'] = "Sortie";
             options['product'] = [];
             $('.comm_prod_content table tbody tr').each(function(){
                 var q = parseInt($(this).find('input').val());
@@ -116,18 +113,8 @@ define(["jquery", "underscore", "backbone", "text!template/mon_stock_destock.htm
                 }
             });
             
-            var xhr = $.ajax({
-                url: config.api_url + "/rest-stock/"+_this.user.get('id'),
-                type: 'PUT',
-                data: options,
-                dataType: "jsonp"
-            });
-            xhr.done(function (data) {
-                _this.trigger('stockdestock:endsuccesstockupdated');
-            });
-            xhr.fail(function (data) {
-                _this.trigger('stockdestock:endfailurestockupdated', data);
-            });
+            this.stock.setProduct(options);
+            Backbone.history.navigate("monstockCassePerteValidate", true);
         },
         
         loadingStop: function() {
@@ -143,5 +130,5 @@ define(["jquery", "underscore", "backbone", "text!template/mon_stock_destock.htm
             return this;
         }
     });
-    return MonStockDestockView;
+    return MonStockCassePerteView;
 });

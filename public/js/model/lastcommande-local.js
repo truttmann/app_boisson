@@ -29,7 +29,12 @@ define(["jquery", "underscore", "backbone", "backbone.localStorage"], function (
             this.set('changeProduct', true);
             this.save();
         },
-        saveNewStock: function(id) {
+        resetData: function(){
+            this.set('product', null);
+            this.set('changeProduct', false);
+            this.save();
+        },
+        saveNewStock: function(id, motif) {
             var self = this;
             var xhr = null;
             
@@ -39,6 +44,7 @@ define(["jquery", "underscore", "backbone", "backbone.localStorage"], function (
                 options['id_commande'] = this.get('idCommande');
             }
             options['id'] = id;
+            options['motif'] = motif;
             
             xhr = $.ajax({
                 url: config.api_url + "/rest-stock/"+options['id'],

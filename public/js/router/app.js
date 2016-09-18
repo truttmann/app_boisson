@@ -2,7 +2,7 @@ define(["jquery", "jquery.validate", "underscore", "backbone", "backbone.querypa
     'backbone.localStorage', "backbone.token", "model/user-local",  "model/commande-local", 
     "view/homeView", "view/loginView", "view/creationcompteView", "view/parametreView",
     "view/commandeView", "view/MonStockView","view/cassePerteView", "view/CommanderMenuView",
-    "view/commandeProduitView", "view/stockProduitView", "view/destockProduitView",
+    "view/commandeProduitView", "view/stockProduitView", "view/MonStockDestockView",
     "view/MonCompteView", "view/EncoursFacturationView", "view/MonEquipeView", "view/InventaireView",
     "view/HistoriqueCommandeView", "view/MonEquipeHcView", "view/MemberDetailView",
     "view/MemberAddView","view/MonStockAddView","view/MonStockAddProductCatView",
@@ -12,7 +12,7 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
     LocalStorage, Token, UserLocalModel, CommandeLocalModel,
     HomeView, LoginView, CreationCompteView, ParametreView,
     CommandeView, MonStockView,CassePerteView, CommanderMenuView,
-    CommandeProduitView, StockProduitView, DestockProduitView,
+    CommandeProduitView, StockProduitView, MonStockDestockView,
     MonCompteView, EncoursFacturationView, MonEquipeView, InventaireView,
     HistoriqueCommandeView, MonEquipeHcView, MemberDetailView,
     MemberAddView, MonStockAddView, MonStockAddProductCatView,
@@ -47,7 +47,7 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             "stockProduit": "stockProduit",
             "cassePerteProduit" : "cassePerteProduit",
             "inventaire": "inventaire",
-            "destockProduit": "destockProduit",
+            "monstockdestock": "monstockdestock",
             "parametre": "parametre",
             "logout": "logout",
             "sync/:type": "sync",
@@ -198,6 +198,14 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             view.render();
             this.changePage(view);
         },
+        monstockdestock: function() {
+            var view = new MonStockDestockView({
+                user: this.userLocal,
+                message: this.messageLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
         stockProduit: function() {
             var view = new StockProduitView({
                 commande: new CommandeLocalModel(),
@@ -216,14 +224,6 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
         },
         inventaire: function() {
             var view = new InventaireView({
-                commande: new CommandeLocalModel(),
-                user: this.userLocal
-            });
-            view.render();
-            this.changePage(view);
-        },
-        destockProduit: function() {
-            var view = new DestockProduitView({
                 commande: new CommandeLocalModel(),
                 user: this.userLocal
             });

@@ -15672,7 +15672,7 @@ define('view/commandeView',["jquery", "underscore", "backbone", "text!template/c
     return CommandeView;
 });
 
-define('text!template/mon_stock.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>MON STOCK</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <ul id="lien_menu_p">\n        <li>\n            <a href="#monstockAdd">\n                <div class="menu_p_title">\n                    ENTRER STOCK A LIVRAISON\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#destockProduit">\n                <div class="menu_p_title">\n                    SORTIE SOTCK\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#cassePerteProduit">\n                <div class="menu_p_title">\n                    CASSE / PERTE\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#historiqueCommande">\n                <div class="menu_p_title">\n                    HISTORIQUE DES ENTREES / SORTIES / CASSE / PERTE\n                </div>\n            </a>\n        </li>\n    </ul>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
+define('text!template/mon_stock.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>MON STOCK</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <ul id="lien_menu_p">\n        <li>\n            <a href="#monstockAdd">\n                <div class="menu_p_title">\n                    ENTRER STOCK A LIVRAISON\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#monstockdestock">\n                <div class="menu_p_title">\n                    SORTIE STOCK\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#cassePerteProduit">\n                <div class="menu_p_title">\n                    CASSE / PERTE\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#historiqueCommande">\n                <div class="menu_p_title">\n                    HISTORIQUE DES ENTREES / SORTIES / CASSE / PERTE\n                </div>\n            </a>\n        </li>\n    </ul>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
 
 define('view/MonStockView',["jquery", "underscore", "backbone", "text!template/mon_stock.html"], function($, _, Backbone, mon_stock_tpl) {
     var MonStockView = Backbone.View.extend({
@@ -15950,19 +15950,95 @@ define('view/stockProduitView',["jquery", "underscore", "backbone", "text!templa
     return StockProduitView;
 });
 
-define('text!template/destock_cat_produit.html',[],function () { return '<div data-role="header">\n    <div class="header_bloc_left">\n        <a href="#home">&eacute;tape pr&eacute;c&eacute;dente</a>\n    </div>\n    <h1>ASAR</h1>\n    <img style="float: left" src=""/>\n    <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    \n    <div id="page-title">\n        D&Eacute;STOCKER UN ARTICLE\n        <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    </div>\n</div>\n\n\n\n\n<!--div id="nav-panel-user" data-role="panel" data-position="right" data-theme="b">\n    <div class="ui-panel-inner">\n        <h3><%= user.firstname %> <%= user.lastname %></h3>\n        <a href="#logout" data-rel="close" data-role="button" data-theme="c" data-icon="delete" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-left">\n        <span class="ui-btn-inner">Se deconnecter</span>\n        </a>\n    </div>\n</div-->\n<div data-role="content">\n    <div class="comm_prod_content">\n        <p>IMPORTANT : LES SORTIES DE STOCKS SE FONT UNIQUEMENT PAR CAISSES DE 6 OU 12 BOUTEILLES OU PAR FUT</p>\n        <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n            <tr>\n                <th style="border: solid 1px black;width: 20%">PRDUIT</th>\n                <th style="border: solid 1px black;width: 20%">REFERENCE PRODUIT</th>\n                <th style="border: solid 1px black;width: 20%">MON STAOCK</th>\n                <th style="border: solid 1px black;width: 20%">PRIX UNITAIRE H.T</th>\n                <th style="border: solid 1px black;width: 20%">QUANTITE</th>\n            </tr>\n            <tr>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">\n                    <div class="comm_prod_list_product_div3">-</div>\n                    <div class="comm_prod_list_product_div4"><input type="text" value="1" data-role="none"/></div>\n                    <div class="comm_prod_list_product_div5">+</div>\n                </td>\n            </tr>\n        </table>\n        <p>ENTREE DE STOCK MONTANT H.T. 0.00 €</p>\n        <p>LES PRODUITS ET QUANTITES AFFICHES SONT CEUX DE LA DERNIERE COMMANDE PASSEE</p>\n        \n        <div style="display: table;width: 100%">\n            <a href="#" style="width: 50%; display: table-cell; text-align: center">\n                <div style="width: 96%; color: white; background-color: black; border-bottom-left-radius: 15px; padding: 2%; ">\n                    Valider\n                </div>\n            </a>\n\n            <a href="#inventaire" style="width: 50%; display: table-cell; text-align: center">\n                <div style="width: 96%; color: white; background-color: black; border-bottom-right-radius: 15px; padding: 2%; ">\n                    MON STOCK MONTANT H.T XXXX\n                </div>\n            </a>\n            <div style="clear: both"></div>\n        </div>\n    </div>\n</div>\n<div data-role="footer" id="footer">\n    <div class="footer_div">\n        <a href="#home">\n            <div><img src="" /></div>\n            <div>Accueil</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#consult_stock">\n            <div><img src="" /></div>\n            <div>Consulter le stock</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#destock" class="active">\n            <div><img src="" /></div>\n            <div>D&eacute;stocker un article</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#parametre">\n            <div><img src="" /></div>\n            <div>Mon compte</div>\n        </a>\n    </div>\n    <div class="clear"></div>\n</div>';});
+define('text!template/mon_stock_destock.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>SORTIE STOCK</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_prod_content">\n        <p class="diz_pt ffmorepromed text-left" style="padding: 1% 10%;">IMPORTANT : LES SORTIES DE STOCKS SE FONT UNIQUEMENT PAR CAISSES DE 6 OU 12 BOUTEILLES OU PAR FUT</p>\n        <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n            <thead>\n                <th class="clear" style="border: solid 1px black;width: 40%; position: relative">\n                    <div style="padding-right: 15px;">PRODUIT</div>\n                </th>\n                <th style="border: solid 1px black;width: 20%">MON STOCK</th>\n                <th style="border: solid 1px black;width: 20%">PRIX UNITAIRE H.T</th>\n                <th style="border: solid 1px black;width: 20%">QUANTITE</th>\n            </thead>\n            <tbody></tbody>\n        </table>\n        <p class="dou_pt ffmorepromed text-right" id="somme_entree_ht" style="padding: 2% 10%;">SORTIE DE STOCK MONTANT H.T. 0.00 &euro;</p>\n        <br/>\n        <p class="dou_pt ffmorepromed text-right" style="padding: 2% 10%;">MON STOCK MONTANT H.T XXXX €</p>\n        <br/>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" class="sub_footer">\n        <a href="#" class="valid_sortie">\n            <div class="qua_pt ffmorepromed" style="color: white" >Valider</div>\n        </a>\n    </div>\n    <div data-enhance="false" id="test-container" style="padding-top: 1em;">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
 
-define('view/destockProduitView',["jquery", "underscore", "backbone", "text!template/destock_cat_produit.html"], function($, _, Backbone, destock_cat_produit_tpl) {
-    var DestockProduitView = Backbone.View.extend({
+define('view/MonStockDestockView',["jquery", "underscore", "backbone", "text!template/mon_stock_destock.html"], function($, _, Backbone, mon_stock_destock_tpl) {
+    var MonStockDestockView = Backbone.View.extend({
         
         id: 'destock-produit-view',
 
-        template: _.template(destock_cat_produit_tpl),
+        template: _.template(mon_stock_destock_tpl),
         
         initialize: function(options) {
             this.user = options.user;
-            this.commande = options.commande;
-            this.categorie_id = options.categorie_id
+            this.message = options.message;
+            this.listenTo(this, 'stockdestock:endsuccesstockupdated', function(model) {
+                this.message.addMessage("Stock has been updated");
+                Backbone.history.navigate("home", true);
+            });
+            this.listenTo(this, 'stockdestock:endfailurestockupdated', function(model) {
+                alert("Error during saving, please try later");
+            });
+            this.bind('render:completed', function() {
+                this.loadingStart("Chargement en cours");
+                var _this = this;
+                var xhr = $.get(config.api_url + "/rest-stock/"+_this.user.get('id'), {token:_this.user.get('token')}, null, 'jsonp');
+                xhr.done( function(data){
+                    $('#error').empty();
+                    _this.chargementProducts(data.data);                   
+                });
+                xhr.fail(function(data) {
+                    $('#error').empty().html(data);
+                });
+            });
+        },
+        
+        chargementProducts: function(data) {
+            var chaine = "";                
+            var somme = 0;   
+            
+            for (index2 in data) {
+                var prod = data[index2];
+                chaine+= '<tr data-id="'+prod.id+'" >';
+                chaine+= '        <td class="comm_prod_list_product_div1 ffmoreprbold dou_pt" style="width: 40%">'+prod.libelle+'</td>';
+                chaine+= '        <td class="comm_prod_list_product_div1 text-center ffmoreprobook dix_pt" id="qtemax" style="width: 20%">'+((prod.quantite != null)?prod.quantite:0)+'</td>';
+                chaine+= '        <td class="comm_prod_list_product_div1 text-center ffmoreprobook dix_pt" style="width: 20%" id="prix_base">'+prod.prix_base+'</td>';
+                chaine+= '        <td class="comm_prod_list_product_div4 text-center" style="min-width: 40px; margin: auto;width: 20%">';
+                chaine += '            <a href="#" class="produit_moins">-</a>';
+                chaine += '            <input type="text" value="0" data-role="none" style="float: none;width: 30px;" readOnly/>';
+                chaine += '            <a href="#" class="produit_plus">+</a>';
+                chaine += '       </td>';
+                chaine+= '</tr>';
+                
+                somme += (prod.prix_base * ((prod.quantite != null)?prod.quantite:0));
+            }
+            
+            $('.comm_prod_content table tbody').empty().html(chaine);
+            this.recalculMontantTotalHt();
+            
+            this.loadingStop();
+            
+            this.bindProductEvent();
+        },
+        
+        bindProductEvent: function() {
+            var _this = this;
+            $('.produit_moins').unbind('click').on('click', function(e){
+                e.preventDefault();
+                var v = parseInt($(this).parent().find('input').val());
+                $(this).parent().find('input').val(((v > 0)?v-1:0));      
+                _this.recalculMontantTotalHt();
+            });
+            $('.produit_plus').unbind('click').on('click', function(e){
+                e.preventDefault();
+                var v = parseInt($(this).parent().find('input').val());
+                var m = parseInt($(this).parent().parent().find('#qtemax').html());
+                
+                if(v+1 <= m) {
+                    $(this).parent().find('input').val(v+1);
+                    _this.recalculMontantTotalHt();
+                }
+            });
+        },
+        
+        recalculMontantTotalHt: function() {
+            var somme = 0;
+            $('.comm_prod_content table tbody tr').each(function(){
+                var q = $(this).find('input').val();
+                var p = parseFloat($(this).find('#prix_base').html());
+                somme += (((q > 0)?q:0) * ((p > 0)?p:0));
+            });
+            $('#somme_entree_ht').empty().html("SORTIE DE STOCK MONTANT H.T. "+somme+" &euro;");
         },
         
         loadingStart: function(text_show) {
@@ -15973,43 +16049,54 @@ define('view/destockProduitView',["jquery", "underscore", "backbone", "text!temp
                 html: ""
             });
         },
-
+        
+        events: {
+            "click a.valid_sortie": "valide_sortie"
+        },
+        
+        valide_sortie: function(e) {
+            e.preventDefault();
+            /* si pas de changement, nous validond la livraison */
+            this.loadingStart("Chargement en cours");
+            var _this = this;
+            
+            var options = {};
+            options['product'] = [];
+            $('.comm_prod_content table tbody tr').each(function(){
+                var q = parseInt($(this).find('input').val());
+                if(q > 0) {
+                    options['product'].push({"id":$(this).attr('data-id'), "qt":-q});
+                }
+            });
+            
+            var xhr = $.ajax({
+                url: config.api_url + "/rest-stock/"+_this.user.get('id'),
+                type: 'PUT',
+                data: options,
+                dataType: "jsonp"
+            });
+            xhr.done(function (data) {
+                _this.trigger('stockdestock:endsuccesstockupdated');
+            });
+            xhr.fail(function (data) {
+                _this.trigger('stockdestock:endfailurestockupdated', data);
+            });
+        },
+        
         loadingStop: function() {
             $.mobile.loading('hide');
         },
         
-        onClickFilter: function(e){
-            e.preventDefault();
-            var el = e.target;
-            /*if($(el).attr("name") == "entree") {
-                this.loadingStart("Sauvegarde de votre pointage ...");
-                this.pointeuse.pointage("entree", this.user);
-            } else if($(el).attr("name") == "sortie") {
-                this.pointeuse.pointage("sortie", this.user);
-            }*/
-        },
-        
         render: function(eventName) {
-            var _this = this;
-            var xhr = $.get(config.api_url + "/rest-categorie/1", {"token": _this.user.get('token')}, null, 'jsonp');
-            xhr.done( function(data){
-                _this.$el.empty();
-                _this.$el.append(_this.template({
-                    categorie: data.result,
-                    user: _this.user.toJSON()
-                }));
-                _this.trigger('render:completed', _this);
-                return _this;
-            });
-            xhr.fail(function(data) {
-                $('#error').empty().html(data);
-                this.trigger('categorie:failure');
-            });
-            
-            
+            this.$el.empty();
+            this.$el.append(this.template({
+                user: this.user.toJSON()
+            }));
+            this.trigger('render:completed', this);
+            return this;
         }
     });
-    return DestockProduitView;
+    return MonStockDestockView;
 });
 
 define('text!template/moncompte.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>MON COMPTE</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div style="border: solid 1px black; width: 65%; margin: auto; border-radius: 15px; overflow: hidden; word-wrap: break-word;">\n        <form>\n            <div id="error"></div>\n            <input type="hidden" name="id" value="" class="required" />\n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="nom">Nom</label></div>\n                <input type="text" name="nom" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="prenom">Pr&eacute;nom</label></div>\n                <input type="text" name="prenom" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="societe">Soci&eacute;t&eacute;</label></div>\n                <input type="text" name="societe" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="adr_societe">Adresse Soci&eacute;t&eacute;</label></div>\n                <input type="text" name="adr_societe" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="cp">Code postal</label></div>\n                <input type="text" name="cp" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="ville">Ville</label></div>\n                <input type="text" name="ville" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="siret">SIRET</label></div>\n                <input type="text" name="siret" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="tva">N TVA INTERCOMMUNAUTAIRE</label></div>\n                <input type="text" name="tva" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="horaire">HORAIRES LIVRAISON</label></div>\n                <textarea name="horaire" class="text-left" ></textarea>\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="information">INFORMATION LIVREUR</label></div>\n                <textarea name="information" class="text-left" ></textarea>\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">EMAIL</label></div>\n                <input type="text" name="email" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email_conf">CONFIRMATION EMAIL</label></div>\n                <input type="text" name="email_conf" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="password">PASSWORD</label></div>\n                <input type="password" name="password" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="password_conf">CONFIRMATION PASSWORD</label></div>\n                <input type="password" name="password_conf" value="" class="required" />\n            </div>\n            \n            \n            <p class="diz_pt ffmorepromed text-center">ATTENTION VOTRE COMPTE NE SERA  ACTIF QU\'APRES VALIDATION DE VOTRE COMMERCIAL ASAR</p>\n            <div style="display: table;width: 100%">\n                <a href="#encoursFacturation" style="width: 50%; display: table-cell;">\n                    <div class="dou_pt ffmoreproblack formvalid" style="width: 96%; border-bottom-right-radius: 0px !important;  padding: 2%; ">\n                        En cours de facturation\n                    </div>\n                </a>\n                \n                <a  href="#monequipe" id="submitform" style="width: 50%; display: table-cell;">\n                    <div class="dou_pt ffmoreproblack formvalid" style="width: 96%; border-bottom-left-radius: 0px !important; padding: 2%; ">\n                        Valider et g&eacute;rer mon équipe\n                    </div>\n                </a>\n                <div style="clear: both"></div>\n            </div>\n\n            <!--div data-corners="true" data-shadow="true" data-iconshadow="true"\n                    data-wrapperels="span" data-icon="null" data-iconpos="null"\n                    data-theme="b"\n\n                    aria-disabled="false">\n                    <button type="submit" data-theme="b" name="submit"\n                            value="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>\n            </div-->\n        </form>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>\n';});
@@ -17128,7 +17215,7 @@ define('router/app',["jquery", "jquery.validate", "underscore", "backbone", "bac
     'backbone.localStorage', "backbone.token", "model/user-local",  "model/commande-local", 
     "view/homeView", "view/loginView", "view/creationcompteView", "view/parametreView",
     "view/commandeView", "view/MonStockView","view/cassePerteView", "view/CommanderMenuView",
-    "view/commandeProduitView", "view/stockProduitView", "view/destockProduitView",
+    "view/commandeProduitView", "view/stockProduitView", "view/MonStockDestockView",
     "view/MonCompteView", "view/EncoursFacturationView", "view/MonEquipeView", "view/InventaireView",
     "view/HistoriqueCommandeView", "view/MonEquipeHcView", "view/MemberDetailView",
     "view/MemberAddView","view/MonStockAddView","view/MonStockAddProductCatView",
@@ -17138,7 +17225,7 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
     LocalStorage, Token, UserLocalModel, CommandeLocalModel,
     HomeView, LoginView, CreationCompteView, ParametreView,
     CommandeView, MonStockView,CassePerteView, CommanderMenuView,
-    CommandeProduitView, StockProduitView, DestockProduitView,
+    CommandeProduitView, StockProduitView, MonStockDestockView,
     MonCompteView, EncoursFacturationView, MonEquipeView, InventaireView,
     HistoriqueCommandeView, MonEquipeHcView, MemberDetailView,
     MemberAddView, MonStockAddView, MonStockAddProductCatView,
@@ -17173,7 +17260,7 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             "stockProduit": "stockProduit",
             "cassePerteProduit" : "cassePerteProduit",
             "inventaire": "inventaire",
-            "destockProduit": "destockProduit",
+            "monstockdestock": "monstockdestock",
             "parametre": "parametre",
             "logout": "logout",
             "sync/:type": "sync",
@@ -17324,6 +17411,14 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             view.render();
             this.changePage(view);
         },
+        monstockdestock: function() {
+            var view = new MonStockDestockView({
+                user: this.userLocal,
+                message: this.messageLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
         stockProduit: function() {
             var view = new StockProduitView({
                 commande: new CommandeLocalModel(),
@@ -17342,14 +17437,6 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
         },
         inventaire: function() {
             var view = new InventaireView({
-                commande: new CommandeLocalModel(),
-                user: this.userLocal
-            });
-            view.render();
-            this.changePage(view);
-        },
-        destockProduit: function() {
-            var view = new DestockProduitView({
                 commande: new CommandeLocalModel(),
                 user: this.userLocal
             });

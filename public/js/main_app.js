@@ -15672,7 +15672,7 @@ define('view/commandeView',["jquery", "underscore", "backbone", "text!template/c
     return CommandeView;
 });
 
-define('text!template/mon_stock.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>MON STOCK</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <ul id="lien_menu_p">\n        <li>\n            <a href="#monstockAdd">\n                <div class="menu_p_title">\n                    ENTRER STOCK A LIVRAISON\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#monstockDestock">\n                <div class="menu_p_title">\n                    SORTIE STOCK\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#monstockCassePerte">\n                <div class="menu_p_title">\n                    CASSE / PERTE\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#historiqueCommande">\n                <div class="menu_p_title">\n                    HISTORIQUE DES ENTREES / SORTIES / CASSE / PERTE\n                </div>\n            </a>\n        </li>\n    </ul>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
+define('text!template/mon_stock.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>MON STOCK</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <ul id="lien_menu_p">\n        <li>\n            <a href="#monstockAdd">\n                <div class="menu_p_title">\n                    ENTRER STOCK A LIVRAISON\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#monstockDestock">\n                <div class="menu_p_title">\n                    SORTIE STOCK\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#monstockCassePerte">\n                <div class="menu_p_title">\n                    CASSE / PERTE\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#monstockHistorique">\n                <div class="menu_p_title">\n                    HISTORIQUE DES ENTREES / SORTIES / CASSE / PERTE\n                </div>\n            </a>\n        </li>\n    </ul>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
 
 define('view/MonStockView',["jquery", "underscore", "backbone", "text!template/mon_stock.html"], function($, _, Backbone, mon_stock_tpl) {
     var MonStockView = Backbone.View.extend({
@@ -17316,7 +17316,7 @@ define('model/stock-local',["jquery", "underscore", "backbone", "backbone.localS
     return StockLocalModel;
 });
 
-define('text!template/mon_stock_casse_perte_validation.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>CASSE / PERTE STOCK</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_prod_content clear">\n        <p class="qua_pt ffmorepromed text-left" style="padding: 1% 10%;">MOTIF</p>\n        <div class="floatl" style="width:50%;margin-top: 10px;">\n            <a href="#" class="motif" data-motif="casse"><div class="cell_modif_entree">CASSE</div></a>\n        </div>\n        <div class="floatl" style="width:50%;margin-top: 10px; ">\n            <a href="#" class="motif" data-motif="perte"><div class="cell_modif_entree">PERTE</div></a>\n        </div>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
+define('text!template/mon_stock_casse_perte_validation.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>CASSE / PERTE STOCK</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_prod_content clear">\n        <p class="qua_pt ffmorepromed text-left" style="padding: 1% 10%;">MOTIF</p>\n        <div class="floatl" style="width:50%;margin-top: 10px;">\n            <a href="#" class="motif" data-motif="cassé"><div class="cell_modif_entree">CASSE</div></a>\n        </div>\n        <div class="floatl" style="width:50%;margin-top: 10px; ">\n            <a href="#" class="motif" data-motif="perte"><div class="cell_modif_entree">PERTE</div></a>\n        </div>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
 
 define('view/MonStockCassePerteValidationView',["jquery", "underscore", "backbone", "text!template/mon_stock_casse_perte_validation.html"], function($, _, Backbone, mon_stock_casse_perte_validation_tpl) {
     var MonStockCassePerteValidationView = Backbone.View.extend({
@@ -17390,6 +17390,170 @@ define('view/MonStockCassePerteValidationView',["jquery", "underscore", "backbon
     });
     return MonStockCassePerteValidationView;
 });
+
+define('text!template/mon_stock_historique.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>HISTORIQUE DES ENTRES SORTIES CASSE PERTE</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_prod_content">\n        <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n            <thead>\n                <tr>\n                    <th style="border: solid 1px black;width: 15%">MOTIF</th>\n                    <th style="border: solid 1px black;width: 30%">DATE</th>\n                    <th style="border: solid 1px black;width: 40%">USER</th>\n                    <th style="border: solid 1px black;width: 15%">MONTANT T.H.T</th>\n                </tr>\n            </thead>\n            <tbody></tbody>\n        </table>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" class="sub_footer">\n        <a href="#" class="valid_entree">\n            <div class="qua_pt ffmorepromed" style="color: white" >Envoyer par mail</div>\n        </a>\n    </div>\n    <div data-enhance="false" id="test-container" style="padding-top: 1em;">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
+
+define('view/MonStockHistoriqueView',["jquery", "underscore", "backbone", "text!template/mon_stock_historique.html"], function($, _, Backbone, mon_stock_historique_tpl) {
+    var MonStockHistoriqueView = Backbone.View.extend({
+        
+        id: 'mon_stock_historique-view',
+
+        template: _.template(mon_stock_historique_tpl),
+        
+        initialize: function(options) {
+            this.user = options.user;
+            this.lastcommande = options.lastcommande;
+            this.message = options.message;
+            
+            this.bind('render:completed', function() {
+                this.loadingStart("Chargement en cours");
+                /* recuperation de la derniere commande */
+                var _this = this;
+                var xhr = $.get(config.api_url + "/rest-stock?a=historique", {token:_this.user.get('token')}, null, 'jsonp');
+                xhr.done( function(data){
+                    $('#error').empty();
+                    _this.chargementHistorique(data.data);                    
+                });
+                xhr.fail(function(data) {
+                    $('#error').empty().html(data);
+                });
+            });
+        },
+        
+        chargementHistorique: function(data) {
+            var chaine = "";                
+            
+            for (index2 in data) {
+                var hist = data[index2];
+                chaine+= '<tr data-id="'+hist.id+'" >';
+                chaine+= '        <td class="comm_prod_list_product_div1 ffmoreprbold dou_pt" style="width: 15%"><a href="#">'+hist.motif+'</a></td>';
+                chaine+= '        <td class="comm_prod_list_product_div1 text-center ffmoreprobook dix_pt" style="width: 30%">'+((hist.montantht != null)?hist.montantht:0)+'</td>';
+                chaine+= '        <td class="comm_prod_list_product_div1 text-center ffmoreprobook dix_pt" style="width: 40%">'+hist.user+'</td>';
+                chaine+= '        <td class="comm_prod_list_product_div1 text-center ffmoreprobook dix_pt" style="width: 15%">'+hist.created_at+'</td>';
+                chaine+= '</tr>';
+            }
+            
+            $('.comm_prod_content table tbody').empty().html(chaine);
+            this.loadingStop();
+            
+            this.bindProductEvent();
+        },
+        
+        bindProductEvent: function() {
+            var _this = this;
+            $('.comm_prod_content table tbody tr a').unbind('click').on('click', function(e){
+                e.preventDefault();
+                Backbone.history.navigate("monstockHistoriqueDetail/"+$(this).parents('tr').attr('data-id'), true);
+            });
+        },
+        
+        loadingStart: function(text_show) {
+            $.mobile.loading('show', {
+                text: text_show,
+                textVisible: true,
+                theme: 'b',
+                html: ""
+            });
+        },
+
+        loadingStop: function() {
+            $.mobile.loading('hide');
+        },
+        
+        render: function(eventName) {
+            this.$el.empty();
+            this.$el.append(this.template({
+                user: this.user.toJSON()
+            }));
+            this.trigger('render:completed', this);
+            return this;
+        }
+    });
+    return MonStockHistoriqueView;
+});
+
+define('text!template/mon_stock_historique_detail.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>HISTORIQUE DES ENTRES SORTIES CASSE PERTE</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_prod_content">\n        <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n            <thead>\n                <tr>\n                    <th style="border: solid 1px black;width: 15%">PRODUIT</th>\n                    <th style="border: solid 1px black;width: 30%">QUANTITE</th>\n                    <th style="border: solid 1px black;width: 40%">P.U.H.T</th>\n                    <th style="border: solid 1px black;width: 15%">P.T.H.T</th>\n                </tr>\n            </thead>\n            <tbody></tbody>\n        </table>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" class="sub_footer">\n        <a href="#" class="valid_entree">\n            <div class="qua_pt ffmorepromed" style="color: white" >Envoyer par mail</div>\n        </a>\n    </div>\n    <div data-enhance="false" id="test-container" style="padding-top: 1em;">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
+
+define('view/MonStockHistoriqueDetailView',["jquery", "underscore", "backbone", "text!template/mon_stock_historique_detail.html"], function($, _, Backbone, mon_stock_historique_detail_tpl) {
+    var MonStockHistoriqueDetailView = Backbone.View.extend({
+        
+        id: 'mon_stock_historique_detail-view',
+
+        template: _.template(mon_stock_historique_detail_tpl),
+        
+        initialize: function(options) {
+            this.user = options.user;
+            this.lastcommande = options.lastcommande;
+            this.message = options.message;
+            this.historique_id = options.id;
+            
+            this.bind('render:completed', function() {
+                this.loadingStart("Chargement en cours");
+                /* recuperation de la derniere commande */
+                var _this = this;
+                var xhr = $.get(config.api_url + "/rest-stock?a=historique", {id:_this.user.get('id'), "idH": this.historique_id}, null, 'jsonp');
+                xhr.done( function(data){
+                    $('#error').empty();
+                    _this.chargementHistorique(data.data);                    
+                });
+                xhr.fail(function(data) {
+                    $('#error').empty().html(data);
+                });
+            });
+        },
+        
+        chargementHistorique: function(data) {
+            var chaine = "";                
+            var somme = parseInt(0);
+            var sommeT = parseInt(0);
+            for (index2 in data) {
+                var hist = data[index2];
+                chaine+= '<tr>';
+                chaine+= '        <td class="comm_prod_list_product_div1 ffmoreprbold dou_pt" style="width: 15%"><a href="#">'+hist.produit+'</a></td>';
+                chaine+= '        <td class="comm_prod_list_product_div1 text-center ffmoreprobook dix_pt" style="width: 30%">'+hist.quantite+'</td>';
+                chaine+= '        <td class="comm_prod_list_product_div1 text-center ffmoreprobook dix_pt" style="width: 40%">'+hist.prix_base+'</td>';
+                chaine+= '        <td class="comm_prod_list_product_div1 text-center ffmoreprobook dix_pt" style="width: 15%">'+hist.total+'</td>';
+                chaine+= '</tr>';
+                
+                somme += parseInt(hist.quantite);
+                sommeT += parseInt(hist.total);
+            }
+            
+            chaine+= '<tr>';
+                chaine+= '        <td class="comm_prod_list_product_div1 ffmoreprbold dou_pt" style="width: 15%"><a href="#">TOTAL</a></td>';
+                chaine+= '        <td class="comm_prod_list_product_div1 text-center ffmoreprobook dix_pt" style="width: 30%">'+somme+'</td>';
+                chaine+= '        <td class="comm_prod_list_product_div1 text-center ffmoreprobook dix_pt" style="width: 40%">-</td>';
+                chaine+= '        <td class="comm_prod_list_product_div1 text-center ffmoreprobook dix_pt" style="width: 15%">'+sommeT+'</td>';
+                chaine+= '</tr>';
+            
+            $('.comm_prod_content table tbody').empty().html(chaine);
+            this.loadingStop();
+        },
+        
+        loadingStart: function(text_show) {
+            $.mobile.loading('show', {
+                text: text_show,
+                textVisible: true,
+                theme: 'b',
+                html: ""
+            });
+        },
+
+        loadingStop: function() {
+            $.mobile.loading('hide');
+        },
+        
+        render: function(eventName) {
+            this.$el.empty();
+            this.$el.append(this.template({
+                user: this.user.toJSON()
+            }));
+            this.trigger('render:completed', this);
+            return this;
+        }
+    });
+    return MonStockHistoriqueDetailView;
+});
 define('router/app',["jquery", "jquery.validate", "underscore", "backbone", "backbone.queryparams", "backbone.route-filter", 
     'backbone.localStorage', "backbone.token", "model/user-local",  "model/commande-local", 
     "view/homeView", "view/loginView", "view/creationcompteView", "view/parametreView",
@@ -17400,7 +17564,8 @@ define('router/app',["jquery", "jquery.validate", "underscore", "backbone", "bac
     "view/MemberAddView","view/MonStockAddView","view/MonStockAddProductCatView",
     "view/MonStockAddProductCatProdView", "model/lastcommande-local",
     "view/MonStockAddValidateView","model/message-local","model/stock-local",
-    "view/MonStockCassePerteValidationView"], 
+    "view/MonStockCassePerteValidationView", "view/MonStockHistoriqueView",
+    "view/MonStockHistoriqueDetailView"], 
 function($, validate ,_, Backbone, QueryParams, RouterFilter,
     LocalStorage, Token, UserLocalModel, CommandeLocalModel,
     HomeView, LoginView, CreationCompteView, ParametreView,
@@ -17411,7 +17576,8 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
     MemberAddView, MonStockAddView, MonStockAddProductCatView,
     MonStockAddProductCatProdView, LastcommandeLocalModel,
     MonStockAddValidateView,MessageLocalModel,StockLocalModel,
-    MonStockCassePerteValidationView) {
+    MonStockCassePerteValidationView, MonStockHistoriqueView,
+    MonStockHistoriqueDetailView) {
     
     var userLocal = new UserLocalModel();
     userLocal.fetch();
@@ -17444,6 +17610,8 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             "monstockDestock": "monstockDestock",
             "monstockCassePerte" : "monstockCassePerte",
             "monstockCassePerteValidate": "monstockCassePerteValidate",
+            "monstockHistorique":"monstockHistorique",
+            "monstockHistoriqueDetail/:id":"monstockHistoriqueDetail",
             "stockProduit": "stockProduit",
             "inventaire": "inventaire",
             "parametre": "parametre",
@@ -17619,6 +17787,25 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
                 user: this.userLocal,
                 message: this.messageLocal,
                 stock: this.stockLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        monstockHistorique: function() {
+            var view = new MonStockHistoriqueView({
+                user: this.userLocal,
+                message: this.messageLocal,
+                stock: this.stockLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        monstockHistoriqueDetail: function(id) {
+            var view = new MonStockHistoriqueDetailView({
+                user: this.userLocal,
+                message: this.messageLocal,
+                stock: this.stockLocal,
+                id: id
             });
             view.render();
             this.changePage(view);

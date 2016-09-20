@@ -8,7 +8,8 @@ define(["jquery", "jquery.validate", "underscore", "backbone", "backbone.querypa
     "view/MemberAddView","view/MonStockAddView","view/MonStockAddProductCatView",
     "view/MonStockAddProductCatProdView", "model/lastcommande-local",
     "view/MonStockAddValidateView","model/message-local","model/stock-local",
-    "view/MonStockCassePerteValidationView"], 
+    "view/MonStockCassePerteValidationView", "view/MonStockHistoriqueView",
+    "view/MonStockHistoriqueDetailView"], 
 function($, validate ,_, Backbone, QueryParams, RouterFilter,
     LocalStorage, Token, UserLocalModel, CommandeLocalModel,
     HomeView, LoginView, CreationCompteView, ParametreView,
@@ -19,7 +20,8 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
     MemberAddView, MonStockAddView, MonStockAddProductCatView,
     MonStockAddProductCatProdView, LastcommandeLocalModel,
     MonStockAddValidateView,MessageLocalModel,StockLocalModel,
-    MonStockCassePerteValidationView) {
+    MonStockCassePerteValidationView, MonStockHistoriqueView,
+    MonStockHistoriqueDetailView) {
     
     var userLocal = new UserLocalModel();
     userLocal.fetch();
@@ -52,6 +54,8 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             "monstockDestock": "monstockDestock",
             "monstockCassePerte" : "monstockCassePerte",
             "monstockCassePerteValidate": "monstockCassePerteValidate",
+            "monstockHistorique":"monstockHistorique",
+            "monstockHistoriqueDetail/:id":"monstockHistoriqueDetail",
             "stockProduit": "stockProduit",
             "inventaire": "inventaire",
             "parametre": "parametre",
@@ -227,6 +231,25 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
                 user: this.userLocal,
                 message: this.messageLocal,
                 stock: this.stockLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        monstockHistorique: function() {
+            var view = new MonStockHistoriqueView({
+                user: this.userLocal,
+                message: this.messageLocal,
+                stock: this.stockLocal
+            });
+            view.render();
+            this.changePage(view);
+        },
+        monstockHistoriqueDetail: function(id) {
+            var view = new MonStockHistoriqueDetailView({
+                user: this.userLocal,
+                message: this.messageLocal,
+                stock: this.stockLocal,
+                id: id
             });
             view.render();
             this.changePage(view);

@@ -14,6 +14,7 @@ define(["jquery", "underscore", "backbone", "text!template/mon_stock_destock.htm
             });
             this.listenTo(this, 'stockdestock:endfailurestockupdated', function(model) {
                 alert("Error during saving, please try later");
+                this.loadingStop();
             });
             this.bind('render:completed', function() {
                 this.loadingStart("Chargement en cours");

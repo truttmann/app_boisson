@@ -208,6 +208,9 @@ a:visited {
 .ss_cat_com_prod .ss_cat_com_prod_title {
     margin-bottom: 15px;
 }
+.comm_prod_list_product {
+    clear: both;
+}
 .ss_cat_com_prod .comm_prod_list_product {
     list-style: none;
 }
@@ -423,4 +426,11 @@ div.moneq_1_content > div > div {
 .message {
     color: green;
     font-size: 20px;
+}
+
+.span-nav {
+    vertical-align: middle;
+    line-height: 2.2;
+    margin: auto;
+    display: inline-block;
 }

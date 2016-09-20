@@ -1,15 +1,14 @@
-define(["jquery", "underscore", "backbone", "text!template/mon_stock_add_product_cat_prod.html"], function($, _, Backbone, mon_stock_add_product_cat_prod_tpl) {
-    var MonStockAddProductCatProdView = Backbone.View.extend({
+define(["jquery", "underscore", "backbone", "text!template/commander_step2.html"], function($, _, Backbone, commander_step2_tpl) {
+    var CommanderStep2View = Backbone.View.extend({
         
-        id: 'mon_stock_add_product_cat_prod-view',
+        id: 'commander_step2-view',
 
-        template: _.template(mon_stock_add_product_cat_prod_tpl),
+        template: _.template(commander_step2_tpl),
         
         initialize: function(options) {
             this.user = options.user;
-            this.idCategorie = options.idCategorie;
-            this.lastcommande = options.lastcommande;
-            
+            this.commande = options.commande;
+            this.idCategorie = options.categorie_id;
             this.bind('render:completed', function() {
                 /* recuperation de la derniere commande */
                 this.loadingStart("Chargement des informations");
@@ -40,7 +39,7 @@ define(["jquery", "underscore", "backbone", "text!template/mon_stock_add_product
                 if(cat_id == null || (cat.ss_cat != null && cat.ss_cat.id != cat_id)) {
                     chaine += '<div class="ss_cat_com_prod '+((cat.ss_cat == null)?'no_border':'')+'">';
                     chaine += '<ul class="clear">'; 
-                    chaine += '<li style="width: 40%;list-style: none" class="floatl ss_cat_com_prod_title">PRODUIT'+/*((cat.ss_cat != null)?cat.ss_cat.libelle:'')*/+'</li>';
+                    chaine += '<li style="width: 40%;list-style: none" class="floatl ss_cat_com_prod_title">'+((cat.ss_cat != null)?cat.ss_cat.libelle:'')+'</li>';
                     chaine += '<li style="width: 18%;list-style: none" class="floatl ffmoreprobook dix_pt"><i>P.U.H.T</i></li>';
                     chaine += '<li style="width: 27%;list-style: none" class="floatl ffmoreprobook dix_pt"><i>S&eacute;l&eacute;ctionner</i></li>';
                     chaine += '<li style="width: 14%;list-style: none" class="floatl ">&nbsp;</li>';
@@ -49,13 +48,13 @@ define(["jquery", "underscore", "backbone", "text!template/mon_stock_add_product
                 }
             
                 if(cat.produit.length > 0) {
-                    chaine+= '<ul class="comm_prod_list_product clear" >';
+                    chaine+= '<ul class="comm_prod_list_product" >';
                     for (index2 in cat.produit) {
                         var prod = cat.produit[index2];
                         chaine+= '<li>';
-                        chaine+= '    <div data-id="'+prod.id+'">';
+                        chaine+= '    <div data-id="'+prod.id+'" data-price="'+prod.prix_base+'">';
                         chaine+= '        <div class="comm_prod_list_product_div1 ffmoreprbold dou_pt" style="width: 40%">'+prod.libelle+'</div>';
-                        chaine+= '        <div class="comm_prod_list_product_div1 text-center ffmoreprobook dix_pt" style="width: 18%">'+prod.prix_base+'</div>';
+                        chaine+= '        <div class="comm_prod_list_product_div1 text-center ffmoreprobook dix_pt" style="width: 18%" id="prix_base">'+prod.prix_base+'</div>';
                         chaine+= '        <div class="comm_prod_list_product_div4 text-center" style="min-width: 40px; margin: auto;width: 27%">';
                         chaine += '            <a href="#" class="produit_moins">-</a>';
                         chaine += '            <input type="text" value="1" data-role="none" style="float: none;width: 30px;"/>';
@@ -78,6 +77,8 @@ define(["jquery", "underscore", "backbone", "text!template/mon_stock_add_product
             this.loadingStop();
             
             this.bindProductEvent();
+            
+            this.recalculMontantTotalHt();
         },
         
         bindProductEvent: function() {
@@ -85,7 +86,7 @@ define(["jquery", "underscore", "backbone", "text!template/mon_stock_add_product
             $('.produit_moins').unbind('click').on('click', function(e){
                 e.preventDefault();
                 var v = parseInt($(this).parent().find('input').val());
-                $(this).parent().find('input').val(((v > 1)?v-1:1));                
+                $(this).parent().find('input').val(((v > 0)?v-1:0));                
             });
             $('.produit_plus').unbind('click').on('click', function(e){
                 e.preventDefault();
@@ -96,10 +97,23 @@ define(["jquery", "underscore", "backbone", "text!template/mon_stock_add_product
                 e.preventDefault();
                 var qt = $(this).parent().parent().find("input").val();
                 var id = $(this).parent().parent().attr("data-id");
+                var pr = $(this).parent().parent().attr("data-price");
                 
-                _this.lastcommande.addProduct(id, qt);
-                Backbone.history.navigate("monstockAdd", true);
+                _this.commande.addProduct(id, qt, pr);
+                
+                _this.recalculMontantTotalHt();
             });
+        },
+        
+        recalculMontantTotalHt: function() {
+            var somme = 0;
+            var t = this.commande.get('product');
+            for (i in t){
+                var q = t[i].qt;
+                var p = t[i].price;
+                somme += (((q > 0)?q:0) * ((p > 0)?p:0));
+            }
+            $('#motant_panier').empty().html("MON STOCK MONTANT H.T "+somme+" &euro;");
         },
         
         events: {
@@ -116,7 +130,7 @@ define(["jquery", "underscore", "backbone", "text!template/mon_stock_add_product
                 xhr.done( function(data){
                     $('#error').empty();
                     if(data.data) {
-                        Backbone.history.navigate("monstockAddProductCatProd/"+data.data.id, true);
+                        Backbone.history.navigate("commanderStep2/"+data.data.id, true);
                     }
                 });
                 xhr.fail(function(data) {
@@ -132,7 +146,7 @@ define(["jquery", "underscore", "backbone", "text!template/mon_stock_add_product
                 xhr.done( function(data){
                     $('#error').empty();
                     if(data.data) {
-                        Backbone.history.navigate("monstockAddProductCatProd/"+data.data.id, true);
+                        Backbone.history.navigate("commanderStep2/"+data.data.id, true);
                     }
                 });
                 xhr.fail(function(data) {
@@ -153,6 +167,11 @@ define(["jquery", "underscore", "backbone", "text!template/mon_stock_add_product
             $.mobile.loading('hide');
         },
         
+        onClickFilter: function(e){
+            e.preventDefault();
+            var el = e.target;
+        },
+        
         render: function(eventName) {
             this.$el.empty();
             this.$el.append(this.template({
@@ -160,7 +179,9 @@ define(["jquery", "underscore", "backbone", "text!template/mon_stock_add_product
             }));
             this.trigger('render:completed', this);
             return this;
+            
+            
         }
     });
-    return MonStockAddProductCatProdView;
+    return CommanderStep2View;
 });

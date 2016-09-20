@@ -1,10 +1,10 @@
 define(["jquery", "jquery.validate", "underscore", "backbone", "backbone.queryparams", "backbone.route-filter", 
     'backbone.localStorage', "backbone.token", "model/user-local",  "model/commande-local", 
     "view/homeView", "view/loginView", "view/creationcompteView", "view/parametreView",
-    "view/commandeView", "view/MonStockView","view/MonStockCassePerteView", "view/CommanderMenuView",
-    "view/commandeProduitView", "view/stockProduitView", "view/MonStockDestockView",
+    "view/CommanderStep1View", "view/MonStockView","view/MonStockCassePerteView", "view/CommanderMenuView",
+    "view/CommanderStep2View", "view/stockProduitView", "view/MonStockDestockView",
     "view/MonCompteView", "view/EncoursFacturationView", "view/MonEquipeView", "view/InventaireView",
-    "view/HistoriqueCommandeView", "view/MonEquipeHcView", "view/MemberDetailView",
+    "view/CommanderHistoriqueView", "view/MonEquipeHcView", "view/MemberDetailView",
     "view/MemberAddView","view/MonStockAddView","view/MonStockAddProductCatView",
     "view/MonStockAddProductCatProdView", "model/lastcommande-local",
     "view/MonStockAddValidateView","model/message-local","model/stock-local",
@@ -13,10 +13,10 @@ define(["jquery", "jquery.validate", "underscore", "backbone", "backbone.querypa
 function($, validate ,_, Backbone, QueryParams, RouterFilter,
     LocalStorage, Token, UserLocalModel, CommandeLocalModel,
     HomeView, LoginView, CreationCompteView, ParametreView,
-    CommandeView, MonStockView,MonStockCassePerteView, CommanderMenuView,
-    CommandeProduitView, StockProduitView, MonStockDestockView,
+    CommanderStep1View, MonStockView,MonStockCassePerteView, CommanderMenuView,
+    CommanderStep2View, StockProduitView, MonStockDestockView,
     MonCompteView, EncoursFacturationView, MonEquipeView, InventaireView,
-    HistoriqueCommandeView, MonEquipeHcView, MemberDetailView,
+    CommanderHistoriqueView, MonEquipeHcView, MemberDetailView,
     MemberAddView, MonStockAddView, MonStockAddProductCatView,
     MonStockAddProductCatProdView, LastcommandeLocalModel,
     MonStockAddValidateView,MessageLocalModel,StockLocalModel,
@@ -34,6 +34,9 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
     
     var stockLocal = new StockLocalModel();
     stockLocal.fetch();
+    
+    var commandeLocal = new CommandeLocalModel();
+    commandeLocal.fetch();
 
     var AppRouter = Backbone.Router.extend({
         init: true,
@@ -43,9 +46,9 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             "creationcompte": "creationcompte",
             "login": "login",
             "commanderMenu": "commanderMenu",
-            "commander": "commander",
-            "commanderProduit/:id": "commanderProduit",
-            "historiqueCommande": "historiqueCommande",
+            "commanderStep1": "commanderStep1",
+            "commanderStep2/:id": "commanderStep2",
+            "commanderHistorique": "commanderHistorique",
             "monstock": "monstock",
             "monstockAdd": "monstockAdd",
             "monstockAddValidate": "monstockAddValidate",
@@ -98,6 +101,7 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             this.lastcommandeLocal = lastcommandeLocal;
             this.messageLocal = messageLocal;
             this.stockLocal = stockLocal;
+            this.commandeLocal = commandeLocal;
         },
         logout: function() {
             this.userLocal.clear();
@@ -123,23 +127,29 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
         },
         commanderMenu: function() {
             var view = new CommanderMenuView({
-                commande: new CommandeLocalModel(),
                 user: this.userLocal
             });
             view.render();
             this.changePage(view);
         },
-        commander: function() {
-            var view = new CommandeView({
-                commande: new CommandeLocalModel(),
+        commanderStep1: function() {
+            var view = new CommanderStep1View({
                 user: this.userLocal
             });
             view.render();
             this.changePage(view);
         },
-        historiqueCommande: function() {
-            var view = new HistoriqueCommandeView({
-                commande: new CommandeLocalModel(),
+        commanderStep2: function(id) {
+            var view = new CommanderStep2View({
+                user: this.userLocal,
+                commande: this.commandeLocal,
+                categorie_id: id,
+            });
+            view.render();
+            this.changePage(view);
+        },
+        commanderHistorique: function() {
+            var view = new CommanderHistoriqueView({
                 user: this.userLocal
             });
             view.render();
@@ -154,15 +164,6 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
         },
         monequipehc: function() {
             var view = new MonEquipeHcView({
-                user: this.userLocal
-            });
-            view.render();
-            this.changePage(view);
-        },
-        commanderProduit: function(id) {
-            var view = new CommandeProduitView({
-                commande: new CommandeLocalModel(),
-                categorie_id: id,
                 user: this.userLocal
             });
             view.render();
@@ -254,17 +255,16 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             view.render();
             this.changePage(view);
         },
-        stockProduit: function() {
+        /*stockProduit: function() {
             var view = new StockProduitView({
                 commande: new CommandeLocalModel(),
                 user: this.userLocal
             });
             view.render();
             this.changePage(view);
-        },
+        },*/
         inventaire: function() {
             var view = new InventaireView({
-                commande: new CommandeLocalModel(),
                 user: this.userLocal
             });
             view.render();

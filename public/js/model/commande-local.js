@@ -1,33 +1,56 @@
 define(["jquery", "underscore", "backbone", "backbone.localStorage"], function ($, _, Backbone, LocalStorage) {
     var CommandeLocalModel = Backbone.Model.extend({
-        localStorage: new Backbone.LocalStorage("main-categorie"),
+        localStorage: new Backbone.LocalStorage("main-commande"),
         initialize: function () {
-            this.categorieFirstLevel = new Array();
-            /*_.bindAll(this, "onPointageSuccess", "onPointageFailure");
+            //_.bindAll(this, "onLoginSuccess", "onLoginFailure");
             uid = this.localStorage.records[0];
             if (!uid) {
                 this.localStorage.create(this);
             } else {
                 this.id = uid;
-            }*/
-        },
-        onCategorieSuccess: function (data) {
-            if((typeof data != "object" && data.substr(0,2) == 'ko') || (data.result.length == 0)){
-                this.onCategorieFailure(data);
-            } else {
-                console.log(data);
-                this.categorieFirstLevel = data.result;
             }
         },
-        onCategorieFailure: function (data) {
-            this.categorieFirstLevel = false;
-            $('#error').empty().html(data);
-            this.trigger('categorie:failure');
+        defaults: {
+            "product": []
         },
-        getCategorie: function (user) {
-            var xhr = $.get(config.api_url + "/rest-categorie", {"token": user.get('token')}, null, 'jsonp');
-            xhr.done(this.onCategorieSuccess);
-            xhr.fail(this.onCategorieFailure);
+        addProduct: function(id, quantity, price) {
+            var t = this.get("product");
+            if(t == undefined || t == null) {
+                t = new Array();
+            }
+            t.push({"id":id,"qt": quantity,"price":price});
+            
+            this.set('product', t);
+            this.save();
+        },
+        resetData: function(){
+            this.set('product', null);
+            this.save();
+        },
+        saveCommande: function(id, motif) {
+            var self = this;
+            var xhr = null;
+            
+            var options = {};
+            options['product'] = this.get('product');
+            if(this.get('idCommande') != null) {
+                options['id_commande'] = this.get('idCommande');
+            }
+            options['id'] = id;
+            options['motif'] = motif;
+            
+            xhr = $.ajax({
+                url: config.api_url + "/rest-stock/"+options['id'],
+                type: 'PUT',
+                data: options,
+                dataType: "jsonp"
+            });
+            xhr.done(function (data) {
+                self.trigger('lastcommande:endsuccesstockupdated');
+            });
+            xhr.fail(function (data) {
+                self.trigger('lastcommande:endfailurestockupdated', data);
+            });
         },
     });
     return CommandeLocalModel;

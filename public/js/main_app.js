@@ -14800,41 +14800,64 @@ define('model/user-local',["jquery", "underscore", "backbone", "backbone.localSt
 });
 define('model/commande-local',["jquery", "underscore", "backbone", "backbone.localStorage"], function ($, _, Backbone, LocalStorage) {
     var CommandeLocalModel = Backbone.Model.extend({
-        localStorage: new Backbone.LocalStorage("main-categorie"),
+        localStorage: new Backbone.LocalStorage("main-commande"),
         initialize: function () {
-            this.categorieFirstLevel = new Array();
-            /*_.bindAll(this, "onPointageSuccess", "onPointageFailure");
+            //_.bindAll(this, "onLoginSuccess", "onLoginFailure");
             uid = this.localStorage.records[0];
             if (!uid) {
                 this.localStorage.create(this);
             } else {
                 this.id = uid;
-            }*/
-        },
-        onCategorieSuccess: function (data) {
-            if((typeof data != "object" && data.substr(0,2) == 'ko') || (data.result.length == 0)){
-                this.onCategorieFailure(data);
-            } else {
-                console.log(data);
-                this.categorieFirstLevel = data.result;
             }
         },
-        onCategorieFailure: function (data) {
-            this.categorieFirstLevel = false;
-            $('#error').empty().html(data);
-            this.trigger('categorie:failure');
+        defaults: {
+            "product": []
         },
-        getCategorie: function (user) {
-            var xhr = $.get(config.api_url + "/rest-categorie", {"token": user.get('token')}, null, 'jsonp');
-            xhr.done(this.onCategorieSuccess);
-            xhr.fail(this.onCategorieFailure);
+        addProduct: function(id, quantity, price) {
+            var t = this.get("product");
+            if(t == undefined || t == null) {
+                t = new Array();
+            }
+            t.push({"id":id,"qt": quantity,"price":price});
+            
+            this.set('product', t);
+            this.save();
+        },
+        resetData: function(){
+            this.set('product', null);
+            this.save();
+        },
+        saveCommande: function(id, motif) {
+            var self = this;
+            var xhr = null;
+            
+            var options = {};
+            options['product'] = this.get('product');
+            if(this.get('idCommande') != null) {
+                options['id_commande'] = this.get('idCommande');
+            }
+            options['id'] = id;
+            options['motif'] = motif;
+            
+            xhr = $.ajax({
+                url: config.api_url + "/rest-stock/"+options['id'],
+                type: 'PUT',
+                data: options,
+                dataType: "jsonp"
+            });
+            xhr.done(function (data) {
+                self.trigger('lastcommande:endsuccesstockupdated');
+            });
+            xhr.fail(function (data) {
+                self.trigger('lastcommande:endfailurestockupdated', data);
+            });
         },
     });
     return CommandeLocalModel;
 });
 define('text',{load: function(id){throw new Error("Dynamic load not allowed: " + id);}});
 
-define('text!template/home.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>CHOISIR UNE ACTION</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="message"><%= message %></div>\n    <ul id="lien_menu_p">\n        <li>\n            <a href="#commanderMenu">\n                <div class="menu_p_title">\n                    COMMANDER\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#monstock">\n                <div class="menu_p_title">\n                    GERER MON STOCK\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#moncompte">\n                <div class="menu_p_title">\n                    MON COMPTE\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n    </ul>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
+define('text!template/home.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li><span class="span-nav">CHOISIR UNE ACTION</span></li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="message"><%= message %></div>\n    <ul id="lien_menu_p">\n        <li>\n            <a href="#commanderMenu">\n                <div class="menu_p_title">\n                    COMMANDER\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#monstock">\n                <div class="menu_p_title">\n                    GERER MON STOCK\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#moncompte">\n                <div class="menu_p_title">\n                    MON COMPTE\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n    </ul>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
 
 define('view/homeView',["jquery", "underscore", "backbone", "text!template/home.html"], function($, _, Backbone, home_tpl) {
     var HomeView = Backbone.View.extend({
@@ -15361,7 +15384,7 @@ define('view/homeView',["jquery", "underscore", "backbone", "text!template/home.
   return Backbone.Syphon;
 }));
 
-define('text!template/login.html',[],function () { return '\n<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>LOGIN</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content" style="margin: 0px;">\n    <div style="border: solid 1px black; width: 65%; margin: auto; border-radius: 15px;">\n        <form>\n            <div id="error"></div>\n            <div data-role="fieldcontain" class="ui-label" style=" padding: 2%; width: 96%">\n                <div style="width: 100%; ">\n                    <label for="username" class="text-left qua_pt ffmoreprobook">Identifiant:</label>\n                </div>\n                <input type="text" name="token" id="login" value="" class="required" placeholder="Identifiant" />\n            </div>\n\n            <div style="clear: both"></div>\n\n            <a href="#" id="submitform">\n                <div class="dou_pt ffmoreproblack formvalid" style="width: 96%; padding: 2%; ">\n                    valider\n                </div>\n            </a>\n\n            <!--div data-corners="true" data-shadow="true" data-iconshadow="true"\n                    data-wrapperels="span" data-icon="null" data-iconpos="null"\n                    data-theme="b"\n\n                    aria-disabled="false">\n                    <button type="submit" data-theme="b" name="submit"\n                            value="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>\n            </div-->\n        </form>\n    </div>\n    <div style="width: 100%; height: 15px;"></div>\n\n    <div style="width: 100%; text-align: center">\n        <a href="#"  class="diz_pt ffmorepromed" style="text-decoration: underline" id="creation_compte">CRE&Eacute;R UN COMPTE</a>\n    </div>\n</div>\n\n<div data-role="footer"  data-position="fixed">\n    <!-- div data-enhance="false" id="test-container"><a href="#" class="cancel" >Annuler</a></div -->\n</div>\n\n';});
+define('text!template/login.html',[],function () { return '\n<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li><span class="span-nav">LOGIN</span></li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content" style="margin: 0px;">\n    <div style="border: solid 1px black; width: 65%; margin: auto; border-radius: 15px;">\n        <form>\n            <div id="error"></div>\n            <div data-role="fieldcontain" class="ui-label" style=" padding: 2%; width: 96%">\n                <div style="width: 100%; ">\n                    <label for="username" class="text-left qua_pt ffmoreprobook">Identifiant:</label>\n                </div>\n                <input type="text" name="token" id="login" value="" class="required" placeholder="Identifiant" />\n            </div>\n\n            <div style="clear: both"></div>\n\n            <a href="#" id="submitform">\n                <div class="dou_pt ffmoreproblack formvalid" style="width: 96%; padding: 2%; ">\n                    valider\n                </div>\n            </a>\n\n            <!--div data-corners="true" data-shadow="true" data-iconshadow="true"\n                    data-wrapperels="span" data-icon="null" data-iconpos="null"\n                    data-theme="b"\n\n                    aria-disabled="false">\n                    <button type="submit" data-theme="b" name="submit"\n                            value="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>\n            </div-->\n        </form>\n    </div>\n    <div style="width: 100%; height: 15px;"></div>\n\n    <div style="width: 100%; text-align: center">\n        <a href="#"  class="diz_pt ffmorepromed" style="text-decoration: underline" id="creation_compte">CRE&Eacute;R UN COMPTE</a>\n    </div>\n</div>\n\n<div data-role="footer"  data-position="fixed">\n    <!-- div data-enhance="false" id="test-container"><a href="#" class="cancel" >Annuler</a></div -->\n</div>\n\n';});
 
 define('view/loginView',["jquery", "underscore", "backbone", "backbone.syphon", "text!template/login.html"], function($, _, Backbone, Syphon, login_tpl) {
     var LoginView = Backbone.View.extend({
@@ -15448,7 +15471,7 @@ define('view/loginView',["jquery", "underscore", "backbone", "backbone.syphon", 
     return LoginView;
 });
 
-define('text!template/creationcompte.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#login" id="cancel"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>CREATION DE COMPTE</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content" style="text-align: center">\n    <div style="border: solid 1px black; width: 65%; margin: auto; border-radius: 15px;">\n        <form>\n            <div id="error"></div>\n            <div id="success"></div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="nom">Nom<span class="required">*</span></label></div>\n                <input type="text" name="nom" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="prenom">Pr&eacute;nom<span class="required">*</span></label></div>\n                <input type="text" name="prenom" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="societe">Soci&eacute;t&eacute;<span class="required">*</span></label></div>\n                <input type="text" name="societe" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="adr_societe">Adresse Soci&eacute;t&eacute;<span class="required">*</span></label></div>\n                <input type="text" name="adr_societe" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="cp">Code postal<span class="required">*</span></label></div>\n                <input type="text" name="cp" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="ville">Ville<span class="required">*</span></label></div>\n                <input type="text" name="ville" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="siret">SIRET<span class="required">*</span></label></div>\n                <input type="text" name="siret" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="tva">N TVA INTERCOMMUNAUTAIRE<span class="required">*</span></label></div>\n                <input type="text" name="tva" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="horaire">HORAIRES LIVRAISON</label></div>\n                <textarea name="horaire" class=" text-left" ></textarea>\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="information">INFORMATION LIVREUR</label></div>\n                <textarea name="information" class=" text-left" ></textarea>\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">EMAIL<span class="required">*</span></label></div>\n                <input type="text" name="email" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email_conf">CONFIRMATION EMAIL<span class="required">*</span></label></div>\n                <input type="text" name="email_conf" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="password">PASSWORD<span class="required">*</span></label></div>\n                <input type="password" name="password" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="password_conf">CONFIRMATION PASSWORD<span class="required">*</span></label></div>\n                <input type="password" name="password_conf" value="" class="required" required="required" />\n            </div>\n            \n            \n            <div style="clear: both"></div>\n            <p class="diz_pt ffmorepromed text-left" style="color: red">* Tous les champs requis sont obligatoires</p>\n            <p class="diz_pt ffmorepromed text-left">ATTENTION VOTRE COMPTE NE SERA  ACTIF QU\'APRES VALIDATION DE VOTRE COMMERCIAL ASAR</p>\n            \n            <a href="#" id="submitform">\n                <div  class="dou_pt ffmoreproblack formvalid" style="width: 96%;padding: 2%;">\n                    valider\n                </div>\n            </a>\n\n            <!--div data-corners="true" data-shadow="true" data-iconshadow="true"\n                    data-wrapperels="span" data-icon="null" data-iconpos="null"\n                    data-theme="b"\n\n                    aria-disabled="false">\n                    <button type="submit" data-theme="b" name="submit"\n                            value="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>\n            </div-->\n        </form>\n    </div>\n</div>\n';});
+define('text!template/creationcompte.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#login" id="cancel"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li><span class="span-nav">CREATION DE COMPTE</span></li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content" style="text-align: center">\n    <div style="border: solid 1px black; width: 65%; margin: auto; border-radius: 15px;">\n        <form>\n            <div id="error"></div>\n            <div id="success"></div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="nom">Nom<span class="required">*</span></label></div>\n                <input type="text" name="nom" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="prenom">Pr&eacute;nom<span class="required">*</span></label></div>\n                <input type="text" name="prenom" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="societe">Soci&eacute;t&eacute;<span class="required">*</span></label></div>\n                <input type="text" name="societe" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="adr_societe">Adresse Soci&eacute;t&eacute;<span class="required">*</span></label></div>\n                <input type="text" name="adr_societe" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="cp">Code postal<span class="required">*</span></label></div>\n                <input type="text" name="cp" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="ville">Ville<span class="required">*</span></label></div>\n                <input type="text" name="ville" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="siret">SIRET<span class="required">*</span></label></div>\n                <input type="text" name="siret" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="tva">N TVA INTERCOMMUNAUTAIRE<span class="required">*</span></label></div>\n                <input type="text" name="tva" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="horaire">HORAIRES LIVRAISON</label></div>\n                <textarea name="horaire" class=" text-left" ></textarea>\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="information">INFORMATION LIVREUR</label></div>\n                <textarea name="information" class=" text-left" ></textarea>\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">EMAIL<span class="required">*</span></label></div>\n                <input type="text" name="email" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email_conf">CONFIRMATION EMAIL<span class="required">*</span></label></div>\n                <input type="text" name="email_conf" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="password">PASSWORD<span class="required">*</span></label></div>\n                <input type="password" name="password" value="" class="required" required="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="password_conf">CONFIRMATION PASSWORD<span class="required">*</span></label></div>\n                <input type="password" name="password_conf" value="" class="required" required="required" />\n            </div>\n            \n            \n            <div style="clear: both"></div>\n            <p class="diz_pt ffmorepromed text-left" style="color: red">* Tous les champs requis sont obligatoires</p>\n            <p class="diz_pt ffmorepromed text-left">ATTENTION VOTRE COMPTE NE SERA  ACTIF QU\'APRES VALIDATION DE VOTRE COMMERCIAL ASAR</p>\n            \n            <a href="#" id="submitform">\n                <div  class="dou_pt ffmoreproblack formvalid" style="width: 96%;padding: 2%;">\n                    valider\n                </div>\n            </a>\n\n            <!--div data-corners="true" data-shadow="true" data-iconshadow="true"\n                    data-wrapperels="span" data-icon="null" data-iconpos="null"\n                    data-theme="b"\n\n                    aria-disabled="false">\n                    <button type="submit" data-theme="b" name="submit"\n                            value="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>\n            </div-->\n        </form>\n    </div>\n</div>\n';});
 
 define('view/creationcompteView',["jquery", "underscore", "backbone", "backbone.syphon", "text!template/creationcompte.html"], function($, _, Backbone, Syphon, creationcompte_tpl) {
     var CreationCompteView = Backbone.View.extend({
@@ -15600,25 +15623,74 @@ define('view/parametreView',["jquery", "underscore", "backbone", "text!template/
     return ParametreView;
 });
 
-define('text!template/commande_cat.html',[],function () { return '<div data-role="header">\n    <div class="header_bloc_left">\n        <a href="#home">&eacute;tape pr&eacute;c&eacute;dente</a>\n    </div>\n    <h1>ASAR</h1>\n    <img style="float: left" src=""/>\n    <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    \n    <div id="page-title">\n        CHOISIR UNE CAT&Eacute;GORIE\n        <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    </div>\n</div>\n\n\n\n\n<!--div id="nav-panel-user" data-role="panel" data-position="right" data-theme="b">\n    <div class="ui-panel-inner">\n        <h3><%= user.firstname %> <%= user.lastname %></h3>\n        <a href="#logout" data-rel="close" data-role="button" data-theme="c" data-icon="delete" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-left">\n        <span class="ui-btn-inner">Se deconnecter</span>\n        </a>\n    </div>\n</div-->\n<div data-role="content">\n    <div class="comm_1_content">\n        <% index = 0; %>\n        <% passe = 0; %>\n        <% _.each(categorie, function(cat){ %>\n            <% if (index == 0) { %>\n                <div class="ligne <% if(passe != 0){ %>bg_haut<%}%>">\n                <% index = 0; %>                    \n            <% } %>\n            <% index += 1; %>\n            <div data-id="<%= cat.id %>" class="comm_1_cat <% if(index ==1){ %>bg_droite<%}%>"><div><%= cat.libelle %></div></div>\n            <% if (index == 2) { %>\n                </div>\n                <div class="clear"></div> \n                <% index = 0; %>\n                <% passe += 1; %>\n            <% } %>\n        <% }); %>\n        <% if(index == 1) { %>\n                <div class="comm_1_cat">&nbsp;</div>\n            </div>\n        <% } %>\n        <div class="clear"></div> \n    </div>\n</div>\n<div data-role="footer" id="footer">\n    <div class="footer_div">\n        <a href="#home">\n            <div><img src="" /></div>\n            <div>Accueil</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#">\n            <div><img src="" /></div>\n            <div>Nouveaut&eacute;s & Promotions</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#commander" class="active">\n            <div><img src="" /></div>\n            <div>Commander</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#parametre">\n            <div><img src="" /></div>\n            <div>Mon compte</div>\n        </a>\n    </div>\n    <div class="clear"></div> \n</div>';});
+define('text!template/commander_step1.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li><span class="span-nav">CHOISIR UNE CATEGORIE</span></li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_1_content">\n       \n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
 
-define('view/commandeView',["jquery", "underscore", "backbone", "text!template/commande_cat.html"], function($, _, Backbone, commande_cat_tpl) {
-    var CommandeView = Backbone.View.extend({
+define('view/CommanderStep1View',["jquery", "underscore", "backbone", "text!template/commander_step1.html"], function($, _, Backbone, commander_step1_tpl) {
+    var CommanderStep1View = Backbone.View.extend({
         
-        id: 'commande-view',
+        id: 'commander_step1-view',
 
-        template: _.template(commande_cat_tpl),
+        template: _.template(commander_step1_tpl),
         
         initialize: function(options) {
             this.user = options.user;
-            this.commande = options.commande;
-            /*this.listenToOnce(this.user, 'pointage:failure', function() {
-                _.delay(this.loadingStop);
-                alert('Erreur de sauvegarde, Veuillez vous déconnecter et recommencer');
-            });*/
+            
             this.bind('render:completed', function() {
                $('a.ui-btn').removeClass('ui-btn');
             });
+            
+            this.bind('render:completed', function() {
+                /* recuperation de la derniere commande */
+                this.loadingStart("Chargement des informations");
+                var _this = this;
+                var xhr = $.get(config.api_url + "/rest-categorie", {"token": _this.user.get('token')}, null, 'jsonp');
+                xhr.done( function(data){
+                    $('#error').empty();
+                    _this.chargementCategories(data.data);
+                });
+                xhr.fail(function(data) {
+                    $('#error').empty().html(data);
+                });
+            });
+        },
+        
+        chargementCategories: function(data) {
+            var chaine = "";
+            var index = 0;
+            var passe = 0;
+            
+            for (cat in data) {
+                if (index == 0) {
+                    chaine += '<div class="ligne '+((passe != 0)?'bg_haut':'')+'">';
+                    index = 0;                    
+                }
+                index += 1;
+                chaine += '<div data-id="'+data[cat].id+'" class="comm_1_cat '+((index ==1)?'bg_droite':'')+'"><div>'+data[cat].libelle+'</div></div>';
+                if (index == 2) {
+                    chaine += '</div><div class="clear"></div> ';
+                    index = 0;
+                    passe += 1;
+                }
+            }
+            if(index == 1) { 
+                chaine += '<div class="comm_1_cat">&nbsp;</div>';
+                chaine += '</div>';
+            }
+            chaine += '<div class="clear"></div>';
+            
+            $('.comm_1_content').empty().html(chaine);
+            
+            this.loadingStop();
+        },
+        
+        events: {
+            "click div.comm_1_cat": "goToPageListProduit",
+        },
+        
+        goToPageListProduit: function(e){
+            e.preventDefault();
+            Backbone.history.navigate("commanderStep2/"+$(e.target).parent().attr('data-id'), true);
+            
         },
         
         loadingStart: function(text_show) {
@@ -15634,45 +15706,21 @@ define('view/commandeView',["jquery", "underscore", "backbone", "text!template/c
             $.mobile.loading('hide');
         },
         
-        onClickFilter: function(e){
-            e.preventDefault();
-            var el = e.target;
-            if($(el).parent().hasClass("comm_1_cat")) {
-                Backbone.history.navigate("commanderProduit/"+$(el).parent().attr('data-id'), true);
-            }
-            /*if($(el).attr("name") == "entree") {
-                this.loadingStart("Sauvegarde de votre pointage ...");
-                this.pointeuse.pointage("entree", this.user);
-            } else if($(el).attr("name") == "sortie") {
-                this.pointeuse.pointage("sortie", this.user);
-            }*/
-        },
-        
         render: function(eventName) {
-            var _this = this;
-            var xhr = $.get(config.api_url + "/rest-categorie", {"token": _this.user.get('token')}, null, 'jsonp');
-            xhr.done( function(data){
-                _this.$el.empty();
-                _this.$el.append(_this.template({
-                    categorie: data.result,
-                    user: _this.user.toJSON()
-                }));
-                _this.trigger('render:completed', _this);
-                _this.$el.find('.comm_1_cat').on('click', _.bind(_this.onClickFilter, _this));
-                return _this;
-            });
-            xhr.fail(function(data) {
-                $('#error').empty().html(data);
-                this.trigger('categorie:failure');
-            });
+            this.$el.empty();
+            this.$el.append(this.template({
+                user: this.user.toJSON()
+            }));
+            this.trigger('render:completed', this);
+            return this;
             
             
         }
     });
-    return CommandeView;
+    return CommanderStep1View;
 });
 
-define('text!template/mon_stock.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>MON STOCK</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <ul id="lien_menu_p">\n        <li>\n            <a href="#monstockAdd">\n                <div class="menu_p_title">\n                    ENTRER STOCK A LIVRAISON\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#monstockDestock">\n                <div class="menu_p_title">\n                    SORTIE STOCK\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#monstockCassePerte">\n                <div class="menu_p_title">\n                    CASSE / PERTE\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#monstockHistorique">\n                <div class="menu_p_title">\n                    HISTORIQUE DES ENTREES / SORTIES / CASSE / PERTE\n                </div>\n            </a>\n        </li>\n    </ul>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
+define('text!template/mon_stock.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li><span class="span-nav">MON STOCK</span></li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <ul id="lien_menu_p">\n        <li>\n            <a href="#monstockAdd">\n                <div class="menu_p_title">\n                    ENTRER STOCK A LIVRAISON\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#monstockDestock">\n                <div class="menu_p_title">\n                    SORTIE STOCK\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#monstockCassePerte">\n                <div class="menu_p_title">\n                    CASSE / PERTE\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#monstockHistorique">\n                <div class="menu_p_title">\n                    HISTORIQUE DES ENTREES / SORTIES / CASSE / PERTE\n                </div>\n            </a>\n        </li>\n    </ul>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
 
 define('view/MonStockView',["jquery", "underscore", "backbone", "text!template/mon_stock.html"], function($, _, Backbone, mon_stock_tpl) {
     var MonStockView = Backbone.View.extend({
@@ -15710,7 +15758,7 @@ define('view/MonStockView',["jquery", "underscore", "backbone", "text!template/m
     return MonStockView;
 });
 
-define('text!template/mon_stock_casse_perte.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>CASSE / PERTE STOCK</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_prod_content">\n        <p class="diz_pt ffmorepromed text-left" style="padding: 1% 10%;">IMPORTANT : LES SORTIES DE STOCKS SE FONT UNIQUEMENT PAR CAISSES DE 6 OU 12 BOUTEILLES OU PAR FUT</p>\n        <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n            <thead>\n                <th class="clear" style="border: solid 1px black;width: 40%; position: relative">\n                    <div style="padding-right: 15px;">PRODUIT</div>\n                </th>\n                <th style="border: solid 1px black;width: 20%">MON STOCK</th>\n                <th style="border: solid 1px black;width: 20%">PRIX UNITAIRE H.T</th>\n                <th style="border: solid 1px black;width: 20%">QUANTITE</th>\n            </thead>\n            <tbody></tbody>\n        </table>\n        <p class="dou_pt ffmorepromed text-right" id="somme_entree_ht" style="padding: 2% 10%;">SORTIE DE STOCK MONTANT H.T. 0.00 &euro;</p>\n        <br/>\n        <p class="dou_pt ffmorepromed text-right" style="padding: 2% 10%;">MON STOCK MONTANT H.T XXXX €</p>\n        <br/>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" class="sub_footer">\n        <a href="#" class="valid_sortie">\n            <div class="qua_pt ffmorepromed" style="color: white" >Valider</div>\n        </a>\n    </div>\n    <div data-enhance="false" id="test-container" style="padding-top: 1em;">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
+define('text!template/mon_stock_casse_perte.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li><span class="span-nav">CASSE / PERTE STOCK</span></li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_prod_content">\n        <p class="diz_pt ffmorepromed text-left" style="padding: 1% 10%;">IMPORTANT : LES SORTIES DE STOCKS SE FONT UNIQUEMENT PAR CAISSES DE 6 OU 12 BOUTEILLES OU PAR FUT</p>\n        <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n            <thead>\n                <th class="clear" style="border: solid 1px black;width: 40%; position: relative">\n                    <div style="padding-right: 15px;">PRODUIT</div>\n                </th>\n                <th style="border: solid 1px black;width: 20%">MON STOCK</th>\n                <th style="border: solid 1px black;width: 20%">PRIX UNITAIRE H.T</th>\n                <th style="border: solid 1px black;width: 20%">QUANTITE</th>\n            </thead>\n            <tbody></tbody>\n        </table>\n        <p class="dou_pt ffmorepromed text-right" id="somme_entree_ht" style="padding: 2% 10%;">SORTIE DE STOCK MONTANT H.T. 0.00 &euro;</p>\n        <br/>\n        <p class="dou_pt ffmorepromed text-right" style="padding: 2% 10%;">MON STOCK MONTANT H.T XXXX €</p>\n        <br/>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" class="sub_footer">\n        <a href="#" class="valid_sortie">\n            <div class="qua_pt ffmorepromed" style="color: white" >Valider</div>\n        </a>\n    </div>\n    <div data-enhance="false" id="test-container" style="padding-top: 1em;">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
 
 define('view/MonStockCassePerteView',["jquery", "underscore", "backbone", "text!template/mon_stock_casse_perte.html"], function($, _, Backbone, mon_stock_casse_perte_tpl) {
     var MonStockCassePerteView = Backbone.View.extend({
@@ -15847,7 +15895,7 @@ define('view/MonStockCassePerteView',["jquery", "underscore", "backbone", "text!
     return MonStockCassePerteView;
 });
 
-define('text!template/commander_menu.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>CHOISIR UNE ACTION</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <ul id="lien_menu_p">\n        <li>\n            <a href="#commander">\n                <div class="menu_p_title ffmoreprbold dou_pt">\n                    NOUVELLE COMMANDE\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#historiqueCommande">\n                <div class="menu_p_title ffmoreprbold dou_pt">\n                    HISTORIQUE DE MES COMMANDES\n                    <div class="menu_p_img "><img src="" /></div>\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#encoursFacturation">\n                <div class="menu_p_title ffmoreprbold dou_pt">\n                    EN-COURS FACTURATION\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n    </ul>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#" class="cancel" >Annuler</a>\n    </div>\n</div>\n';});
+define('text!template/commander_menu.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li><span class="span-nav">CHOISIR UNE ACTION</span></li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <ul id="lien_menu_p">\n        <li>\n            <a href="#commanderStep1">\n                <div class="menu_p_title ffmoreprbold dou_pt">\n                    NOUVELLE COMMANDE\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#commanderHistorique">\n                <div class="menu_p_title ffmoreprbold dou_pt">\n                    HISTORIQUE DE MES COMMANDES\n                    <div class="menu_p_img "><img src="" /></div>\n                </div>\n            </a>\n        </li>\n        <li>\n            <a href="#encoursFacturation">\n                <div class="menu_p_title ffmoreprbold dou_pt">\n                    EN-COURS FACTURATION\n                    <div class="menu_p_img"><img src="" /></div>\n                </div>\n            </a>\n        </li>\n    </ul>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#" class="cancel" >Annuler</a>\n    </div>\n</div>\n';});
 
 define('view/CommanderMenuView',["jquery", "underscore", "backbone", "text!template/commander_menu.html"], function($, _, Backbone, commander_menu_tpl) {
     var CommanderMenuView = Backbone.View.extend({
@@ -15858,11 +15906,6 @@ define('view/CommanderMenuView',["jquery", "underscore", "backbone", "text!templ
         
         initialize: function(options) {
             this.user = options.user;
-            this.commande = options.commande;
-            /*this.listenToOnce(this.user, 'pointage:failure', function() {
-                _.delay(this.loadingStop);
-                alert('Erreur de sauvegarde, Veuillez vous déconnecter et recommencer');
-            });*/
             this.bind('render:completed', function() {
                $('a.ui-btn').removeClass('ui-btn');
             });
@@ -15887,12 +15930,6 @@ define('view/CommanderMenuView',["jquery", "underscore", "backbone", "text!templ
             if($(el).parent().hasClass("comm_1_cat")) {
                 Backbone.history.navigate("commanderProduit/"+$(el).parent().attr('data-id'), true);
             }
-            /*if($(el).attr("name") == "entree") {
-                this.loadingStart("Sauvegarde de votre pointage ...");
-                this.pointeuse.pointage("entree", this.user);
-            } else if($(el).attr("name") == "sortie") {
-                this.pointeuse.pointage("sortie", this.user);
-            }*/
         },
         
         render: function(eventName) {
@@ -15907,23 +15944,162 @@ define('view/CommanderMenuView',["jquery", "underscore", "backbone", "text!templ
     return CommanderMenuView;
 });
 
-define('text!template/commande_cat_produit.html',[],function () { return '<div data-role="header">\n    <div class="header_bloc_left">\n        <a href="#home">&eacute;tape pr&eacute;c&eacute;dente</a>\n    </div>\n    <h1>ASAR</h1>\n    <img style="float: left" src=""/>\n    <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    \n    <div id="page-title">\n        COMMANDER\n        <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    </div>\n    \n    <div class="produit_nav">\n        <div class="nav-left"><img src="" />&nbsp;</div>\n        <div class="nav-center"><div><%= categorie.libelle %></div></div>\n        <div class="nav-right"><img src="" />&nbsp;</div>\n        <div class="clear"></div>\n    </div>\n</div>\n\n\n\n\n<!--div id="nav-panel-user" data-role="panel" data-position="right" data-theme="b">\n    <div class="ui-panel-inner">\n        <h3><%= user.firstname %> <%= user.lastname %></h3>\n        <a href="#logout" data-rel="close" data-role="button" data-theme="c" data-icon="delete" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" class="ui-btn ui-btn-up-c ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-left">\n        <span class="ui-btn-inner">Se deconnecter</span>\n        </a>\n    </div>\n</div-->\n<div data-role="content">\n    <div class="comm_prod_content">\n        <p>IMPORTANT : LES SORTIES DE STOCKS SE FONT UNIQUEMENT PAR CAISSES DE 6 OU 12 BOUTEILLES OU PAR FUT</p>\n        <% cat_id = null; %>\n        <% _.each(categorie.list_produit, function(cat){ %>\n            \n            <% if(cat_id != null && cat.ss_cat != null && cat_ss_cat.id != cat_id){ %>\n                </div>\n            <%}%>\n        \n            <% if(cat_id == null || (cat.ss_cat != null && cat_ss_cat.id != cat_id)) { %>\n                <div class="ss_cat_com_prod">\n                    <div class="ss_cat_com_prod_title"><% if(cat.ss_cat != null){ %> <%= cat_ss_cat.libelle %> <%}%></div>\n                <% if(cat.ss_cat != null) { cat_id = cat_ss_cat.id; } else {cat_id = 0;} %>\n            <% } %>\n            \n            <% if(cat.produit.length > 0) { %>\n                <ul class="comm_prod_list_product">\n                <% _.each(cat.produit, function(prod){ %>\n                    <li>\n                        <div>\n                            <div class="comm_prod_list_product_div1"><%= prod.libelle %></div>\n                            <div class="comm_prod_list_product_div2"><input type="text" value="4" data-role="none"/></div>\n                            <div class="comm_prod_list_product_div3">-</div>\n                            <div class="comm_prod_list_product_div4"><input type="text" value="1" data-role="none"/></div>\n                            <div class="comm_prod_list_product_div5">+</div>\n                            <div class="comm_prod_list_product_div6"><input type="button" value="ajouter" data-role="none"/></div>\n                            <div class="clear"></div>\n                        </div>\n                    </li>\n                <% }); %>\n                </ul>\n            <% } %>\n            \n        <% }); %>\n        \n        <% if(cat_id != null){ %>\n            </div>\n        <%}%>\n    </div>\n</div>\n<div data-role="footer" id="footer">\n    <div class="footer_div">\n        <a href="#home">\n            <div><img src="" /></div>\n            <div>Accueil</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#">\n            <div><img src="" /></div>\n            <div>Nouveaut&eacute;s & Promotions</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#commander" class="active">\n            <div><img src="" /></div>\n            <div>Commander</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#parametre">\n            <div><img src="" /></div>\n            <div>Mon compte</div>\n        </a>\n    </div>\n    <div class="clear"></div> \n</div>';});
+define('text!template/commander_step2.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li><span class="span-nav">AJOUTER AU STOCK</span></li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div>\n        <div class="produit_nav" style="max-width: 300px;margin: auto;line-height: 35px;">\n            <a href="#" class="nav-right-a"><div class="nav-left text-right" style="width: 10%; "><img style="padding-right: 5px;" src="css/images/icons-png/arrow-l-black.png" />&nbsp;</div></a>\n            <div class="nav-center ffmoreprbold dizhui_pt" style="width: 78%;border: solid 1px black;border-radius: 15px"></div>\n            <a href="#" class="nav-left-a"><div class="nav-right text-left" style="width: 10%;"><img style="padding-left: 5px;" src="css/images/icons-png/arrow-r-black.png" />&nbsp;</div></a>\n            <div class="clear"></div>\n        </div>\n    </div>\n    \n    <div class="comm_prod_content">\n        <p class="diz_pt ffmorepromed text-left" style="padding: 1% 10%;">IMPORTANT : LES SORTIES DE STOCKS SE FONT UNIQUEMENT PAR CAISSES DE 6 OU 12 BOUTEILLES OU PAR FUT</p>\n        <div class="comm_2_content"></div>\n        <p class="dou_pt ffmorepromed text-right" id="motant_panier" style="padding: 2% 10%;">MON STOCK MONTANT H.T XXXX &euro;</p>\n    </div>\n</div>\n\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
 
-define('view/commandeProduitView',["jquery", "underscore", "backbone", "text!template/commande_cat_produit.html"], function($, _, Backbone, commande_cat_produit_tpl) {
-    var CommandeProduitView = Backbone.View.extend({
+define('view/CommanderStep2View',["jquery", "underscore", "backbone", "text!template/commander_step2.html"], function($, _, Backbone, commander_step2_tpl) {
+    var CommanderStep2View = Backbone.View.extend({
         
-        id: 'commande-produit-view',
+        id: 'commander_step2-view',
 
-        template: _.template(commande_cat_produit_tpl),
+        template: _.template(commander_step2_tpl),
         
         initialize: function(options) {
             this.user = options.user;
             this.commande = options.commande;
-            this.categorie_id = options.categorie_id
-            /*this.listenToOnce(this.user, 'pointage:failure', function() {
-                _.delay(this.loadingStop);
-                alert('Erreur de sauvegarde, Veuillez vous déconnecter et recommencer');
-            });*/
+            this.idCategorie = options.categorie_id;
+            this.bind('render:completed', function() {
+                /* recuperation de la derniere commande */
+                this.loadingStart("Chargement des informations");
+                var _this = this;
+                var xhr = $.get(config.api_url + "/rest-categorie/"+_this.idCategorie, {"token": _this.user.get('token')}, null, 'jsonp');
+                xhr.done( function(data){
+                    $('#error').empty();
+                    _this.chargementProducts(data.data);
+                });
+                xhr.fail(function(data) {
+                    $('#error').empty().html(data);
+                });
+            });
+        },
+        
+        chargementProducts: function(data) {
+            $('.nav-center').empty().html(data.libelle);
+            
+            var cat_id = null;
+            var chaine = "";
+            
+            for (index in data.list_produit) {
+                var cat = data.list_produit[index];
+                if(cat_id != null && cat.ss_cat != null && cat.ss_cat.id != cat_id){
+                    chaine += '</div>';
+                }
+        
+                if(cat_id == null || (cat.ss_cat != null && cat.ss_cat.id != cat_id)) {
+                    chaine += '<div class="ss_cat_com_prod '+((cat.ss_cat == null)?'no_border':'')+'">';
+                    chaine += '<ul class="clear">'; 
+                    chaine += '<li style="width: 40%;list-style: none" class="floatl ss_cat_com_prod_title">'+((cat.ss_cat != null)?cat.ss_cat.libelle:'')+'</li>';
+                    chaine += '<li style="width: 18%;list-style: none" class="floatl ffmoreprobook dix_pt"><i>P.U.H.T</i></li>';
+                    chaine += '<li style="width: 27%;list-style: none" class="floatl ffmoreprobook dix_pt"><i>S&eacute;l&eacute;ctionner</i></li>';
+                    chaine += '<li style="width: 14%;list-style: none" class="floatl ">&nbsp;</li>';
+                    chaine += '</ul>';
+                    if(cat.ss_cat != null) { cat_id = cat.ss_cat.id; } else {cat_id = 0;}
+                }
+            
+                if(cat.produit.length > 0) {
+                    chaine+= '<ul class="comm_prod_list_product" >';
+                    for (index2 in cat.produit) {
+                        var prod = cat.produit[index2];
+                        chaine+= '<li>';
+                        chaine+= '    <div data-id="'+prod.id+'" data-price="'+prod.prix_base+'">';
+                        chaine+= '        <div class="comm_prod_list_product_div1 ffmoreprbold dou_pt" style="width: 40%">'+prod.libelle+'</div>';
+                        chaine+= '        <div class="comm_prod_list_product_div1 text-center ffmoreprobook dix_pt" style="width: 18%" id="prix_base">'+prod.prix_base+'</div>';
+                        chaine+= '        <div class="comm_prod_list_product_div4 text-center" style="min-width: 40px; margin: auto;width: 27%">';
+                        chaine += '            <a href="#" class="produit_moins">-</a>';
+                        chaine += '            <input type="text" value="1" data-role="none" style="float: none;width: 30px;"/>';
+                        chaine += '            <a href="#" class="produit_plus">+</a>';
+                        chaine += '       </div>';
+                        chaine+= '        <div class="comm_prod_list_product_div6 text-center ffmorepromed huit_pt" style="width: 14%;"><input type="button" value="ajouter" class="addnewproductstock" data-role="none" style="padding: 3px;"/></div>';
+                        chaine+= '        <div class="clear"></div>';
+                        chaine+= '    </div>';
+                        chaine+= '</li>';
+                    }
+                    chaine+= '</ul>';
+                }
+            }
+        
+            if(cat_id != null){
+                chaine += '</div>';
+            }
+            
+            $('.comm_2_content').empty().html(chaine);
+            this.loadingStop();
+            
+            this.bindProductEvent();
+            
+            this.recalculMontantTotalHt();
+        },
+        
+        bindProductEvent: function() {
+            var _this = this;
+            $('.produit_moins').unbind('click').on('click', function(e){
+                e.preventDefault();
+                var v = parseInt($(this).parent().find('input').val());
+                $(this).parent().find('input').val(((v > 0)?v-1:0));                
+            });
+            $('.produit_plus').unbind('click').on('click', function(e){
+                e.preventDefault();
+                var v = parseInt($(this).parent().find('input').val());
+                $(this).parent().find('input').val(v+1);                
+            });
+            $('.addnewproductstock').unbind('click').on('click', function(e){
+                e.preventDefault();
+                var qt = $(this).parent().parent().find("input").val();
+                var id = $(this).parent().parent().attr("data-id");
+                var pr = $(this).parent().parent().attr("data-price");
+                
+                _this.commande.addProduct(id, qt, pr);
+                
+                _this.recalculMontantTotalHt();
+            });
+        },
+        
+        recalculMontantTotalHt: function() {
+            var somme = 0;
+            var t = this.commande.get('product');
+            for (i in t){
+                var q = t[i].qt;
+                var p = t[i].price;
+                somme += (((q > 0)?q:0) * ((p > 0)?p:0));
+            }
+            $('#motant_panier').empty().html("MON STOCK MONTANT H.T "+somme+" &euro;");
+        },
+        
+        events: {
+            /* TODO : changement de catégorie */
+            "click .nav-right-a":"gotonextCategorie",
+            "click .nav-left-a":"gotopreviousCategorie",
+        },
+        
+        gotonextCategorie: function(e){
+            e.preventDefault();
+            this.loadingStart("Chargement en cours");
+            var _this = this;
+            var xhr = $.get(config.api_url + "/rest-categorie/"+_this.idCategorie, {"token": _this.user.get('token'), "action": "next"}, null, 'jsonp');
+                xhr.done( function(data){
+                    $('#error').empty();
+                    if(data.data) {
+                        Backbone.history.navigate("commanderStep2/"+data.data.id, true);
+                    }
+                });
+                xhr.fail(function(data) {
+                    $('#error').empty().html(data);
+                });
+        },
+        
+        gotopreviousCategorie: function(e){
+            e.preventDefault();
+            this.loadingStart("Chargement en cours");
+            var _this = this;
+            var xhr = $.get(config.api_url + "/rest-categorie/"+_this.idCategorie, {"token": _this.user.get('token'), "action": "previous"}, null, 'jsonp');
+                xhr.done( function(data){
+                    $('#error').empty();
+                    if(data.data) {
+                        Backbone.history.navigate("commanderStep2/"+data.data.id, true);
+                    }
+                });
+                xhr.fail(function(data) {
+                    $('#error').empty().html(data);
+                });
         },
         
         loadingStart: function(text_show) {
@@ -15942,38 +16118,23 @@ define('view/commandeProduitView',["jquery", "underscore", "backbone", "text!tem
         onClickFilter: function(e){
             e.preventDefault();
             var el = e.target;
-            /*if($(el).attr("name") == "entree") {
-                this.loadingStart("Sauvegarde de votre pointage ...");
-                this.pointeuse.pointage("entree", this.user);
-            } else if($(el).attr("name") == "sortie") {
-                this.pointeuse.pointage("sortie", this.user);
-            }*/
         },
         
         render: function(eventName) {
-            var _this = this;
-            var xhr = $.get(config.api_url + "/rest-categorie/"+this.categorie_id, {"token": _this.user.get('token')}, null, 'jsonp');
-            xhr.done( function(data){
-                _this.$el.empty();
-                _this.$el.append(_this.template({
-                    categorie: data.result,
-                    user: _this.user.toJSON()
-                }));
-                _this.trigger('render:completed', _this);
-                return _this;
-            });
-            xhr.fail(function(data) {
-                $('#error').empty().html(data);
-                this.trigger('categorie:failure');
-            });
+            this.$el.empty();
+            this.$el.append(this.template({
+                user: this.user.toJSON()
+            }));
+            this.trigger('render:completed', this);
+            return this;
             
             
         }
     });
-    return CommandeProduitView;
+    return CommanderStep2View;
 });
 
-define('text!template/stock_cat_produit.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>ENTREE STOCK</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_prod_content">\n        <p>IMPORTANT : LES SORTIES DE STOCKS SE FONT UNIQUEMENT PAR CAISSES DE 6 OU 12 BOUTEILLES OU PAR FUT</p>\n        <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n            <tr>\n                <th style="border: solid 1px black;width: 20%">PRDUIT</th>\n                <th style="border: solid 1px black;width: 20%">REFERENCE PRODUIT</th>\n                <th style="border: solid 1px black;width: 20%">MON STAOCK</th>\n                <th style="border: solid 1px black;width: 20%">PRIX UNITAIRE H.T</th>\n                <th style="border: solid 1px black;width: 20%">QUANTITE</th>\n            </tr>\n            <tr>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">\n                    <div class="comm_prod_list_product_div3">-</div>\n                    <div class="comm_prod_list_product_div4"><input type="text" value="1" data-role="none"/></div>\n                    <div class="comm_prod_list_product_div5">+</div>\n                </td>\n            </tr>\n        </table>\n        <p>ENTREE DE STOCK MONTANT H.T. 0.00 €</p>\n        <p>LES PRODUITS ET QUANTITES AFFICHES SONT CEUX DE LA DERNIERE COMMANDE PASSEE</p>\n        \n        <div style="display: table;width: 100%">\n            <a href="#" style="width: 50%; display: table-cell; text-align: center">\n                <div style="width: 96%; color: white; background-color: black; border-bottom-left-radius: 15px; padding: 2%; ">\n                    Valider\n                </div>\n            </a>\n\n            <a href="#inventaire" style="width: 50%; display: table-cell; text-align: center">\n                <div style="width: 96%; color: white; background-color: black; border-bottom-right-radius: 15px; padding: 2%; ">\n                    MON STOCK MONTANT H.T XXXX\n                </div>\n            </a>\n            <div style="clear: both"></div>\n        </div>\n        \n        <% /*cat_id = null; %>\n        <% _.each(categorie.list_produit, function(cat){ %>\n            \n            <% if(cat_id != null && cat.ss_cat != null && cat.ss_cat.id != cat_id){ %>\n                </div>\n            <%}%>\n        \n            <% if(cat_id == null || (cat.ss_cat != null && cat.ss_cat.id != cat_id)) { %>\n                <div class="ss_cat_com_prod">\n                    <div class="ss_cat_com_prod_title"><% if(cat.ss_cat != null){ %> <%= cat.ss_cat.libelle %> <%}%></div>\n                <% if(cat.ss_cat != null) { cat_id = cat.ss_cat.id; } else {cat_id = 0;} %>\n            <% } %>\n            \n            <% if(cat.produit.length > 0) { %>\n                <ul class="comm_prod_list_product">\n                <% _.each(cat.produit, function(prod){ %>\n                    <li>\n                        <div>\n                            <div class="comm_prod_list_product_div1"><%= prod.libelle %></div>\n                            <div class="comm_prod_list_product_div2"><input type="text" value="4" data-role="none"/></div>\n                            <div class="comm_prod_list_product_div3">-</div>\n                            <div class="comm_prod_list_product_div4"><input type="text" value="1" data-role="none"/></div>\n                            <div class="comm_prod_list_product_div5">+</div>\n                            <div class="comm_prod_list_product_div6"><input type="button" value="commander" data-role="none"/></div>\n                            <div class="clear"></div>\n                        </div>\n                    </li>\n                <% }); %>\n                </ul>\n            <% } %>\n            \n        <% }); %>\n        \n        <% if(cat_id != null){ %>\n            </div>\n        <%}*/%>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
+define('text!template/stock_cat_produit.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li><span class="span-nav">ENTREE STOCK</span></li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_prod_content">\n        <p>IMPORTANT : LES SORTIES DE STOCKS SE FONT UNIQUEMENT PAR CAISSES DE 6 OU 12 BOUTEILLES OU PAR FUT</p>\n        <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n            <tr>\n                <th style="border: solid 1px black;width: 20%">PRDUIT</th>\n                <th style="border: solid 1px black;width: 20%">REFERENCE PRODUIT</th>\n                <th style="border: solid 1px black;width: 20%">MON STAOCK</th>\n                <th style="border: solid 1px black;width: 20%">PRIX UNITAIRE H.T</th>\n                <th style="border: solid 1px black;width: 20%">QUANTITE</th>\n            </tr>\n            <tr>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">&nbsp;</td>\n                <td style="border: solid 1px black;">\n                    <div class="comm_prod_list_product_div3">-</div>\n                    <div class="comm_prod_list_product_div4"><input type="text" value="1" data-role="none"/></div>\n                    <div class="comm_prod_list_product_div5">+</div>\n                </td>\n            </tr>\n        </table>\n        <p>ENTREE DE STOCK MONTANT H.T. 0.00 €</p>\n        <p>LES PRODUITS ET QUANTITES AFFICHES SONT CEUX DE LA DERNIERE COMMANDE PASSEE</p>\n        \n        <div style="display: table;width: 100%">\n            <a href="#" style="width: 50%; display: table-cell; text-align: center">\n                <div style="width: 96%; color: white; background-color: black; border-bottom-left-radius: 15px; padding: 2%; ">\n                    Valider\n                </div>\n            </a>\n\n            <a href="#inventaire" style="width: 50%; display: table-cell; text-align: center">\n                <div style="width: 96%; color: white; background-color: black; border-bottom-right-radius: 15px; padding: 2%; ">\n                    MON STOCK MONTANT H.T XXXX\n                </div>\n            </a>\n            <div style="clear: both"></div>\n        </div>\n        \n        <% /*cat_id = null; %>\n        <% _.each(categorie.list_produit, function(cat){ %>\n            \n            <% if(cat_id != null && cat.ss_cat != null && cat.ss_cat.id != cat_id){ %>\n                </div>\n            <%}%>\n        \n            <% if(cat_id == null || (cat.ss_cat != null && cat.ss_cat.id != cat_id)) { %>\n                <div class="ss_cat_com_prod">\n                    <div class="ss_cat_com_prod_title"><% if(cat.ss_cat != null){ %> <%= cat.ss_cat.libelle %> <%}%></div>\n                <% if(cat.ss_cat != null) { cat_id = cat.ss_cat.id; } else {cat_id = 0;} %>\n            <% } %>\n            \n            <% if(cat.produit.length > 0) { %>\n                <ul class="comm_prod_list_product">\n                <% _.each(cat.produit, function(prod){ %>\n                    <li>\n                        <div>\n                            <div class="comm_prod_list_product_div1"><%= prod.libelle %></div>\n                            <div class="comm_prod_list_product_div2"><input type="text" value="4" data-role="none"/></div>\n                            <div class="comm_prod_list_product_div3">-</div>\n                            <div class="comm_prod_list_product_div4"><input type="text" value="1" data-role="none"/></div>\n                            <div class="comm_prod_list_product_div5">+</div>\n                            <div class="comm_prod_list_product_div6"><input type="button" value="commander" data-role="none"/></div>\n                            <div class="clear"></div>\n                        </div>\n                    </li>\n                <% }); %>\n                </ul>\n            <% } %>\n            \n        <% }); %>\n        \n        <% if(cat_id != null){ %>\n            </div>\n        <%}*/%>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
 
 define('view/stockProduitView',["jquery", "underscore", "backbone", "text!template/stock_cat_produit.html"], function($, _, Backbone, stock_cat_produit_tpl) {
     var StockProduitView = Backbone.View.extend({
@@ -16022,7 +16183,7 @@ define('view/stockProduitView',["jquery", "underscore", "backbone", "text!templa
     return StockProduitView;
 });
 
-define('text!template/mon_stock_destock.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>SORTIE STOCK</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_prod_content">\n        <p class="diz_pt ffmorepromed text-left" style="padding: 1% 10%;">IMPORTANT : LES SORTIES DE STOCKS SE FONT UNIQUEMENT PAR CAISSES DE 6 OU 12 BOUTEILLES OU PAR FUT</p>\n        <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n            <thead>\n                <th class="clear" style="border: solid 1px black;width: 40%; position: relative">\n                    <div style="padding-right: 15px;">PRODUIT</div>\n                </th>\n                <th style="border: solid 1px black;width: 20%">MON STOCK</th>\n                <th style="border: solid 1px black;width: 20%">PRIX UNITAIRE H.T</th>\n                <th style="border: solid 1px black;width: 20%">QUANTITE</th>\n            </thead>\n            <tbody></tbody>\n        </table>\n        <p class="dou_pt ffmorepromed text-right" id="somme_entree_ht" style="padding: 2% 10%;">SORTIE DE STOCK MONTANT H.T. 0.00 &euro;</p>\n        <br/>\n        <p class="dou_pt ffmorepromed text-right" style="padding: 2% 10%;">MON STOCK MONTANT H.T XXXX €</p>\n        <br/>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" class="sub_footer">\n        <a href="#" class="valid_sortie">\n            <div class="qua_pt ffmorepromed" style="color: white" >Valider</div>\n        </a>\n    </div>\n    <div data-enhance="false" id="test-container" style="padding-top: 1em;">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
+define('text!template/mon_stock_destock.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li><span class="span-nav">SORTIE STOCK</span></li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_prod_content">\n        <p class="diz_pt ffmorepromed text-left" style="padding: 1% 10%;">IMPORTANT : LES SORTIES DE STOCKS SE FONT UNIQUEMENT PAR CAISSES DE 6 OU 12 BOUTEILLES OU PAR FUT</p>\n        <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n            <thead>\n                <th class="clear" style="border: solid 1px black;width: 40%; position: relative">\n                    <div style="padding-right: 15px;">PRODUIT</div>\n                </th>\n                <th style="border: solid 1px black;width: 20%">MON STOCK</th>\n                <th style="border: solid 1px black;width: 20%">PRIX UNITAIRE H.T</th>\n                <th style="border: solid 1px black;width: 20%">QUANTITE</th>\n            </thead>\n            <tbody></tbody>\n        </table>\n        <p class="dou_pt ffmorepromed text-right" id="somme_entree_ht" style="padding: 2% 10%;">SORTIE DE STOCK MONTANT H.T. 0.00 &euro;</p>\n        <br/>\n        <p class="dou_pt ffmorepromed text-right" style="padding: 2% 10%;">MON STOCK MONTANT H.T XXXX €</p>\n        <br/>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" class="sub_footer">\n        <a href="#" class="valid_sortie">\n            <div class="qua_pt ffmorepromed" style="color: white" >Valider</div>\n        </a>\n    </div>\n    <div data-enhance="false" id="test-container" style="padding-top: 1em;">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
 
 define('view/MonStockDestockView',["jquery", "underscore", "backbone", "text!template/mon_stock_destock.html"], function($, _, Backbone, mon_stock_destock_tpl) {
     var MonStockDestockView = Backbone.View.extend({
@@ -16172,7 +16333,7 @@ define('view/MonStockDestockView',["jquery", "underscore", "backbone", "text!tem
     return MonStockDestockView;
 });
 
-define('text!template/moncompte.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>MON COMPTE</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div style="border: solid 1px black; width: 65%; margin: auto; border-radius: 15px; overflow: hidden; word-wrap: break-word;">\n        <form>\n            <div id="error"></div>\n            <input type="hidden" name="id" value="" class="required" />\n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="nom">Nom</label></div>\n                <input type="text" name="nom" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="prenom">Pr&eacute;nom</label></div>\n                <input type="text" name="prenom" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="societe">Soci&eacute;t&eacute;</label></div>\n                <input type="text" name="societe" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="adr_societe">Adresse Soci&eacute;t&eacute;</label></div>\n                <input type="text" name="adr_societe" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="cp">Code postal</label></div>\n                <input type="text" name="cp" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="ville">Ville</label></div>\n                <input type="text" name="ville" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="siret">SIRET</label></div>\n                <input type="text" name="siret" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="tva">N TVA INTERCOMMUNAUTAIRE</label></div>\n                <input type="text" name="tva" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="horaire">HORAIRES LIVRAISON</label></div>\n                <textarea name="horaire" class="text-left" ></textarea>\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="information">INFORMATION LIVREUR</label></div>\n                <textarea name="information" class="text-left" ></textarea>\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">EMAIL</label></div>\n                <input type="text" name="email" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email_conf">CONFIRMATION EMAIL</label></div>\n                <input type="text" name="email_conf" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="password">PASSWORD</label></div>\n                <input type="password" name="password" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="password_conf">CONFIRMATION PASSWORD</label></div>\n                <input type="password" name="password_conf" value="" class="required" />\n            </div>\n            \n            \n            <p class="diz_pt ffmorepromed text-center">ATTENTION VOTRE COMPTE NE SERA  ACTIF QU\'APRES VALIDATION DE VOTRE COMMERCIAL ASAR</p>\n            <div style="display: table;width: 100%">\n                <a href="#encoursFacturation" style="width: 50%; display: table-cell;">\n                    <div class="dou_pt ffmoreproblack formvalid" style="width: 96%; border-bottom-right-radius: 0px !important;  padding: 2%; ">\n                        En cours de facturation\n                    </div>\n                </a>\n                \n                <a  href="#monequipe" id="submitform" style="width: 50%; display: table-cell;">\n                    <div class="dou_pt ffmoreproblack formvalid" style="width: 96%; border-bottom-left-radius: 0px !important; padding: 2%; ">\n                        Valider et g&eacute;rer mon équipe\n                    </div>\n                </a>\n                <div style="clear: both"></div>\n            </div>\n\n            <!--div data-corners="true" data-shadow="true" data-iconshadow="true"\n                    data-wrapperels="span" data-icon="null" data-iconpos="null"\n                    data-theme="b"\n\n                    aria-disabled="false">\n                    <button type="submit" data-theme="b" name="submit"\n                            value="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>\n            </div-->\n        </form>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>\n';});
+define('text!template/moncompte.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li><span class="span-nav">MON COMPTE</span></li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div style="border: solid 1px black; width: 65%; margin: auto; border-radius: 15px; overflow: hidden; word-wrap: break-word;">\n        <form>\n            <div id="error"></div>\n            <input type="hidden" name="id" value="" class="required" />\n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="nom">Nom</label></div>\n                <input type="text" name="nom" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="prenom">Pr&eacute;nom</label></div>\n                <input type="text" name="prenom" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="societe">Soci&eacute;t&eacute;</label></div>\n                <input type="text" name="societe" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="adr_societe">Adresse Soci&eacute;t&eacute;</label></div>\n                <input type="text" name="adr_societe" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="cp">Code postal</label></div>\n                <input type="text" name="cp" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="ville">Ville</label></div>\n                <input type="text" name="ville" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="siret">SIRET</label></div>\n                <input type="text" name="siret" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="tva">N TVA INTERCOMMUNAUTAIRE</label></div>\n                <input type="text" name="tva" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="horaire">HORAIRES LIVRAISON</label></div>\n                <textarea name="horaire" class="text-left" ></textarea>\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="information">INFORMATION LIVREUR</label></div>\n                <textarea name="information" class="text-left" ></textarea>\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">EMAIL</label></div>\n                <input type="text" name="email" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email_conf">CONFIRMATION EMAIL</label></div>\n                <input type="text" name="email_conf" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="password">PASSWORD</label></div>\n                <input type="password" name="password" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="password_conf">CONFIRMATION PASSWORD</label></div>\n                <input type="password" name="password_conf" value="" class="required" />\n            </div>\n            \n            \n            <p class="diz_pt ffmorepromed text-center">ATTENTION VOTRE COMPTE NE SERA  ACTIF QU\'APRES VALIDATION DE VOTRE COMMERCIAL ASAR</p>\n            <div style="display: table;width: 100%">\n                <a href="#encoursFacturation" style="width: 50%; display: table-cell;">\n                    <div class="dou_pt ffmoreproblack formvalid" style="width: 96%; border-bottom-right-radius: 0px !important;  padding: 2%; ">\n                        En cours de facturation\n                    </div>\n                </a>\n                \n                <a  href="#monequipe" id="submitform" style="width: 50%; display: table-cell;">\n                    <div class="dou_pt ffmoreproblack formvalid" style="width: 96%; border-bottom-left-radius: 0px !important; padding: 2%; ">\n                        Valider et g&eacute;rer mon équipe\n                    </div>\n                </a>\n                <div style="clear: both"></div>\n            </div>\n\n            <!--div data-corners="true" data-shadow="true" data-iconshadow="true"\n                    data-wrapperels="span" data-icon="null" data-iconpos="null"\n                    data-theme="b"\n\n                    aria-disabled="false">\n                    <button type="submit" data-theme="b" name="submit"\n                            value="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>\n            </div-->\n        </form>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>\n';});
 
 define('view/MonCompteView',["jquery", "underscore", "backbone", "backbone.syphon", "text!template/moncompte.html"], function($, _, Backbone, Syphon, moncompte_tpl) {
     var MonCompteView = Backbone.View.extend({
@@ -16330,7 +16491,7 @@ define('view/EncoursFacturationView',["jquery", "underscore", "backbone", "text!
     return EncoursFacturationView;
 });
 
-define('text!template/mon_equipe.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>MON EQUIPE</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="moneq_1_content">\n        <!--div class="column1"></div>\n        <div class="column2"></div-->        \n    </div>\n    \n    <div style="display: table;width: 96%; margin:auto; text-align: center">\n        <a  href="#" id="addmember" style="width: 89%;">\n            <div class="dou_pt ffmoreproblack formvalid" style="margin: auto; width: 8em; border-radius: 15px; padding: 2% 0; ">\n                Ajouter un membre\n            </div>\n        </a>\n    </div>\n</div>\n\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
+define('text!template/mon_equipe.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li><span class="span-nav">MON EQUIPE</span></li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="moneq_1_content">\n        <!--div class="column1"></div>\n        <div class="column2"></div-->        \n    </div>\n    \n    <div style="display: table;width: 96%; margin:auto; text-align: center">\n        <a  href="#" id="addmember" style="width: 89%;">\n            <div class="dou_pt ffmoreproblack formvalid" style="margin: auto; width: 8em; border-radius: 15px; padding: 2% 0; ">\n                Ajouter un membre\n            </div>\n        </a>\n    </div>\n</div>\n\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
 
 define('view/MonEquipeView',["jquery", "underscore", "backbone", "text!template/mon_equipe.html"], function($, _, Backbone, mon_equipe_tpl) {
     var MonEquipeView = Backbone.View.extend({
@@ -16467,14 +16628,14 @@ define('view/InventaireView',["jquery", "underscore", "backbone", "text!template
     return InventaireView;
 });
 
-define('text!template/historique_commande.html',[],function () { return '<div data-role="header">\n    <div class="header_bloc_left">\n        <a href="#home">&eacute;tape pr&eacute;c&eacute;dente</a>\n    </div>\n    <h1>ASAR</h1>\n    <img style="float: left" src=""/>\n    <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    \n    <div id="page-title">\n        HISTORIQUE DE MES COMMANDES\n        <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    </div>\n    \n    <div class="produit_nav">\n        <a href="#">Ajouter un produit</a>\n    </div>\n</div>\n\n\n<div data-role="content">\n    <div class="comm_prod_content">\n        <div style="margin-top: 1em; margin-bottom: 1em">\n            <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n                <tr>\n                    <th style="border: solid 1px black;width: 33%">COMMANDE</th>\n                    <th style="border: solid 1px black;width: 33%">DATE</th>\n                    <th style="border: solid 1px black;width: 33%">MONTANT H.T</th>\n                </tr>\n                <tr>\n                    <td style="border: solid 1px black;">&nbsp;</td>\n                    <td style="border: solid 1px black;">&nbsp;</td>\n                    <td style="border: solid 1px black;">&nbsp;</td>\n                </tr>\n            </table>\n        </div>\n        \n        <div style="display: table;width: 100%">\n        <a href="#" style="width: 50%; display: table-cell; text-align: center">\n            <div style="width: 96%; color: white; background-color: black; border-bottom-left-radius: 15px; padding: 2%; ">\n                Envoyer par mail\n            </div>\n        </a>\n\n        <a href="#" style="width: 50%; display: table-cell; text-align: center">\n            <div style="width: 96%; color: white; background-color: black; border-bottom-right-radius: 15px; padding: 2%; ">\n                Page suivante\n            </div>\n        </a>\n        <div style="clear: both"></div>\n    </div>\n</div>\n<div data-role="footer" id="footer">\n    <div class="footer_div">\n        <a href="#home">\n            <div><img src="" /></div>\n            <div>Accueil</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#consult_stock" class="active">\n            <div><img src="" /></div>\n            <div>Consulter le stock</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#destock">\n            <div><img src="" /></div>\n            <div>D&eacute;stocker un article</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#parametre">\n            <div><img src="" /></div>\n            <div>Mon compte</div>\n        </a>\n    </div>\n    <div class="clear"></div>\n</div>';});
+define('text!template/commande_historique.html',[],function () { return '<div data-role="header">\n    <div class="header_bloc_left">\n        <a href="#home">&eacute;tape pr&eacute;c&eacute;dente</a>\n    </div>\n    <h1>ASAR</h1>\n    <img style="float: left" src=""/>\n    <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    \n    <div id="page-title">\n        HISTORIQUE DE MES COMMANDES\n        <!--a href="#nav-panel-user" data-icon="user" data-iconpos="notext">Menu</a-->\n    </div>\n    \n    <div class="produit_nav">\n        <a href="#">Ajouter un produit</a>\n    </div>\n</div>\n\n\n<div data-role="content">\n    <div class="comm_prod_content">\n        <div style="margin-top: 1em; margin-bottom: 1em">\n            <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n                <tr>\n                    <th style="border: solid 1px black;width: 33%">COMMANDE</th>\n                    <th style="border: solid 1px black;width: 33%">DATE</th>\n                    <th style="border: solid 1px black;width: 33%">MONTANT H.T</th>\n                </tr>\n                <tr>\n                    <td style="border: solid 1px black;">&nbsp;</td>\n                    <td style="border: solid 1px black;">&nbsp;</td>\n                    <td style="border: solid 1px black;">&nbsp;</td>\n                </tr>\n            </table>\n        </div>\n        \n        <div style="display: table;width: 100%">\n        <a href="#" style="width: 50%; display: table-cell; text-align: center">\n            <div style="width: 96%; color: white; background-color: black; border-bottom-left-radius: 15px; padding: 2%; ">\n                Envoyer par mail\n            </div>\n        </a>\n\n        <a href="#" style="width: 50%; display: table-cell; text-align: center">\n            <div style="width: 96%; color: white; background-color: black; border-bottom-right-radius: 15px; padding: 2%; ">\n                Page suivante\n            </div>\n        </a>\n        <div style="clear: both"></div>\n    </div>\n</div>\n<div data-role="footer" id="footer">\n    <div class="footer_div">\n        <a href="#home">\n            <div><img src="" /></div>\n            <div>Accueil</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#consult_stock" class="active">\n            <div><img src="" /></div>\n            <div>Consulter le stock</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#destock">\n            <div><img src="" /></div>\n            <div>D&eacute;stocker un article</div>\n        </a>\n    </div>\n    <div class="footer_div">\n        <a href="#parametre">\n            <div><img src="" /></div>\n            <div>Mon compte</div>\n        </a>\n    </div>\n    <div class="clear"></div>\n</div>';});
 
-define('view/HistoriqueCommandeView',["jquery", "underscore", "backbone", "text!template/historique_commande.html"], function($, _, Backbone, historique_commande_tpl) {
-    var HistoriqueCommandeView = Backbone.View.extend({
+define('view/CommanderHistoriqueView',["jquery", "underscore", "backbone", "text!template/commande_historique.html"], function($, _, Backbone, commander_historique_tpl) {
+    var CommanderHistoriqueView = Backbone.View.extend({
         
-        id: 'historique_commande-view',
+        id: 'commander_historique-view',
 
-        template: _.template(historique_commande_tpl),
+        template: _.template(commander_historique_tpl),
         
         initialize: function(options) {
             this.user = options.user;
@@ -16525,7 +16686,7 @@ define('view/HistoriqueCommandeView',["jquery", "underscore", "backbone", "text!
             
         }
     });
-    return HistoriqueCommandeView;
+    return CommanderHistoriqueView;
 });
 define('view/MonEquipeHcView',["jquery", "underscore", "backbone", "text!template/mon_equipe.html"], function($, _, Backbone, mon_equipe_tpl) {
     var MonEquipeView = Backbone.View.extend({
@@ -16581,7 +16742,7 @@ define('view/MonEquipeHcView',["jquery", "underscore", "backbone", "text!templat
     return MonEquipeView;
 });
 
-define('text!template/member_detail.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>MON MEMBRE</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div style="border: solid 1px black; width: 65%; margin: auto; border-radius: 15px; overflow: hidden; word-wrap: break-word;">\n        <form>\n            <div id="error"></div>\n            <input type="hidden" name="id" value="" class="required" />\n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="nom">Nom</label></div>\n                <input type="text" name="name" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="prenom">Pr&eacute;nom</label></div>\n                <input type="text" name="firstname" value="" class="required" />\n            </div>\n            \n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">POSTE</label></div>\n                <input type="text" name="fonction" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">TELEPHONE</label></div>\n                <input type="text" name="telephone" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">EMAIL</label></div>\n                <input type="text" name="email" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label text-left" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">DROIT D\'ACCES</label></div>\n                <div data-enhance="false" class="text-left">\n                    <input type="radio" data-role="none" name="droit_mobile" value="1">Ce membre peut enregistrer des livraisons<br/>\n                    <input type="radio" data-role="none" name="droit_mobile" value="2">Ce membre peut commander<br/>\n                    <input type="radio" data-role="none" name="droit_mobile" value="3">ce membre peut g&eacute;rer le stock<br/>\n                </div>\n            </div>\n            \n            <div style="display: table;width: 100%">\n                <a  href="#" id="submitform" style="width: 96%;">\n                    <div class="dou_pt ffmoreproblack formvalid" style="width: 96%; border-bottom-left-radius: 0px !important; padding: 2%; ">\n                        Valider et g&eacute;rer mon équipe\n                    </div>\n                </a>\n                <div style="clear: both"></div>\n            </div>\n\n            <!--div data-corners="true" data-shadow="true" data-iconshadow="true"\n                    data-wrapperels="span" data-icon="null" data-iconpos="null"\n                    data-theme="b"\n\n                    aria-disabled="false">\n                    <button type="submit" data-theme="b" name="submit"\n                            value="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>\n            </div-->\n        </form>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>\n';});
+define('text!template/member_detail.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li><span class="span-nav">MON MEMBRE</span></li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div style="border: solid 1px black; width: 65%; margin: auto; border-radius: 15px; overflow: hidden; word-wrap: break-word;">\n        <form>\n            <div id="error"></div>\n            <input type="hidden" name="id" value="" class="required" />\n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="nom">Nom</label></div>\n                <input type="text" name="name" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="prenom">Pr&eacute;nom</label></div>\n                <input type="text" name="firstname" value="" class="required" />\n            </div>\n            \n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">POSTE</label></div>\n                <input type="text" name="fonction" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">TELEPHONE</label></div>\n                <input type="text" name="telephone" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">EMAIL</label></div>\n                <input type="text" name="email" value="" class="required" />\n            </div>\n            \n            <div data-role="fieldcontain" class="ui-label text-left" style=" padding: 0 2%; width: 96%">\n                <div style="width: 100%; text-align: left"><label class="text-left qua_pt ffmoreprobook" for="email">DROIT D\'ACCES</label></div>\n                <div data-enhance="false" class="text-left">\n                    <input type="radio" data-role="none" name="droit_mobile" value="1">Ce membre peut enregistrer des livraisons<br/>\n                    <input type="radio" data-role="none" name="droit_mobile" value="2">Ce membre peut commander<br/>\n                    <input type="radio" data-role="none" name="droit_mobile" value="3">ce membre peut g&eacute;rer le stock<br/>\n                </div>\n            </div>\n            \n            <div style="display: table;width: 100%">\n                <a  href="#" id="submitform" style="width: 96%;">\n                    <div class="dou_pt ffmoreproblack formvalid" style="width: 96%; border-bottom-left-radius: 0px !important; padding: 2%; ">\n                        Valider et g&eacute;rer mon équipe\n                    </div>\n                </a>\n                <div style="clear: both"></div>\n            </div>\n\n            <!--div data-corners="true" data-shadow="true" data-iconshadow="true"\n                    data-wrapperels="span" data-icon="null" data-iconpos="null"\n                    data-theme="b"\n\n                    aria-disabled="false">\n                    <button type="submit" data-theme="b" name="submit"\n                            value="submit-value" class="ui-btn-hidden" aria-disabled="false">Se connecter</button>\n            </div-->\n        </form>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>\n';});
 
 define('view/MemberDetailView',["jquery", "underscore", "backbone", "text!template/member_detail.html"], function($, _, Backbone, member_detail_tpl) {
     var MemberDetailView = Backbone.View.extend({
@@ -16759,7 +16920,7 @@ define('view/MemberAddView',["jquery", "underscore", "backbone", "text!template/
     return MemberAddView;
 });
 
-define('text!template/mon_stock_add.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>ENTREE STOCK</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_prod_content">\n        <p class="diz_pt ffmorepromed text-left" style="padding: 1% 10%;">IMPORTANT : LES SORTIES DE STOCKS SE FONT UNIQUEMENT PAR CAISSES DE 6 OU 12 BOUTEILLES OU PAR FUT</p>\n        <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n            <thead>\n                <th class="clear" style="border: solid 1px black;width: 40%; position: relative">\n                    <div style="padding-right: 15px;">PRODUIT</div>\n                    <div style="position: absolute; right: 2px; top: 2px" ><a href="#monstockAddProductCat"><img src="css/images/icons-png/plus-black.png"/></a></div>\n                </th>\n                <th style="border: solid 1px black;width: 20%">MON STOCK</th>\n                <th style="border: solid 1px black;width: 20%">PRIX UNITAIRE H.T</th>\n                <th style="border: solid 1px black;width: 20%">QUANTITE</th>\n            </thead>\n            <tbody></tbody>\n        </table>\n        <p class="diz_pt ffmorepromed text-right" style="padding: 1% 10%;">LES PRODUITS ET QUANTITES AFFICHES SONT CEUX DE LA DERNIERE COMMANDE PASSEE</p>\n        <p class="dou_pt ffmorepromed text-right" id="somme_entree_ht" style="padding: 2% 10%;">ENTREE DE STOCK MONTANT H.T. 0.00 &euro;</p>\n        <br/>\n        <p class="dou_pt ffmorepromed text-right" style="padding: 2% 10%;">MON STOCK MONTANT H.T XXXX €</p>\n        <br/>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" class="sub_footer">\n        <a href="#" class="valid_entree">\n            <div class="qua_pt ffmorepromed" style="color: white" >Valider</div>\n        </a>\n    </div>\n    <div data-enhance="false" id="test-container" style="padding-top: 1em;">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
+define('text!template/mon_stock_add.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li><span class="span-nav">ENTREE STOCK</span></li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_prod_content">\n        <p class="diz_pt ffmorepromed text-left" style="padding: 1% 10%;">IMPORTANT : LES SORTIES DE STOCKS SE FONT UNIQUEMENT PAR CAISSES DE 6 OU 12 BOUTEILLES OU PAR FUT</p>\n        <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n            <thead>\n                <th class="clear" style="border: solid 1px black;width: 40%; position: relative">\n                    <div style="padding-right: 15px;">PRODUIT</div>\n                    <div style="position: absolute; right: 2px; top: 2px" ><a href="#monstockAddProductCat"><img src="css/images/icons-png/plus-black.png"/></a></div>\n                </th>\n                <th style="border: solid 1px black;width: 20%">MON STOCK</th>\n                <th style="border: solid 1px black;width: 20%">PRIX UNITAIRE H.T</th>\n                <th style="border: solid 1px black;width: 20%">QUANTITE</th>\n            </thead>\n            <tbody></tbody>\n        </table>\n        <p class="diz_pt ffmorepromed text-right" style="padding: 1% 10%;">LES PRODUITS ET QUANTITES AFFICHES SONT CEUX DE LA DERNIERE COMMANDE PASSEE</p>\n        <p class="dou_pt ffmorepromed text-right" id="somme_entree_ht" style="padding: 2% 10%;">ENTREE DE STOCK MONTANT H.T. 0.00 &euro;</p>\n        <br/>\n        <p class="dou_pt ffmorepromed text-right" style="padding: 2% 10%;">MON STOCK MONTANT H.T XXXX €</p>\n        <br/>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" class="sub_footer">\n        <a href="#" class="valid_entree">\n            <div class="qua_pt ffmorepromed" style="color: white" >Valider</div>\n        </a>\n    </div>\n    <div data-enhance="false" id="test-container" style="padding-top: 1em;">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
 
 define('view/MonStockAddView',["jquery", "underscore", "backbone", "text!template/mon_stock_add.html"], function($, _, Backbone, mon_stock_add_tpl) {
     var MonStockAddView = Backbone.View.extend({
@@ -16910,7 +17071,7 @@ define('view/MonStockAddView',["jquery", "underscore", "backbone", "text!templat
     return MonStockAddView;
 });
 
-define('text!template/mon_stock_add_product_cat.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>CHOISIR UNE CATEGORIE</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_1_content">\n       \n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
+define('text!template/mon_stock_add_product_cat.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li><span class="span-nav">CHOISIR UNE CATEGORIE</span></li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_1_content">\n       \n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
 
 define('view/MonStockAddProductCatView',["jquery", "underscore", "backbone", "text!template/mon_stock_add_product_cat.html"], function($, _, Backbone, mon_stock_add_product_cat_tpl) {
     var MonStockAddProductCatView = Backbone.View.extend({
@@ -17001,7 +17162,7 @@ define('view/MonStockAddProductCatView',["jquery", "underscore", "backbone", "te
     return MonStockAddProductCatView;
 });
 
-define('text!template/mon_stock_add_product_cat_prod.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>AJOUTER AU STOCK</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div>\n        <div class="produit_nav" style="width: 50%;margin: auto;line-height: 35px;">\n            <div class="nav-left text-right" style="width: 10%; padding-right: 5px;"><img src="css/images/icons-png/arrow-l-black.png" />&nbsp;</div>\n            <div class="nav-center ffmoreprbold dizhui_pt" style="width: 78%;border: solid 1px black;border-radius: 15px"></div>\n            <div class="nav-right text-left" style="width: 10%; padding-left: 5px;"><img src="css/images/icons-png/arrow-r-black.png" />&nbsp;</div>\n            <div class="clear"></div>\n        </div>\n    </div>\n    \n    <div class="comm_prod_content">\n        <p class="diz_pt ffmorepromed text-left" style="padding: 1% 10%;">IMPORTANT : LES SORTIES DE STOCKS SE FONT UNIQUEMENT PAR CAISSES DE 6 OU 12 BOUTEILLES OU PAR FUT</p>\n        <div class="comm_2_content"></div>\n    </div>\n</div>\n\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
+define('text!template/mon_stock_add_product_cat_prod.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li><span class="span-nav">AJOUTER AU STOCK</span></li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div>\n        <div class="produit_nav" style="max-width: 300px;margin: auto;line-height: 35px;">\n            <a href="#" class="nav-right-a"><div class="nav-left text-right" style="width: 10%; "><img style="padding-right: 5px;" src="css/images/icons-png/arrow-l-black.png" />&nbsp;</div></a>\n            <div class="nav-center ffmoreprbold dizhui_pt" style="width: 78%;border: solid 1px black;border-radius: 15px"></div>\n            <a href="#" class="nav-left-a"><div class="nav-right text-left" style="width: 10%;"><img style="padding-left: 5px;" src="css/images/icons-png/arrow-r-black.png" />&nbsp;</div></a>\n            <div class="clear"></div>\n        </div>\n    </div>\n    \n    <div class="comm_prod_content">\n        <p class="diz_pt ffmorepromed text-left" style="padding: 1% 10%;">IMPORTANT : LES SORTIES DE STOCKS SE FONT UNIQUEMENT PAR CAISSES DE 6 OU 12 BOUTEILLES OU PAR FUT</p>\n        <div class="comm_2_content"></div>\n    </div>\n</div>\n\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
 
 define('view/MonStockAddProductCatProdView',["jquery", "underscore", "backbone", "text!template/mon_stock_add_product_cat_prod.html"], function($, _, Backbone, mon_stock_add_product_cat_prod_tpl) {
     var MonStockAddProductCatProdView = Backbone.View.extend({
@@ -17045,23 +17206,23 @@ define('view/MonStockAddProductCatProdView',["jquery", "underscore", "backbone",
                 if(cat_id == null || (cat.ss_cat != null && cat.ss_cat.id != cat_id)) {
                     chaine += '<div class="ss_cat_com_prod '+((cat.ss_cat == null)?'no_border':'')+'">';
                     chaine += '<ul class="clear">'; 
-                    chaine += '<li style="width: 50%;list-style: none" class="floatl ss_cat_com_prod_title">'+((cat.ss_cat != null)?cat.ss_cat.libelle:'')+'</li>';
-                    chaine += '<li style="width: 20%;list-style: none" class="floatl ffmoreprobook dix_pt"><i>P.U.H.T</i></li>';
-                    chaine += '<li style="width: 15%;list-style: none" class="floatl ffmoreprobook dix_pt"><i>S&eacute;l&eacute;ctionner</i></li>';
+                    chaine += '<li style="width: 40%;list-style: none" class="floatl ss_cat_com_prod_title">PRODUIT'+/*((cat.ss_cat != null)?cat.ss_cat.libelle:'')*/+'</li>';
+                    chaine += '<li style="width: 18%;list-style: none" class="floatl ffmoreprobook dix_pt"><i>P.U.H.T</i></li>';
+                    chaine += '<li style="width: 27%;list-style: none" class="floatl ffmoreprobook dix_pt"><i>S&eacute;l&eacute;ctionner</i></li>';
                     chaine += '<li style="width: 14%;list-style: none" class="floatl ">&nbsp;</li>';
                     chaine += '</ul>';
                     if(cat.ss_cat != null) { cat_id = cat.ss_cat.id; } else {cat_id = 0;}
                 }
             
                 if(cat.produit.length > 0) {
-                    chaine+= '<ul class="comm_prod_list_product">';
+                    chaine+= '<ul class="comm_prod_list_product clear" >';
                     for (index2 in cat.produit) {
                         var prod = cat.produit[index2];
                         chaine+= '<li>';
                         chaine+= '    <div data-id="'+prod.id+'">';
-                        chaine+= '        <div class="comm_prod_list_product_div1 ffmoreprbold dou_pt" style="width: 50%">'+prod.libelle+'</div>';
-                        chaine+= '        <div class="comm_prod_list_product_div1 text-center ffmoreprobook dix_pt" style="width: 20%">'+prod.prix_base+'</div>';
-                        chaine+= '        <div class="comm_prod_list_product_div4 text-center" style="min-width: 40px; margin: auto;width: 15%">';
+                        chaine+= '        <div class="comm_prod_list_product_div1 ffmoreprbold dou_pt" style="width: 40%">'+prod.libelle+'</div>';
+                        chaine+= '        <div class="comm_prod_list_product_div1 text-center ffmoreprobook dix_pt" style="width: 18%">'+prod.prix_base+'</div>';
+                        chaine+= '        <div class="comm_prod_list_product_div4 text-center" style="min-width: 40px; margin: auto;width: 27%">';
                         chaine += '            <a href="#" class="produit_moins">-</a>';
                         chaine += '            <input type="text" value="1" data-role="none" style="float: none;width: 30px;"/>';
                         chaine += '            <a href="#" class="produit_plus">+</a>';
@@ -17109,6 +17270,40 @@ define('view/MonStockAddProductCatProdView',["jquery", "underscore", "backbone",
         
         events: {
             /* TODO : changement de catégorie */
+            "click .nav-right-a":"gotonextCategorie",
+            "click .nav-left-a":"gotopreviousCategorie",
+        },
+        
+        gotonextCategorie: function(e){
+            e.preventDefault();
+            this.loadingStart("Chargement en cours");
+            var _this = this;
+            var xhr = $.get(config.api_url + "/rest-categorie/"+_this.idCategorie, {"token": _this.user.get('token'), "action": "next"}, null, 'jsonp');
+                xhr.done( function(data){
+                    $('#error').empty();
+                    if(data.data) {
+                        Backbone.history.navigate("monstockAddProductCatProd/"+data.data.id, true);
+                    }
+                });
+                xhr.fail(function(data) {
+                    $('#error').empty().html(data);
+                });
+        },
+        
+        gotopreviousCategorie: function(e){
+            e.preventDefault();
+            this.loadingStart("Chargement en cours");
+            var _this = this;
+            var xhr = $.get(config.api_url + "/rest-categorie/"+_this.idCategorie, {"token": _this.user.get('token'), "action": "previous"}, null, 'jsonp');
+                xhr.done( function(data){
+                    $('#error').empty();
+                    if(data.data) {
+                        Backbone.history.navigate("monstockAddProductCatProd/"+data.data.id, true);
+                    }
+                });
+                xhr.fail(function(data) {
+                    $('#error').empty().html(data);
+                });
         },
         
         loadingStart: function(text_show) {
@@ -17200,7 +17395,7 @@ define('model/lastcommande-local',["jquery", "underscore", "backbone", "backbone
     return LastcommandeLocalModel;
 });
 
-define('text!template/mon_stock_add_validate.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>ENTREE STOCK</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_prod_content">\n        <p class="qua_pt ffmorepromed text-left" style="padding: 1% 10%;">MOTIF DE MODIFICATION DE QUANTITE DE PRODUITS RECUS</p>\n        <div class="floatl" style="width:50%;margin-top: 10px;">\n            <a href="#" class="motif" data-motif="Non livrés"><div class="cell_modif_entree">PRODUITS NON LIVRES</div></a>\n        </div>\n        <div class="floatl" style="width:50%;margin-top: 10px; ">\n            <a href="#" class="motif" data-motif="Cassés"><div class="cell_modif_entree">PRODUITS CASSES</div></a>\n        </div>\n        <div class="floatl" style="width:50%;margin-top: 10px; ">\n            <a href="#" class="motif" data-motif="Détériorés"><div class="cell_modif_entree">PRODUITS DETERIORES OU NON CONFORMES</div></a>\n        </div>\n        <div class="floatl" style="width:50%;margin-top: 10px; ">\n            <a href="#" class="motif" data-motif="A reprendre"><div class="cell_modif_entree">PRODUITS NON COMMANDES A REPRENDRE</div></a>\n        </div>\n        <div class="floatl" style="width:100%;margin-top: 10px; ">\n            <a href="#" class="motif" data-motif="Autre distributeur ou appoint"><div class="cell_modif_entree" style="width: 50%;">PRODUITS ACHETES A UN AUTRE DISTRIBUTEUR EN APPOINT</div></a>\n        </div>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
+define('text!template/mon_stock_add_validate.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li><span class="span-nav">ENTREE STOCK</span></li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_prod_content">\n        <p class="qua_pt ffmorepromed text-left" style="padding: 1% 10%;">MOTIF DE MODIFICATION DE QUANTITE DE PRODUITS RECUS</p>\n        <div class="floatl" style="width:50%;margin-top: 10px;">\n            <a href="#" class="motif" data-motif="Non livrés"><div class="cell_modif_entree">PRODUITS NON LIVRES</div></a>\n        </div>\n        <div class="floatl" style="width:50%;margin-top: 10px; ">\n            <a href="#" class="motif" data-motif="Cassés"><div class="cell_modif_entree">PRODUITS CASSES</div></a>\n        </div>\n        <div class="floatl" style="width:50%;margin-top: 10px; ">\n            <a href="#" class="motif" data-motif="Détériorés"><div class="cell_modif_entree">PRODUITS DETERIORES OU NON CONFORMES</div></a>\n        </div>\n        <div class="floatl" style="width:50%;margin-top: 10px; ">\n            <a href="#" class="motif" data-motif="A reprendre"><div class="cell_modif_entree">PRODUITS NON COMMANDES A REPRENDRE</div></a>\n        </div>\n        <div class="floatl" style="width:100%;margin-top: 10px; ">\n            <a href="#" class="motif" data-motif="Autre distributeur ou appoint"><div class="cell_modif_entree" style="width: 50%;">PRODUITS ACHETES A UN AUTRE DISTRIBUTEUR EN APPOINT</div></a>\n        </div>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
 
 define('view/MonStockAddValidateView',["jquery", "underscore", "backbone", "text!template/mon_stock_add_validate.html"], function($, _, Backbone, mon_stock_add_validate_tpl) {
     var MonStockAddValidateView = Backbone.View.extend({
@@ -17316,7 +17511,7 @@ define('model/stock-local',["jquery", "underscore", "backbone", "backbone.localS
     return StockLocalModel;
 });
 
-define('text!template/mon_stock_casse_perte_validation.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>CASSE / PERTE STOCK</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_prod_content clear">\n        <p class="qua_pt ffmorepromed text-left" style="padding: 1% 10%;">MOTIF</p>\n        <div class="floatl" style="width:50%;margin-top: 10px;">\n            <a href="#" class="motif" data-motif="cassé"><div class="cell_modif_entree">CASSE</div></a>\n        </div>\n        <div class="floatl" style="width:50%;margin-top: 10px; ">\n            <a href="#" class="motif" data-motif="perte"><div class="cell_modif_entree">PERTE</div></a>\n        </div>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
+define('text!template/mon_stock_casse_perte_validation.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li><span class="span-nav">CASSE / PERTE STOCK</span></li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_prod_content clear">\n        <p class="qua_pt ffmorepromed text-left" style="padding: 1% 10%;">MOTIF</p>\n        <div class="floatl" style="width:50%;margin-top: 10px;">\n            <a href="#" class="motif" data-motif="cassé"><div class="cell_modif_entree">CASSE</div></a>\n        </div>\n        <div class="floatl" style="width:50%;margin-top: 10px; ">\n            <a href="#" class="motif" data-motif="perte"><div class="cell_modif_entree">PERTE</div></a>\n        </div>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" id="test-container">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
 
 define('view/MonStockCassePerteValidationView',["jquery", "underscore", "backbone", "text!template/mon_stock_casse_perte_validation.html"], function($, _, Backbone, mon_stock_casse_perte_validation_tpl) {
     var MonStockCassePerteValidationView = Backbone.View.extend({
@@ -17391,7 +17586,7 @@ define('view/MonStockCassePerteValidationView',["jquery", "underscore", "backbon
     return MonStockCassePerteValidationView;
 });
 
-define('text!template/mon_stock_historique.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>HISTORIQUE DES ENTRES SORTIES CASSE PERTE</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_prod_content">\n        <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n            <thead>\n                <tr>\n                    <th style="border: solid 1px black;width: 15%">MOTIF</th>\n                    <th style="border: solid 1px black;width: 30%">DATE</th>\n                    <th style="border: solid 1px black;width: 40%">USER</th>\n                    <th style="border: solid 1px black;width: 15%">MONTANT T.H.T</th>\n                </tr>\n            </thead>\n            <tbody></tbody>\n        </table>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" class="sub_footer">\n        <a href="#" class="valid_entree">\n            <div class="qua_pt ffmorepromed" style="color: white" >Envoyer par mail</div>\n        </a>\n    </div>\n    <div data-enhance="false" id="test-container" style="padding-top: 1em;">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
+define('text!template/mon_stock_historique.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li><span class="span-nav">HISTORIQUE DES ENTRES SORTIES CASSE PERTE</span></li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_prod_content">\n        <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n            <thead>\n                <tr>\n                    <th style="border: solid 1px black;width: 15%">MOTIF</th>\n                    <th style="border: solid 1px black;width: 30%">DATE</th>\n                    <th style="border: solid 1px black;width: 40%">USER</th>\n                    <th style="border: solid 1px black;width: 15%">MONTANT T.H.T</th>\n                </tr>\n            </thead>\n            <tbody></tbody>\n        </table>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" class="sub_footer">\n        <a href="#" class="valid_entree">\n            <div class="qua_pt ffmorepromed" style="color: white" >Envoyer par mail</div>\n        </a>\n    </div>\n    <div data-enhance="false" id="test-container" style="padding-top: 1em;">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
 
 define('view/MonStockHistoriqueView',["jquery", "underscore", "backbone", "text!template/mon_stock_historique.html"], function($, _, Backbone, mon_stock_historique_tpl) {
     var MonStockHistoriqueView = Backbone.View.extend({
@@ -17472,7 +17667,7 @@ define('view/MonStockHistoriqueView',["jquery", "underscore", "backbone", "text!
     return MonStockHistoriqueView;
 });
 
-define('text!template/mon_stock_historique_detail.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li>HISTORIQUE DES ENTRES SORTIES CASSE PERTE</li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_prod_content">\n        <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n            <thead>\n                <tr>\n                    <th style="border: solid 1px black;width: 15%">PRODUIT</th>\n                    <th style="border: solid 1px black;width: 30%">QUANTITE</th>\n                    <th style="border: solid 1px black;width: 40%">P.U.H.T</th>\n                    <th style="border: solid 1px black;width: 15%">P.T.H.T</th>\n                </tr>\n            </thead>\n            <tbody></tbody>\n        </table>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" class="sub_footer">\n        <a href="#" class="valid_entree">\n            <div class="qua_pt ffmorepromed" style="color: white" >Envoyer par mail</div>\n        </a>\n    </div>\n    <div data-enhance="false" id="test-container" style="padding-top: 1em;">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
+define('text!template/mon_stock_historique_detail.html',[],function () { return '<div data-role="header" id="headerappli" style="position: relative">\n    <h1>ASAR</h1>\n    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>\n</div><!-- /header -->\n\n<div data-role="navbar">\n    <ul>\n        <li><span class="span-nav">HISTORIQUE DES ENTRES SORTIES CASSE PERTE</span></li>\n    </ul>\n</div><!-- /navbar -->\n\n<div data-role="content">\n    <div class="comm_prod_content">\n        <table style="text-align: center;width: 80%; margin: auto; border-collapse:collapse">\n            <thead>\n                <tr>\n                    <th style="border: solid 1px black;width: 15%">PRODUIT</th>\n                    <th style="border: solid 1px black;width: 30%">QUANTITE</th>\n                    <th style="border: solid 1px black;width: 40%">P.U.H.T</th>\n                    <th style="border: solid 1px black;width: 15%">P.T.H.T</th>\n                </tr>\n            </thead>\n            <tbody></tbody>\n        </table>\n    </div>\n</div>\n<div data-role="footer"  data-position="fixed">\n    <div data-enhance="false" class="sub_footer">\n        <a href="#" class="valid_entree">\n            <div class="qua_pt ffmorepromed" style="color: white" >Envoyer par mail</div>\n        </a>\n    </div>\n    <div data-enhance="false" id="test-container" style="padding-top: 1em;">\n        <a href="#logout">\n            <div style="text-center">\n                <img src="css/images/icons-png/cancel.png" />\n            </div>\n\n            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>\n        </a>\n    </div>\n</div>';});
 
 define('view/MonStockHistoriqueDetailView',["jquery", "underscore", "backbone", "text!template/mon_stock_historique_detail.html"], function($, _, Backbone, mon_stock_historique_detail_tpl) {
     var MonStockHistoriqueDetailView = Backbone.View.extend({
@@ -17557,10 +17752,10 @@ define('view/MonStockHistoriqueDetailView',["jquery", "underscore", "backbone", 
 define('router/app',["jquery", "jquery.validate", "underscore", "backbone", "backbone.queryparams", "backbone.route-filter", 
     'backbone.localStorage', "backbone.token", "model/user-local",  "model/commande-local", 
     "view/homeView", "view/loginView", "view/creationcompteView", "view/parametreView",
-    "view/commandeView", "view/MonStockView","view/MonStockCassePerteView", "view/CommanderMenuView",
-    "view/commandeProduitView", "view/stockProduitView", "view/MonStockDestockView",
+    "view/CommanderStep1View", "view/MonStockView","view/MonStockCassePerteView", "view/CommanderMenuView",
+    "view/CommanderStep2View", "view/stockProduitView", "view/MonStockDestockView",
     "view/MonCompteView", "view/EncoursFacturationView", "view/MonEquipeView", "view/InventaireView",
-    "view/HistoriqueCommandeView", "view/MonEquipeHcView", "view/MemberDetailView",
+    "view/CommanderHistoriqueView", "view/MonEquipeHcView", "view/MemberDetailView",
     "view/MemberAddView","view/MonStockAddView","view/MonStockAddProductCatView",
     "view/MonStockAddProductCatProdView", "model/lastcommande-local",
     "view/MonStockAddValidateView","model/message-local","model/stock-local",
@@ -17569,10 +17764,10 @@ define('router/app',["jquery", "jquery.validate", "underscore", "backbone", "bac
 function($, validate ,_, Backbone, QueryParams, RouterFilter,
     LocalStorage, Token, UserLocalModel, CommandeLocalModel,
     HomeView, LoginView, CreationCompteView, ParametreView,
-    CommandeView, MonStockView,MonStockCassePerteView, CommanderMenuView,
-    CommandeProduitView, StockProduitView, MonStockDestockView,
+    CommanderStep1View, MonStockView,MonStockCassePerteView, CommanderMenuView,
+    CommanderStep2View, StockProduitView, MonStockDestockView,
     MonCompteView, EncoursFacturationView, MonEquipeView, InventaireView,
-    HistoriqueCommandeView, MonEquipeHcView, MemberDetailView,
+    CommanderHistoriqueView, MonEquipeHcView, MemberDetailView,
     MemberAddView, MonStockAddView, MonStockAddProductCatView,
     MonStockAddProductCatProdView, LastcommandeLocalModel,
     MonStockAddValidateView,MessageLocalModel,StockLocalModel,
@@ -17590,6 +17785,9 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
     
     var stockLocal = new StockLocalModel();
     stockLocal.fetch();
+    
+    var commandeLocal = new CommandeLocalModel();
+    commandeLocal.fetch();
 
     var AppRouter = Backbone.Router.extend({
         init: true,
@@ -17599,9 +17797,9 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             "creationcompte": "creationcompte",
             "login": "login",
             "commanderMenu": "commanderMenu",
-            "commander": "commander",
-            "commanderProduit/:id": "commanderProduit",
-            "historiqueCommande": "historiqueCommande",
+            "commanderStep1": "commanderStep1",
+            "commanderStep2/:id": "commanderStep2",
+            "commanderHistorique": "commanderHistorique",
             "monstock": "monstock",
             "monstockAdd": "monstockAdd",
             "monstockAddValidate": "monstockAddValidate",
@@ -17654,6 +17852,7 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             this.lastcommandeLocal = lastcommandeLocal;
             this.messageLocal = messageLocal;
             this.stockLocal = stockLocal;
+            this.commandeLocal = commandeLocal;
         },
         logout: function() {
             this.userLocal.clear();
@@ -17679,23 +17878,29 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
         },
         commanderMenu: function() {
             var view = new CommanderMenuView({
-                commande: new CommandeLocalModel(),
                 user: this.userLocal
             });
             view.render();
             this.changePage(view);
         },
-        commander: function() {
-            var view = new CommandeView({
-                commande: new CommandeLocalModel(),
+        commanderStep1: function() {
+            var view = new CommanderStep1View({
                 user: this.userLocal
             });
             view.render();
             this.changePage(view);
         },
-        historiqueCommande: function() {
-            var view = new HistoriqueCommandeView({
-                commande: new CommandeLocalModel(),
+        commanderStep2: function(id) {
+            var view = new CommanderStep2View({
+                user: this.userLocal,
+                commande: this.commandeLocal,
+                categorie_id: id,
+            });
+            view.render();
+            this.changePage(view);
+        },
+        commanderHistorique: function() {
+            var view = new CommanderHistoriqueView({
                 user: this.userLocal
             });
             view.render();
@@ -17710,15 +17915,6 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
         },
         monequipehc: function() {
             var view = new MonEquipeHcView({
-                user: this.userLocal
-            });
-            view.render();
-            this.changePage(view);
-        },
-        commanderProduit: function(id) {
-            var view = new CommandeProduitView({
-                commande: new CommandeLocalModel(),
-                categorie_id: id,
                 user: this.userLocal
             });
             view.render();
@@ -17810,17 +18006,16 @@ function($, validate ,_, Backbone, QueryParams, RouterFilter,
             view.render();
             this.changePage(view);
         },
-        stockProduit: function() {
+        /*stockProduit: function() {
             var view = new StockProduitView({
                 commande: new CommandeLocalModel(),
                 user: this.userLocal
             });
             view.render();
             this.changePage(view);
-        },
+        },*/
         inventaire: function() {
             var view = new InventaireView({
-                commande: new CommandeLocalModel(),
                 user: this.userLocal
             });
             view.render();

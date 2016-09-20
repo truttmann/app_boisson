@@ -1,9 +1,9 @@
-define(["jquery", "underscore", "backbone", "text!template/historique_commande.html"], function($, _, Backbone, historique_commande_tpl) {
-    var HistoriqueCommandeView = Backbone.View.extend({
+define(["jquery", "underscore", "backbone", "text!template/commande_historique.html"], function($, _, Backbone, commander_historique_tpl) {
+    var CommanderHistoriqueView = Backbone.View.extend({
         
-        id: 'historique_commande-view',
+        id: 'commander_historique-view',
 
-        template: _.template(historique_commande_tpl),
+        template: _.template(commander_historique_tpl),
         
         initialize: function(options) {
             this.user = options.user;
@@ -54,5 +54,5 @@ define(["jquery", "underscore", "backbone", "text!template/historique_commande.h
             
         }
     });
-    return HistoriqueCommandeView;
+    return CommanderHistoriqueView;
 });

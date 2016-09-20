@@ -17,6 +17,7 @@ define(["jquery", "underscore", "backbone", "text!template/mon_stock_add_validat
             });
             this.listenTo(this.lastcommande, 'lastcommande:endfailurestockupdated', function(model) {
                 alert("Error during saving, please try later");
+                this.loadingStop();
             });
             
             this.bind('render:completed', function() {

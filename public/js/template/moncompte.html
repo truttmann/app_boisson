@@ -1,6 +1,6 @@
 <div data-role="header" id="headerappli" style="position: relative">
     <h1>ASAR</h1>
-    <div style="position: absolute; right: 1em; top: 3em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>
+    <div style="position: absolute; right: 1em; top: 1em;"><a href="#home"><img src="css/images/icons-png/icon.png" style="width: 3em; height: 5em" /></a></div>
 </div><!-- /header -->
 
 <div data-role="navbar">
@@ -10,7 +10,7 @@
 </div><!-- /navbar -->
 
 <div data-role="content">
-    <div style="border: solid 1px black; width: 65%; margin: auto; border-radius: 15px; overflow: hidden; word-wrap: break-word;">
+    <div style="border: solid 1px black; width: 100%; margin: auto; border-radius: 15px; overflow: hidden; word-wrap: break-word;">
         <form>
             <div id="error"></div>
             <input type="hidden" name="id" value="" class="required" />
@@ -86,19 +86,12 @@
             
             
             <p class="diz_pt ffmorepromed text-center">ATTENTION VOTRE COMPTE NE SERA  ACTIF QU'APRES VALIDATION DE VOTRE COMMERCIAL ASAR</p>
-            <div style="display: table;width: 100%">
-                <a href="#encoursFacturation" style="width: 50%; display: table-cell;">
-                    <div class="dou_pt ffmoreproblack formvalid" style="width: 96%; border-bottom-right-radius: 0px !important;  padding: 2%; ">
-                        En cours de facturation
-                    </div>
-                </a>
-                
-                <a  href="#monequipe" id="submitform" style="width: 50%; display: table-cell;">
+            <div style="width: 100%">
+                <a  href="#monequipe" id="submitform" style="width: 100%;">
                     <div class="dou_pt ffmoreproblack formvalid" style="width: 96%; border-bottom-left-radius: 0px !important; padding: 2%; ">
                         Valider et g&eacute;rer mon équipe
                     </div>
                 </a>
-                <div style="clear: both"></div>
             </div>
 
             <!--div data-corners="true" data-shadow="true" data-iconshadow="true"
@@ -111,14 +104,24 @@
             </div-->
         </form>
     </div>
+    
+    <br/>
+    <a href="#encoursFacturation" style="width: 100%">
+        <div class="dou_pt ffmoreproblack" style="width: 100%; border-bottom-right-radius: 0px !important;  padding: 2%; ">
+            En cours de facturation
+        </div>
+    </a>
+    <br/>
 </div>
 <div data-role="footer"  data-position="fixed">
     <div data-enhance="false" id="test-container">
-        <a href="#logout">
-            <div style="text-center">
-                <img src="css/images/icons-png/cancel.png" />
-            </div>
-            <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>
-        </a>
+        <div data-enhance="false" id="test-container" style="padding-top: 1em;">
+            <a href="#logout">
+                <div style="text-center">
+                    <img src="css/images/icons-png/cancel.png" />
+                </div>
+                <div class="cancel diz_pt ffmorepromed" >D&eacute;connexion</div>
+            </a>
+        </div>s
     </div>
 </div>
